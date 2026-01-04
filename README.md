@@ -2,6 +2,8 @@
 
 A comprehensive KOL (Key Opinion Leader) commission management platform for China affiliate marketing programs. Built with React 18, TypeScript, and Ant Design.
 
+🌐 **[Live Demo](https://jimmy00415.github.io/CoselectorDemo/)** | 📖 [Documentation](PRD.markdown)
+
 ## 📋 Overview
 
 The Co-Selector Console enables content creators to manage their affiliate marketing operations with 14 integrated modules:
