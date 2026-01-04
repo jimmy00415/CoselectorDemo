@@ -1,0 +1,49 @@
+/* Payouts Module Styles */
+
+.payouts-container {
+  padding: 24px;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .payouts-container {
+    padding: 16px;
+  }
+}
+
+/* Eligibility banner actions */
+.ant-alert-action {
+  margin-left: 16px;
+}
+
+/* Table hover effect */
+.ant-table-tbody > tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Drawer styles */
+.ant-drawer-body {
+  padding: 24px;
+}
+
+.ant-drawer-body .ant-descriptions-item-label {
+  font-weight: 500;
+}
+
+/* Timeline in drawer */
+.ant-timeline {
+  margin-top: 16px;
+}
+
+/* Modal form */
+.ant-modal-body .ant-form-item {
+  margin-bottom: 16px;
+}
+
+/* Button spacing */
+.ant-space-item {
+  display: flex;
+  align-items: center;
+}

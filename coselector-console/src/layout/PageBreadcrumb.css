@@ -1,0 +1,17 @@
+.page-breadcrumb {
+  margin-bottom: 16px;
+  padding: 12px 0;
+}
+
+.page-breadcrumb a {
+  color: rgba(0, 0, 0, 0.65);
+  transition: color 0.3s;
+}
+
+.page-breadcrumb a:hover {
+  color: #1890ff;
+}
+
+.page-breadcrumb .ant-breadcrumb-separator {
+  color: rgba(0, 0, 0, 0.45);
+}

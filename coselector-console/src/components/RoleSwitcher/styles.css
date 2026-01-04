@@ -1,0 +1,30 @@
+.role-switcher {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.role-switcher-select {
+  min-width: 180px;
+}
+
+.role-switcher-info {
+  max-width: 250px;
+  margin-top: 4px;
+}
+
+.role-switcher-dropdown .ant-select-item-option-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Badge styling for dev indicator */
+.role-switcher .ant-badge {
+  display: inline-block;
+}
+
+.role-switcher .ant-badge-count {
+  background: transparent;
+  box-shadow: none;
+}

@@ -1,0 +1,34 @@
+.notification-panel .ant-drawer-body {
+  padding: 0;
+}
+
+.notification-panel .ant-tabs {
+  padding: 0 24px;
+}
+
+.notification-panel .ant-list {
+  padding: 0;
+}
+
+.notification-item {
+  cursor: pointer;
+  padding: 16px 24px !important;
+  transition: background 0.2s;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-item:hover {
+  background: #f5f5f5;
+}
+
+.notification-item.unread {
+  background: #e6f7ff;
+}
+
+.notification-item.unread:hover {
+  background: #bae7ff;
+}
+
+.notification-item .ant-list-item-action {
+  margin-left: 12px;
+}

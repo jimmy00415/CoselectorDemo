@@ -1,0 +1,92 @@
+/* Leads Module Styles */
+
+.leads-container {
+  padding: 24px;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.lead-detail-container {
+  padding: 24px;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.lead-detail-header {
+  margin-bottom: 24px;
+}
+
+.lead-detail-header .ant-card-body {
+  padding: 32px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .leads-container,
+  .lead-detail-container {
+    padding: 16px;
+  }
+
+  .lead-detail-header .ant-card-body {
+    padding: 16px;
+  }
+}
+
+/* Timeline adjustments */
+.ant-timeline {
+  padding-top: 8px;
+}
+
+.ant-timeline-item-content {
+  margin-left: 24px;
+}
+
+/* Form modal sections */
+.ant-form-item {
+  margin-bottom: 16px;
+}
+
+/* Status pills */
+.ant-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Action buttons */
+.ant-btn-link {
+  padding: 0 8px;
+  height: auto;
+}
+
+/* Filter section */
+.ant-select {
+  min-width: 120px;
+}
+
+/* Missing info checklist */
+.ant-alert {
+  margin-bottom: 16px;
+}
+
+/* Review panel */
+.ant-card .ant-card-head-title {
+  font-weight: 600;
+}
+
+/* Descriptions */
+.ant-descriptions-item-label {
+  font-weight: 500;
+}
+
+/* Divider spacing */
+.ant-divider {
+  margin: 16px 0;
+}
+
+/* List items */
+.ant-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

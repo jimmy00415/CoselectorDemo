@@ -1,0 +1,47 @@
+.view-preset-switcher {
+  display: inline-flex;
+  align-items: center;
+}
+
+.view-preset-radio-group {
+  display: flex;
+  gap: 0;
+}
+
+.view-preset-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  transition: all 0.2s ease;
+}
+
+.view-preset-button:hover {
+  transform: translateY(-1px);
+}
+
+.view-preset-icon {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.view-preset-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .view-preset-label {
+    display: none;
+  }
+  
+  .view-preset-button {
+    padding: 4px 8px;
+  }
+  
+  .view-preset-icon {
+    font-size: 16px;
+  }
+}

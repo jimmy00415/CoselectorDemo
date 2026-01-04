@@ -1,0 +1,165 @@
+// User roles for RBAC
+export enum UserRole {
+  CO_SELECTOR = 'CO_SELECTOR',
+  OPS_BD = 'OPS_BD',
+  FINANCE = 'FINANCE',
+}
+
+// View presets for different perspectives
+export enum ViewPreset {
+  OWNER = 'OWNER',
+  OPERATOR = 'OPERATOR',
+  ANALYST = 'ANALYST',
+  FINANCE = 'FINANCE',
+}
+
+// Asset types
+export enum AssetType {
+  SHORT_LINK = 'SHORT_LINK',
+  QR_CODE = 'QR_CODE',
+  INVITE_CODE = 'INVITE_CODE',
+}
+
+// Asset status
+export enum AssetStatus {
+  ACTIVE = 'ACTIVE',
+  DISABLED = 'DISABLED',
+  EXPIRED = 'EXPIRED',
+  REVOKED = 'REVOKED',
+}
+
+// Content platforms
+export enum ContentPlatform {
+  DOUYIN = 'DOUYIN',
+  XIAOHONGSHU = 'XIAOHONGSHU',
+  WECHAT = 'WECHAT',
+  WEIBO = 'WEIBO',
+  BILIBILI = 'BILIBILI',
+  KUAISHOU = 'KUAISHOU',
+  OTHER = 'OTHER',
+}
+
+// Lead status
+export enum LeadStatus {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  INFO_REQUESTED = 'INFO_REQUESTED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  RESUBMITTED = 'RESUBMITTED',
+}
+
+// Earnings state
+export enum EarningsState {
+  PENDING = 'PENDING',
+  LOCKED = 'LOCKED',
+  PAYABLE = 'PAYABLE',
+  PAID = 'PAID',
+  REVERSED = 'REVERSED',
+}
+
+// Payout status
+export enum PayoutStatus {
+  REQUESTED = 'REQUESTED',
+  APPROVED = 'APPROVED',
+  PAID = 'PAID',
+  FAILED = 'FAILED',
+  REJECTED = 'REJECTED',
+  CANCELLED = 'CANCELLED',
+}
+
+// Dispute status
+export enum DisputeStatus {
+  OPEN = 'OPEN',
+  WAITING = 'WAITING',
+  WAITING_FOR_RESPONSE = 'WAITING_FOR_RESPONSE',
+  RESOLVED = 'RESOLVED',
+}
+
+// Notification types
+export enum NotificationType {
+  LEAD_STATUS_CHANGED = 'LEAD_STATUS_CHANGED',
+  TRANSACTION_LOCKED = 'TRANSACTION_LOCKED',
+  PAYOUT_APPROVED = 'PAYOUT_APPROVED',
+  DISPUTE_UPDATE = 'DISPUTE_UPDATE',
+  KYC_REQUIRED = 'KYC_REQUIRED',
+  REVIEW_DECISION = 'REVIEW_DECISION',
+  EARNINGS_LIFECYCLE = 'EARNINGS_LIFECYCLE',
+  PAYOUT_LIFECYCLE = 'PAYOUT_LIFECYCLE',
+  POLICY_UPDATE = 'POLICY_UPDATE',
+}
+
+// KYC status
+export enum KYCStatus {
+  NOT_STARTED = 'NOT_STARTED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  SUBMITTED = 'SUBMITTED',
+  VERIFIED = 'VERIFIED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+// Reversal reason codes
+export enum ReversalReason {
+  REFUND = 'REFUND',
+  DISPUTE = 'DISPUTE',
+  DISPUTE_CHARGEBACK = 'DISPUTE_CHARGEBACK',
+  FRAUD = 'FRAUD',
+  FRAUD_HOLD = 'FRAUD_HOLD',
+  ORDER_VOID_CANCEL = 'ORDER_VOID_CANCEL',
+  SYSTEM_REATTRIBUTED = 'SYSTEM_REATTRIBUTED',
+}
+
+// Lead review reason codes
+export enum LeadReviewReason {
+  // Approval reasons
+  HIGH_VOLUME = 'HIGH_VOLUME',
+  STRATEGIC_FIT = 'STRATEGIC_FIT',
+  GOOD_REPUTATION = 'GOOD_REPUTATION',
+  MEETS_CRITERIA = 'MEETS_CRITERIA',
+  
+  // Rejection reasons
+  LOW_VOLUME = 'LOW_VOLUME',
+  POOR_REPUTATION = 'POOR_REPUTATION',
+  INCOMPLETE_INFO = 'INCOMPLETE_INFO',
+  OUT_OF_SCOPE = 'OUT_OF_SCOPE',
+  
+  // Info request reasons
+  MISSING_CONTACT = 'MISSING_CONTACT',
+  MISSING_DOCUMENTS = 'MISSING_DOCUMENTS',
+  MISSING_DOCS = 'MISSING_DOCS',
+  UNCLEAR_VOLUME = 'UNCLEAR_VOLUME',
+  
+  // General
+  IDENTITY_MISMATCH = 'IDENTITY_MISMATCH',
+  NOT_FIT = 'NOT_FIT',
+  POLICY_RISK = 'POLICY_RISK',
+  DUPLICATE_LEAD = 'DUPLICATE_LEAD',
+  CATEGORY_MISMATCH = 'CATEGORY_MISMATCH',
+  OTHER = 'OTHER',
+}
+
+// Actor types for timeline events
+export enum ActorType {
+  CO_SELECTOR = 'CO_SELECTOR',
+  OPS = 'OPS',
+  OPS_BD = 'OPS_BD',
+  SYSTEM = 'SYSTEM',
+  FINANCE = 'FINANCE',
+  ADMIN = 'ADMIN',
+}
+
+// Milestone status
+export enum MilestoneStatus {
+  NOT_STARTED = 'NOT_STARTED',
+  ACHIEVED = 'ACHIEVED',
+  REVERSED = 'REVERSED',
+}
+
+// Transaction source types
+export enum TransactionSource {
+  ORDER = 'ORDER',
+  MILESTONE = 'MILESTONE',
+  ADJUSTMENT = 'ADJUSTMENT',
+}
