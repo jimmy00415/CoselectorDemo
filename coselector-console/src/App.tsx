@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import { AuthProvider } from './contexts/AuthContext';
 import { MainLayout } from './layout/MainLayout';
@@ -27,95 +27,15 @@ import './styles/global.css';
  * Application Router Configuration
  * 
  * Per PRD §5: Complete navigation structure with 7 main modules
+ * Using HashRouter for GitHub Pages compatibility
  */
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <MainLayout />,
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'assets',
-        element: <AssetsPage />,
-      },
-      {
-        path: 'assets/:assetId',
-        element: <AssetsPage />,
-      },
-      {
-        path: 'content',
-        element: <ContentPage />,
-      },
-      {
-        path: 'content/:contentId',
-        element: <ContentPage />,
-      },
-      {
-        path: 'leads',
-        element: <LeadsPage />,
-      },
-      {
-        path: 'leads/:id',
-        element: <LeadDetailView />,
-      },
-      {
-        path: 'earnings',
-        element: <EarningsPage />,
-      },
-      {
-        path: 'earnings/:transactionId',
-        element: <EarningsPage />,
-      },
-      {
-        path: 'payouts',
-        element: <PayoutsPage />,
-      },
-      {
-        path: 'payouts/:payoutId',
-        element: <PayoutsPage />,
-      },
-      {
-        path: 'inbox',
-        element: <InboxPage />,
-      },
-      {
-        path: 'inbox/notifications',
-        element: <NotificationsPage />,
-      },
-      {
-        path: 'inbox/disputes',
-        element: <DisputesPage />,
-      },
-      {
-        path: 'profile',
-        element: <ProfilePage />,
-      },
-      {
-        path: 'profile/settings',
-        element: <SettingsPage />,
-      },
-      {
-        path: 'help',
-        element: <HelpPage />,
-      },
-      {
-        path: 'showcase',
-        element: <ComponentShowcase />,
-      },
-      {
-        path: '404',
-        element: <NotFoundPage />,
-      },
-      {
-        path: '*',
-        element: <Navigate to="/404" replace />,
-      },
-    ],
-  },
-]);
+
+/**
+ * Application Router Configuration
+ * 
+ * Per PRD §5: Complete navigation structure with 7 main modules
+ * Using HashRouter for GitHub Pages compatibility
+ */
 
 const App: React.FC = () => {
   return (
@@ -129,7 +49,32 @@ const App: React.FC = () => {
       }}
     >
       <AuthProvider>
-        <RouterProvider router={router} />
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route index element={<HomePage />} />
+              <Route path="assets" element={<AssetsPage />} />
+              <Route path="assets/:assetId" element={<AssetsPage />} />
+              <Route path="content" element={<ContentPage />} />
+              <Route path="content/:contentId" element={<ContentPage />} />
+              <Route path="leads" element={<LeadsPage />} />
+              <Route path="leads/:id" element={<LeadDetailView />} />
+              <Route path="earnings" element={<EarningsPage />} />
+              <Route path="earnings/:transactionId" element={<EarningsPage />} />
+              <Route path="payouts" element={<PayoutsPage />} />
+              <Route path="payouts/:payoutId" element={<PayoutsPage />} />
+              <Route path="inbox" element={<InboxPage />} />
+              <Route path="inbox/notifications" element={<NotificationsPage />} />
+              <Route path="inbox/disputes" element={<DisputesPage />} />
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="profile/settings" element={<SettingsPage />} />
+              <Route path="help" element={<HelpPage />} />
+              <Route path="showcase" element={<ComponentShowcase />} />
+              <Route path="404" element={<NotFoundPage />} />
+              <Route path="*" element={<Navigate to="/404" replace />} />
+            </Route>
+          </Routes>
+        </HashRouter>
       </AuthProvider>
     </ConfigProvider>
   );
