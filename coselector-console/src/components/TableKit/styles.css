@@ -1,0 +1,175 @@
+/* TableKit Component Styles */
+
+.table-kit {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* Header Section */
+.table-kit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.table-kit-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.table-kit-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: rgba(0, 0, 0, 0.88);
+  line-height: 1.4;
+}
+
+.table-kit-description {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Action Bar Section */
+.table-kit-action-bar {
+  margin-bottom: 8px;
+}
+
+/* Filter Bar Section */
+.table-kit-filter-bar {
+  margin-bottom: 16px;
+}
+
+/* Table Section */
+.table-kit-table {
+  width: 100%;
+}
+
+.table-kit-table .ant-table {
+  font-size: 14px;
+}
+
+.table-kit-table .ant-table-thead > tr > th {
+  background: #fafafa;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.88);
+  padding: 12px 16px;
+}
+
+.table-kit-table .ant-table-tbody > tr > td {
+  padding: 12px 16px;
+}
+
+.table-kit-table .ant-table-tbody > tr:hover > td {
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+.table-kit-table .ant-table-tbody > tr.ant-table-row-selected > td {
+  background: #e6f4ff;
+}
+
+/* Empty State Customization */
+.table-kit-table .ant-empty {
+  padding: 48px 24px;
+}
+
+/* Pagination Customization */
+.table-kit-table .ant-pagination {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.table-kit-table .ant-pagination-total-text {
+  flex: 1;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+/* Loading State */
+.table-kit-table .ant-skeleton {
+  padding: 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .table-kit {
+    padding: 16px;
+    border-radius: 0;
+  }
+
+  .table-kit-title {
+    font-size: 20px;
+  }
+
+  .table-kit-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .table-kit-table .ant-table {
+    font-size: 13px;
+  }
+
+  .table-kit-table .ant-table-thead > tr > th,
+  .table-kit-table .ant-table-tbody > tr > td {
+    padding: 8px 12px;
+  }
+}
+
+/* Accessibility */
+.table-kit-table .ant-table-tbody > tr:focus {
+  outline: 2px solid #1890ff;
+  outline-offset: -2px;
+}
+
+.table-kit-table .ant-table-cell-row-hover {
+  cursor: pointer;
+}
+
+/* Column Sort Indicators */
+.table-kit-table .ant-table-column-sorter {
+  margin-left: 8px;
+}
+
+.table-kit-table .ant-table-column-sorter-up.active,
+.table-kit-table .ant-table-column-sorter-down.active {
+  color: #1890ff;
+}
+
+/* Filter Dropdowns */
+.table-kit-table .ant-table-filter-trigger {
+  margin-left: 8px;
+}
+
+.table-kit-table .ant-table-filter-trigger.active {
+  color: #1890ff;
+}
+
+/* Row Selection */
+.table-kit-table .ant-table-selection-column {
+  width: 48px;
+  text-align: center;
+}
+
+.table-kit-table .ant-checkbox-wrapper {
+  margin: 0;
+}
+
+/* Bulk Action Mode */
+.table-kit.bulk-action-mode .table-kit-action-bar {
+  background: #e6f4ff;
+  border-radius: 4px;
+  padding: 12px;
+  border: 1px solid #91caff;
+}

@@ -5,9 +5,10 @@ import {
   CloseCircleOutlined, 
   ExclamationCircleOutlined 
 } from '@ant-design/icons';
-import { Lead } from '../../types';
+import { Lead, TimelineEvent } from '../../types';
 import { LeadStatus, LeadReviewReason, ActorType } from '../../types/enums';
 import { LeadStateMachine } from '../../services/stateMachines';
+import { generateId } from '../../utils';
 import { useState } from 'react';
 
 /**
@@ -48,12 +49,30 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
 
   const handleAssignOwner = async () => {
     try {
-      const values = await form.validateFields(['assignedOwner']);
+      const values = await form.validateFields(['assignedOwner', 'reasonCode', 'reasonNote']);
       setLoading(true);
 
-      // Update lead with new owner
+      // Create OWNER_ASSIGNED timeline event per Sprint 1 §9.2
+      const event: TimelineEvent = {
+        id: generateId(),
+        actorType: ActorType.OPS_BD,
+        actorName: currentUserName,
+        occurredAt: new Date().toISOString(),
+        eventType: 'OWNER_ASSIGNED',
+        description: `Owner ${lead.assignedOwner ? 'changed' : 'assigned'} to ${values.assignedOwner}: ${values.reasonCode}${values.reasonNote ? ` - ${values.reasonNote}` : ''}`,
+        reasonCode: values.reasonCode,
+        metadata: {
+          previousOwner: lead.assignedOwner,
+          newOwner: values.assignedOwner,
+          reasonNote: values.reasonNote,
+        },
+      };
+
+      // Update lead with new owner and timeline event
       onUpdateLead({
         assignedOwner: values.assignedOwner,
+        timeline: [...lead.timeline, event],
+        lastUpdatedAt: new Date().toISOString(),
       });
 
       message.success('Owner assigned successfully');
@@ -123,6 +142,26 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
                   <Select.Option value="Carol Li">Carol Li</Select.Option>
                   <Select.Option value="David Zhang">David Zhang</Select.Option>
                 </Select>
+              </Form.Item>
+              <Form.Item
+                name="reasonCode"
+                label="Assignment Reason"
+                rules={[{ required: true, message: 'Please select a reason' }]}
+                tooltip="Required per Sprint 1 §9.2 - OWNER_ASSIGNED requires reason_code"
+              >
+                <Select placeholder="Why assign this owner?">
+                  <Select.Option value="CLAIMED">Claimed by Ops/BD</Select.Option>
+                  <Select.Option value="EXPERTISE">Specialized Expertise</Select.Option>
+                  <Select.Option value="WORKLOAD">Workload Balancing</Select.Option>
+                  <Select.Option value="REGIONAL">Regional Coverage</Select.Option>
+                  <Select.Option value="OTHER">Other</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="reasonNote"
+                label="Additional Notes"
+              >
+                <Input.TextArea rows={2} placeholder="Optional notes..." />
               </Form.Item>
               <Space>
                 <Button type="primary" onClick={handleAssignOwner} loading={loading}>

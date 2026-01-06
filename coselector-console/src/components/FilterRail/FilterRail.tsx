@@ -13,10 +13,13 @@ export interface FilterOption {
 export interface FilterConfig {
   key: string;
   label: string;
-  type: 'select' | 'multiSelect' | 'input' | 'dateRange' | 'range';
+  type: 'select' | 'multiSelect' | 'input' | 'dateRange' | 'range' | 'chips';
   options?: FilterOption[];
   placeholder?: string;
   advanced?: boolean; // If true, shows in advanced section
+  basic?: boolean; // For FilterBar compatibility
+  debounce?: number; // For FilterBar compatibility
+  allowClear?: boolean; // For FilterBar compatibility
 }
 
 export interface FilterValues {

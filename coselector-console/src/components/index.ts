@@ -2,6 +2,9 @@
 export { DataTable } from './DataTable';
 export type { DataTableColumn, RowAction } from './DataTable';
 
+export { TableKit } from './TableKit';
+export type { TableKitProps, TableKitColumn } from './TableKit';
+
 export { DetailsDrawer } from './DetailsDrawer';
 export type { DrawerSection } from './DetailsDrawer';
 
@@ -14,8 +17,14 @@ export type { TimelineComponentProps } from './Timeline';
 export { FilterRail } from './FilterRail';
 export type { FilterConfig, FilterOption, FilterValues } from './FilterRail';
 
+export { FilterBar } from './FilterBar';
+export type { FilterConfig as FilterBarConfig, FilterOption as FilterBarOption, FilterValues as FilterBarValues } from './FilterBar';
+
 export { ActionBar } from './ActionBar';
 export type { BulkAction } from './ActionBar';
+
+export { DetailSection } from './DetailSection';
+export type { DetailField, DetailAttachment } from './DetailSection';
 
 export { KPICard } from './KPICard';
 export type { KPICardProps } from './KPICard';

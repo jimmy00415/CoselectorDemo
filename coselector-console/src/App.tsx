@@ -2,6 +2,8 @@ import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import { AuthProvider } from './contexts/AuthContext';
+import { DevToolsProvider } from './contexts/DevToolsContext';
+import { DevToolsPanel } from './components/DevTools';
 import { MainLayout } from './layout/MainLayout';
 
 // Page imports
@@ -20,6 +22,7 @@ import SettingsPage from './pages/Settings';
 import HelpPage from './pages/Help';
 import NotFoundPage from './pages/NotFound';
 import ComponentShowcase from './pages/ComponentShowcase';
+import { AdminReviewQueue } from './pages/Admin';
 
 import './styles/global.css';
 
@@ -48,8 +51,10 @@ const App: React.FC = () => {
         },
       }}
     >
-      <AuthProvider>
-        <HashRouter>
+      <DevToolsProvider forceEnable={true}>
+        <AuthProvider>
+          <DevToolsPanel />
+          <HashRouter>
           <Routes>
             <Route path="/" element={<MainLayout />}>
               <Route index element={<HomePage />} />
@@ -59,6 +64,7 @@ const App: React.FC = () => {
               <Route path="content/:contentId" element={<ContentPage />} />
               <Route path="leads" element={<LeadsPage />} />
               <Route path="leads/:id" element={<LeadDetailView />} />
+              <Route path="admin/review-queue" element={<AdminReviewQueue />} />
               <Route path="earnings" element={<EarningsPage />} />
               <Route path="earnings/:transactionId" element={<EarningsPage />} />
               <Route path="payouts" element={<PayoutsPage />} />
@@ -75,7 +81,8 @@ const App: React.FC = () => {
             </Route>
           </Routes>
         </HashRouter>
-      </AuthProvider>
+        </AuthProvider>
+      </DevToolsProvider>
     </ConfigProvider>
   );
 };

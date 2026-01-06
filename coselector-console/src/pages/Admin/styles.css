@@ -1,0 +1,33 @@
+.admin-review-queue {
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.filter-section {
+  background: #fafafa;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.leads-table table {
+  background: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.leads-table thead {
+  background: #fafafa;
+}
+
+.leads-table tbody tr:hover {
+  background: #fafafa;
+}
+
+/* Unassigned row highlight */
+.leads-table tbody tr[style*="fffbe6"] {
+  border-left: 3px solid #faad14;
+}

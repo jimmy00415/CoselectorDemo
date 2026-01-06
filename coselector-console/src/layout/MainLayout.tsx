@@ -16,6 +16,7 @@ import {
   MenuUnfoldOutlined,
   SettingOutlined,
   LogoutOutlined,
+  ControlOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { ViewPresetSwitcher, RoleSwitcher } from '../components';
@@ -68,6 +69,12 @@ export const MainLayout: React.FC = () => {
       icon: <TeamOutlined />,
       label: 'Co-selection',
     },
+    // Admin menu item - only visible to OPS_BD role (Sprint 1 §8.1)
+    can(Permission.LEAD_CHANGE_STATUS) ? {
+      key: '/admin/review-queue',
+      icon: <ControlOutlined />,
+      label: 'Admin',
+    } : null,
     {
       key: '/earnings',
       icon: <DollarOutlined />,
@@ -93,7 +100,7 @@ export const MainLayout: React.FC = () => {
       icon: <UserOutlined />,
       label: 'Profile & Compliance',
     },
-  ];
+  ].filter(Boolean);
 
   // User menu dropdown
   const userMenuItems: MenuProps['items'] = [

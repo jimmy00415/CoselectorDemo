@@ -1,0 +1,52 @@
+/* DetailSection Component Styles */
+
+.detail-section {
+  margin-bottom: 16px;
+}
+
+.detail-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.detail-section-title-area {
+  flex: 1;
+}
+
+.detail-section-fields {
+  margin-bottom: 8px;
+}
+
+.detail-section-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-field-label {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 13px;
+}
+
+.detail-field-value {
+  color: rgba(0, 0, 0, 0.88);
+  font-size: 14px;
+  word-break: break-word;
+}
+
+.detail-section-attachments {
+  padding-top: 8px;
+}
+
+.detail-attachment-item {
+  display: inline-block;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .detail-section-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

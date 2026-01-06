@@ -1,23 +1,24 @@
-import { Modal, Form, Input, Select, Row, Col, Checkbox, Upload, Button, Typography, Divider, Space } from 'antd';
-import { UploadOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Modal, Form, Input, Select, Row, Col, Checkbox, Upload, Button, Typography, Divider, Space, Alert } from 'antd';
+import { UploadOutlined, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { Lead } from '../../types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
 /**
  * LeadFormModal Component
- * Per PRD §7.4.2: Multi-section form with 5 sections and validation
+ * Per Sprint 1 §7.2: Multi-section form with 5 sections and validation
  * 
  * Sections:
- * A) Basic Info: Merchant name, Category, Region/City, Website/Social
- * B) Contact: Name, Role, Phone, Email (at least one required)
- * C) Commercial Fit: Estimated monthly volume, Service availability, Notes
- * D) Attachments: Upload menu/deck/pricing sheet
- * E) COI Declaration: Checkbox + conditional details field
+ * A) Merchant Basics* (name, category, region)
+ * B) Contact* (name, phone OR email)
+ * C) Commercial (volume range, notes)
+ * D) Attachments (multi-file)
+ * E) COI Declaration* (checkbox + conditional details)
  * 
- * Key Requirements:
- * - Block submit if required fields missing
- * - Preserve user input on validation errors (don't reset)
- * - Phone OR Email required (at least one)
+ * Key Requirements (Sprint 1 §7.2):
+ * - Auto-save draft every 10 seconds
+ * - Validation summary banner at top
+ * - Preserve user input on error
+ * - Submit button enabled only when required fields pass
  */
 
 const { Title, Text } = Typography;
@@ -28,6 +29,7 @@ interface LeadFormModalProps {
   lead: Lead | null;
   onCancel: () => void;
   onSubmit: (values: Partial<Lead>) => void;
+  onSaveDraft?: (values: Partial<Lead>) => void;
 }
 
 export const LeadFormModal: React.FC<LeadFormModalProps> = ({
@@ -35,10 +37,49 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
   lead,
   onCancel,
   onSubmit,
+  onSaveDraft,
 }) => {
   const [form] = Form.useForm();
   const [coiDeclared, setCoiDeclared] = useState(false);
   const [fileList, setFileList] = useState<any[]>([]);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const formValuesRef = useRef<any>({});
+
+  // Auto-save draft every 10 seconds per Sprint 1 §7.2
+  const saveDraft = useCallback(() => {
+    if (!onSaveDraft) return;
+    
+    const values = form.getFieldsValue();
+    formValuesRef.current = values;
+    onSaveDraft(values);
+    setLastSaved(new Date());
+  }, [form, onSaveDraft]);
+
+  // Setup auto-save timer
+  useEffect(() => {
+    if (!visible) {
+      // Clear timer when modal closes
+      if (autoSaveTimerRef.current) {
+        clearInterval(autoSaveTimerRef.current);
+        autoSaveTimerRef.current = null;
+      }
+      return;
+    }
+
+    // Start auto-save timer when modal opens
+    autoSaveTimerRef.current = setInterval(() => {
+      saveDraft();
+    }, 10000); // 10 seconds
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearInterval(autoSaveTimerRef.current);
+        autoSaveTimerRef.current = null;
+      }
+    };
+  }, [visible, saveDraft]);
 
   // Reset form when modal opens/closes or lead changes
   useEffect(() => {
@@ -73,41 +114,61 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
       
       // Custom validation: At least phone OR email required
       if (!values.contactPhone && !values.contactEmail) {
+        const errors = ['At least phone or email is required'];
         form.setFields([
           {
             name: 'contactPhone',
-            errors: ['At least phone or email is required'],
+            errors,
           },
           {
             name: 'contactEmail',
-            errors: ['At least phone or email is required'],
+            errors,
           },
         ]);
+        setValidationErrors([...errors, 'Please provide either phone or email in Contact section']);
         return;
       }
 
       // COI declaration is required before submit
       if (!coiDeclared) {
+        const errors = ['COI declaration must be confirmed before submitting'];
         form.setFields([
           {
             name: 'coiDeclared',
-            errors: ['You must confirm COI declaration before submitting'],
+            errors,
           },
         ]);
+        setValidationErrors(errors);
         return;
       }
 
+      // Clear validation errors on successful validation
+      setValidationErrors([]);
+      
       onSubmit(values);
       form.resetFields();
       setCoiDeclared(false);
       setFileList([]);
-    } catch (error) {
+      setLastSaved(null);
+    } catch (error: any) {
       // Form validation failed - preserve input (don't reset)
+      // Extract error messages for validation summary banner
+      const errors: string[] = [];
+      if (error.errorFields) {
+        error.errorFields.forEach((field: any) => {
+          errors.push(...field.errors);
+        });
+      }
+      setValidationErrors(errors);
       console.error('Validation failed:', error);
     }
   };
 
   const handleCancel = () => {
+    // Save draft before closing per Sprint 1 §7.2
+    if (onSaveDraft) {
+      saveDraft();
+    }
     // Preserve form state when canceling (per PRD requirement)
     onCancel();
   };
@@ -123,15 +184,49 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
       cancelText="Save as Draft"
       destroyOnClose={false} // Keep form state
     >
+      {/* Validation Summary Banner per Sprint 1 §7.2 & §2.2 */}
+      {validationErrors.length > 0 && (
+        <Alert
+          message="Form Validation Errors"
+          description={
+            <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
+              {validationErrors.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          }
+          type="error"
+          closable
+          onClose={() => setValidationErrors([])}
+          style={{ marginBottom: 16 }}
+          showIcon
+        />
+      )}
+
+      {/* Auto-save indicator per Sprint 1 §7.2 */}
+      {lastSaved && (
+        <Alert
+          message={
+            <Space>
+              <CheckCircleOutlined />
+              Draft auto-saved at {lastSaved.toLocaleTimeString()}
+            </Space>
+          }
+          type="success"
+          style={{ marginBottom: 16 }}
+          banner
+        />
+      )}
+
       <Form
         form={form}
         layout="vertical"
         preserve={true} // Preserve form values on unmount
       >
-        {/* Section A: Basic Info */}
+        {/* Section A: Merchant Basics (required) - Sprint 1 §7.2 */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          A) Basic Information
+          A) Merchant Basics *
         </Title>
         <Row gutter={16}>
           <Col span={12}>
@@ -200,10 +295,10 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
 
         <Divider />
 
-        {/* Section B: Contact Information */}
+        {/* Section B: Contact (at least one method required) - Sprint 1 §7.2 */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          B) Contact Information
+          B) Contact *
         </Title>
         <Row gutter={16}>
           <Col span={12}>
@@ -254,10 +349,10 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
 
         <Divider />
 
-        {/* Section C: Commercial Fit */}
+        {/* Section C: Commercial (optional for Sprint 1) */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          C) Commercial Fit
+          C) Commercial
         </Title>
         <Form.Item
           name="estimatedMonthlyVolume"
@@ -291,10 +386,10 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
 
         <Divider />
 
-        {/* Section D: Attachments */}
+        {/* Section D: Attachments (optional but must exist) - Sprint 1 §7.2 */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          D) Supporting Documents
+          D) Attachments
         </Title>
         <Form.Item
           name="attachments"
@@ -317,10 +412,10 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
 
         <Divider />
 
-        {/* Section E: COI Declaration */}
+        {/* Section E: COI Declaration (required) - Sprint 1 §7.2 */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          E) Conflict of Interest (COI) Declaration
+          E) COI Declaration *
         </Title>
         <Form.Item
           name="coiDeclared"

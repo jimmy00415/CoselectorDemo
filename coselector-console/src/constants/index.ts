@@ -9,6 +9,7 @@ export const ROUTES = {
   CONTENT_DETAIL: '/content/:id',
   LEADS: '/leads',
   LEAD_DETAIL: '/leads/:id',
+  ADMIN_REVIEW_QUEUE: '/admin/review-queue',
   EARNINGS: '/earnings',
   EARNINGS_TRANSACTIONS: '/earnings/transactions',
   EARNINGS_PAYOUTS: '/earnings/payouts',
@@ -49,6 +50,12 @@ export const NAV_ITEMS = [
     label: 'Co-selection',
     path: ROUTES.LEADS,
     icon: 'TeamOutlined',
+  },
+  {
+    key: 'admin',
+    label: 'Admin',
+    path: ROUTES.ADMIN_REVIEW_QUEUE,
+    icon: 'ControlOutlined',
   },
   {
     key: 'earnings',

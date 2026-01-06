@@ -32,20 +32,27 @@ import { formatDate } from '../../utils';
 import { LeadTimeline } from './LeadTimeline';
 import { LeadReviewPanel } from './LeadReviewPanel';
 import { LeadFormModal } from './LeadFormModal';
+import { NextBestAction } from './NextBestAction';
+import { StatusExplanation } from './StatusExplanation';
+import { AdminActionPanel } from '../Admin';
 import { getMissingFieldsText, hasMissingInfo } from './config';
 import './styles.css';
 
 /**
  * LeadDetailView Component
- * Per PRD §7.4.3: Comprehensive lead detail page with:
- * - Header (name + status + owner + timestamps)
- * - Required Info Checklist (dynamic, shows missing items with CTAs)
- * - Timeline/Audit Trail (vertical timeline with actor/timestamp/reason)
- * - Milestones Tracker (Onboarded, First order, 30/60/90-day tiers)
- * - Review Actions (OPS only)
+ * Per Sprint 1 §7.3: Lead Detail Must Answer 3 Questions:
+ * 
+ * Q1) What is the current status?
+ *     - Status chip + explanation (StatusExplanation component)
+ * 
+ * Q2) What happened and why?
+ *     - Timeline component (reverse chronological with from→to)
+ * 
+ * Q3) What should I do next?
+ *     - Next Best Action banner with rule-based text + CTAs
  * 
  * Permission Logic:
- * - CO_SELECTOR can edit only when status is INFO_REQUESTED
+ * - CO_SELECTOR can edit only when status is INFO_REQUESTED or DRAFT
  * - OPS_BD can access review panel
  */
 
@@ -101,6 +108,17 @@ export const LeadDetailView: React.FC = () => {
   const handleEditSubmit = async (values: Partial<Lead>) => {
     await handleUpdateLead(values);
     setEditModalVisible(false);
+  };
+
+  const handleResubmit = () => {
+    // Resubmit creates a new draft with updated status
+    // Per Sprint 1 §7.3 Q3: Rejected → Resubmitted flow
+    setEditModalVisible(true);
+  };
+
+  const handleUploadDocs = () => {
+    // Jump to attachments section in edit modal
+    setEditModalVisible(true);
   };
 
   if (loading) {
@@ -209,6 +227,16 @@ export const LeadDetailView: React.FC = () => {
 
       <Row gutter={24} style={{ marginTop: 24 }}>
         <Col span={16}>
+          {/* Q1: What is the current status? - Sprint 1 §7.3 */}
+          <StatusExplanation status={lead.status} assignedOwner={lead.assignedOwner} />
+
+          {/* Q3: What should I do next? - Sprint 1 §7.3 */}
+          <NextBestAction 
+            lead={lead} 
+            onResubmit={handleResubmit}
+            onUploadDocs={handleUploadDocs}
+          />
+
           {/* Required Info Checklist */}
           {hasMissing && (
             <Card style={{ marginBottom: 24, borderLeft: '4px solid #faad14' }}>
@@ -322,12 +350,21 @@ export const LeadDetailView: React.FC = () => {
             )}
           </Card>
 
-          {/* Timeline */}
-          <LeadTimeline events={lead.timeline} />
+          {/* Q2: What happened and why? - Sprint 1 §7.3 */}
+          {/* Timeline component (reverse chronological with from→to) */}
+          <LeadTimeline events={lead.timeline} title="Timeline & Audit Trail (What happened and why?)" />
         </Col>
 
         <Col span={8}>
-          {/* OPS Review Panel (permission-based) */}
+          {/* Admin Action Panel (Sprint 1 §8.4) - OPS_BD only */}
+          {canViewReview && (
+            <AdminActionPanel
+              lead={lead}
+              onUpdate={loadLead}
+            />
+          )}
+
+          {/* Legacy OPS Review Panel - Keep for backward compatibility */}
           {canViewReview && (
             <LeadReviewPanel
               lead={lead}

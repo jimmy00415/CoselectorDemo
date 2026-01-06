@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Card, Collapse, Input, Button, Space } from 'antd';
-import { SearchOutlined, QuestionCircleOutlined, ToolOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Typography, Card, Collapse, Input } from 'antd';
+import { SearchOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import PageBreadcrumb from '../layout/PageBreadcrumb';
-import { DevToolsDrawer } from '../components/DevTools';
 
 const { Title, Paragraph } = Typography;
 const { Panel } = Collapse;
@@ -10,58 +9,20 @@ const { Panel } = Collapse;
 /**
  * Help & Glossary Page
  * Per PRD §5.2: Accessible from top bar
- * Per PRD §9.3: Hidden dev tools accessible via special key combo
+ * Note: Dev tools are now globally available via Ctrl+Shift+D (DevToolsContext)
  */
 const HelpPage: React.FC = () => {
-  const [devToolsOpen, setDevToolsOpen] = useState(false);
-  const [keySequence, setKeySequence] = useState<string[]>([]);
-
-  // Listen for Ctrl+Shift+D to open dev tools
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-        e.preventDefault();
-        setDevToolsOpen(true);
-      }
-
-      // Easter egg: type "devmode" to show button
-      const newSequence = [...keySequence, e.key].slice(-7);
-      setKeySequence(newSequence);
-      
-      if (newSequence.join('').toLowerCase() === 'devmode') {
-        const btn = document.getElementById('dev-tools-btn');
-        if (btn) {
-          btn.style.display = 'inline-block';
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [keySequence]);
-
   return (
     <div>
       <PageBreadcrumb />
-      <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-        <div>
-          <Title level={2}>
-            <QuestionCircleOutlined /> Help & Glossary
-          </Title>
-          <Paragraph type="secondary">
-            Find answers to common questions and understand key terms
-          </Paragraph>
-        </div>
-        <Button
-          id="dev-tools-btn"
-          icon={<ToolOutlined />}
-          onClick={() => setDevToolsOpen(true)}
-          style={{ display: 'none' }}
-          type="dashed"
-        >
-          Dev Tools
-        </Button>
-      </Space>
+      <div>
+        <Title level={2}>
+          <QuestionCircleOutlined /> Help & Glossary
+        </Title>
+        <Paragraph type="secondary">
+          Find answers to common questions and understand key terms
+        </Paragraph>
+      </div>
 
       <Card style={{ marginTop: 24 }}>
         <Input
@@ -99,8 +60,6 @@ const HelpPage: React.FC = () => {
           </Panel>
         </Collapse>
       </Card>
-
-      <DevToolsDrawer open={devToolsOpen} onClose={() => setDevToolsOpen(false)} />
     </div>
   );
 };

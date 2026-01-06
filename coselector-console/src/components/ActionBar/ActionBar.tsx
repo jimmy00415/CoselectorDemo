@@ -1,7 +1,9 @@
 import React from 'react';
-import { Space, Button, Dropdown, Typography } from 'antd';
+import { Space, Button, Dropdown, Typography, Tooltip } from 'antd';
 import type { MenuProps } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, LockOutlined } from '@ant-design/icons';
+import { Permission } from '../../services/permissions';
+import { usePermission } from '../../hooks/usePermission';
 
 const { Text } = Typography;
 
@@ -12,6 +14,10 @@ export interface BulkAction {
   onClick: () => void;
   danger?: boolean;
   disabled?: boolean;
+  permission?: Permission; // Permission required for this action
+  tooltip?: string; // Custom tooltip (default: permission denial message)
+  hidden?: boolean; // If true, action is completely hidden
+  requireSelection?: boolean; // If true, disabled when no items selected (default: true)
 }
 
 interface ActionBarProps {
@@ -21,6 +27,9 @@ interface ActionBarProps {
     icon?: React.ReactNode;
     onClick: () => void;
     disabled?: boolean;
+    permission?: Permission; // Permission required
+    tooltip?: string; // Custom tooltip
+    hidden?: boolean; // If true, button is completely hidden
   };
 
   // Secondary actions
@@ -29,6 +38,9 @@ interface ActionBarProps {
     icon?: React.ReactNode;
     onClick: () => void;
     disabled?: boolean;
+    permission?: Permission; // Permission required
+    tooltip?: string; // Custom tooltip
+    hidden?: boolean; // If true, action is completely hidden
   }>;
 
   // Bulk actions (shown when items selected)
@@ -69,15 +81,30 @@ export const ActionBar: React.FC<ActionBarProps> = ({
   rightContent,
   className = '',
 }) => {
+  const { can, denialMessage } = usePermission();
+  // Filter bulk actions by permission and hidden flag
+  const visibleBulkActions = bulkActions.filter((action) => {
+    if (action.hidden) return false;
+    if (action.permission && !can(action.permission)) return false;
+    return true;
+  });
+
   // Convert bulk actions to menu items
-  const bulkActionMenuItems: MenuProps['items'] = bulkActions.map((action) => ({
-    key: action.key,
-    label: action.label,
-    icon: action.icon,
-    onClick: action.onClick,
-    danger: action.danger,
-    disabled: action.disabled,
-  }));
+  const bulkActionMenuItems: MenuProps['items'] = visibleBulkActions.map((action) => {
+    const hasPermission = !action.permission || can(action.permission);
+    const isDisabled = action.disabled || !hasPermission || (action.requireSelection !== false && selectedCount === 0);
+    const tooltipMessage = action.tooltip || (action.permission ? denialMessage(action.permission) : undefined);
+
+    return {
+      key: action.key,
+      label: action.label,
+      icon: isDisabled && !hasPermission ? <LockOutlined /> : action.icon,
+      onClick: isDisabled ? undefined : action.onClick,
+      danger: action.danger,
+      disabled: isDisabled,
+      title: isDisabled && tooltipMessage ? tooltipMessage : undefined,
+    };
+  });
 
   // Render bulk actions section
   const renderBulkActions = () => {
@@ -89,21 +116,33 @@ export const ActionBar: React.FC<ActionBarProps> = ({
           <Text strong>
             {selectedCount} item{selectedCount > 1 ? 's' : ''} selected
           </Text>
-          {bulkActions.length > 0 && (
+          {visibleBulkActions.length > 0 && (
             <>
-              {bulkActions.slice(0, 2).map((action) => (
-                <Button
-                  key={action.key}
-                  icon={action.icon}
-                  onClick={action.onClick}
-                  danger={action.danger}
-                  disabled={action.disabled}
-                  aria-label={action.label}
-                >
-                  {action.label}
-                </Button>
-              ))}
-              {bulkActions.length > 2 && (
+              {visibleBulkActions.slice(0, 2).map((action) => {
+                const hasPermission = !action.permission || can(action.permission);
+                const isDisabled = action.disabled || !hasPermission || (action.requireSelection !== false && selectedCount === 0);
+                const tooltipMessage = action.tooltip || (action.permission ? denialMessage(action.permission) : undefined);
+
+                const button = (
+                  <Button
+                    key={action.key}
+                    icon={isDisabled && !hasPermission ? <LockOutlined /> : action.icon}
+                    onClick={isDisabled ? undefined : action.onClick}
+                    danger={action.danger}
+                    disabled={isDisabled}
+                    aria-label={action.label}
+                  >
+                    {action.label}
+                  </Button>
+                );
+
+                return isDisabled && tooltipMessage ? (
+                  <Tooltip key={action.key} title={tooltipMessage}>
+                    {button}
+                  </Tooltip>
+                ) : button;
+              })}
+              {visibleBulkActions.length > 2 && (
                 <Dropdown menu={{ items: bulkActionMenuItems.slice(2) }} trigger={['click']}>
                   <Button>
                     More <DownOutlined />
@@ -134,28 +173,52 @@ export const ActionBar: React.FC<ActionBarProps> = ({
         <div className="action-bar-right">
           <Space size="small">
             {rightContent}
-            {secondaryActions.map((action, index) => (
-              <Button
-                key={index}
-                icon={action.icon}
-                onClick={action.onClick}
-                disabled={action.disabled}
-                aria-label={action.label}
-              >
-                {action.label}
-              </Button>
-            ))}
-            {primaryAction && (
-              <Button
-                type="primary"
-                icon={primaryAction.icon}
-                onClick={primaryAction.onClick}
-                disabled={primaryAction.disabled}
-                aria-label={primaryAction.label}
-              >
-                {primaryAction.label}
-              </Button>
-            )}
+            {secondaryActions.filter((action) => !action.hidden && (!action.permission || can(action.permission))).map((action, index) => {
+              const hasPermission = !action.permission || can(action.permission);
+              const isDisabled = action.disabled || !hasPermission;
+              const tooltipMessage = action.tooltip || (action.permission ? denialMessage(action.permission) : undefined);
+
+              const button = (
+                <Button
+                  key={index}
+                  icon={isDisabled && !hasPermission ? <LockOutlined /> : action.icon}
+                  onClick={isDisabled ? undefined : action.onClick}
+                  disabled={isDisabled}
+                  aria-label={action.label}
+                >
+                  {action.label}
+                </Button>
+              );
+
+              return isDisabled && tooltipMessage ? (
+                <Tooltip key={index} title={tooltipMessage}>
+                  {button}
+                </Tooltip>
+              ) : button;
+            })}
+            {primaryAction && !primaryAction.hidden && (!primaryAction.permission || can(primaryAction.permission)) && (() => {
+              const hasPermission = !primaryAction.permission || can(primaryAction.permission);
+              const isDisabled = primaryAction.disabled || !hasPermission;
+              const tooltipMessage = primaryAction.tooltip || (primaryAction.permission ? denialMessage(primaryAction.permission) : undefined);
+
+              const button = (
+                <Button
+                  type="primary"
+                  icon={isDisabled && !hasPermission ? <LockOutlined /> : primaryAction.icon}
+                  onClick={isDisabled ? undefined : primaryAction.onClick}
+                  disabled={isDisabled}
+                  aria-label={primaryAction.label}
+                >
+                  {primaryAction.label}
+                </Button>
+              );
+
+              return isDisabled && tooltipMessage ? (
+                <Tooltip title={tooltipMessage}>
+                  {button}
+                </Tooltip>
+              ) : button;
+            })()}
           </Space>
         </div>
       </div>

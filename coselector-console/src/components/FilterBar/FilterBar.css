@@ -1,0 +1,177 @@
+/* FilterBar Component Styles */
+
+.filter-bar {
+  margin-bottom: 16px;
+}
+
+.filter-bar-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.filter-bar-card .ant-card-body {
+  padding: 16px;
+}
+
+/* Active Filters Section */
+.filter-bar-active {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.filter-active-tag {
+  padding: 4px 12px;
+  font-size: 13px;
+  border-radius: 16px;
+  background: #e6f7ff;
+  border-color: #91caff;
+}
+
+.filter-active-tag strong {
+  margin-right: 4px;
+}
+
+.filter-clear-all {
+  padding: 0 8px;
+  height: auto;
+  color: #ff4d4f;
+}
+
+.filter-clear-all:hover {
+  color: #ff7875;
+}
+
+/* Basic Filters Section */
+.filter-bar-basic {
+  margin-bottom: 8px;
+}
+
+/* Advanced Filters Section */
+.filter-bar-advanced {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.filter-bar-advanced .ant-collapse-header {
+  padding: 8px 0 !important;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.filter-bar-advanced .ant-collapse-content-box {
+  padding: 16px 0;
+}
+
+/* Filter Item */
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: 0;
+}
+
+/* Filter Actions */
+.filter-bar-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  text-align: right;
+}
+
+/* Chip-style filters */
+.ant-tag-checkable {
+  border-radius: 16px;
+  padding: 4px 14px;
+  font-size: 13px;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ant-tag-checkable:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.ant-tag-checkable-checked {
+  background: #1890ff;
+  border-color: #1890ff;
+  color: #ffffff;
+}
+
+.ant-tag-checkable-checked:hover {
+  background: #40a9ff;
+  border-color: #40a9ff;
+}
+
+/* Compact Mode */
+.filter-bar-compact .filter-bar-card .ant-card-body {
+  padding: 12px;
+}
+
+.filter-bar-compact .filter-item {
+  gap: 4px;
+}
+
+.filter-bar-compact .filter-label {
+  font-size: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .filter-bar-card .ant-card-body {
+    padding: 12px;
+  }
+
+  .filter-bar-active {
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+  }
+
+  .filter-item {
+    margin-bottom: 8px;
+  }
+
+  .filter-label {
+    font-size: 12px;
+  }
+}
+
+/* Accessibility */
+.filter-bar [role="region"] {
+  outline: none;
+}
+
+.filter-bar input:focus,
+.filter-bar .ant-select-focused .ant-select-selector {
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Badge styling for advanced filters indicator */
+.filter-bar-advanced .ant-badge-dot {
+  background: #1890ff;
+}
+
+/* Loading state */
+.filter-bar-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Empty state */
+.filter-bar-empty {
+  text-align: center;
+  padding: 24px;
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 14px;
+}

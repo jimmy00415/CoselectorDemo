@@ -1,1 +1,1 @@
-export { DevToolsDrawer } from './DevToolsDrawer';
+export { DevToolsPanel } from './DevToolsPanel';
