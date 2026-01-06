@@ -10,7 +10,7 @@ import { MainLayout } from './layout/MainLayout';
 import HomePage from './pages/Home';
 import AssetsPage from './pages/Assets';
 import ContentPage from './pages/Content';
-import LeadsPage from './pages/Leads';
+import { Leads as LeadsPage } from './pages/Leads';
 import { LeadDetailView } from './pages/Leads/LeadDetailView';
 import EarningsPage from './pages/Earnings';
 import PayoutsPage from './pages/Payouts';
