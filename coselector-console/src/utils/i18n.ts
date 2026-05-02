@@ -16,9 +16,7 @@ import {
 
 export const STATUS_TEXTS: Record<string, string> = {
   [AssetStatus.ACTIVE]: '启用',
-  [AssetStatus.DISABLED]: '已停用',
-  [AssetStatus.EXPIRED]: '已过期',
-  [AssetStatus.REVOKED]: '已撤销',
+  [AssetStatus.DISABLED]: '失效',
   INACTIVE: '未启用',
 
   [LeadStatus.DRAFT]: '草稿',
@@ -101,10 +99,10 @@ export const TRANSACTION_SOURCE_TEXTS: Record<string, string> = {
 };
 
 export const USER_ROLE_TEXTS: Record<string, string> = {
-  [UserRole.CO_SELECTOR]: '协同遴选者',
+  [UserRole.CO_SELECTOR]: '共选者',
   [UserRole.OPS_BD]: '运营/BD',
   [UserRole.FINANCE]: '财务',
-  AFFILIATE: '协同遴选者',
+  AFFILIATE: '共选者',
 };
 
 export const VIEW_PRESET_TEXTS: Record<string, string> = {
@@ -115,7 +113,7 @@ export const VIEW_PRESET_TEXTS: Record<string, string> = {
 };
 
 export const ACTOR_TYPE_TEXTS: Record<string, string> = {
-  [ActorType.CO_SELECTOR]: '协同遴选者',
+  [ActorType.CO_SELECTOR]: '共选者',
   [ActorType.OPS]: '运营',
   [ActorType.OPS_BD]: '运营/BD',
   [ActorType.SYSTEM]: '系统',
@@ -236,7 +234,7 @@ const FREE_TEXTS: Record<string, string> = {
   'Finance Team': '财务团队',
   'OPS Team': '运营团队',
   'Demo User': '演示用户',
-  'Demo Co-Selector': '演示协同遴选者',
+  'Demo Co-Selector': '演示共选者',
   'Demo OPS/BD': '演示运营/BD',
   'Demo Finance': '演示财务',
   'Dev Tools': '开发工具',

@@ -24,12 +24,16 @@ import {
 } from '@ant-design/icons';
 import QRCode from 'qrcode';
 import { TrackingAsset } from '../../types';
-import { AssetType, AssetStatus } from '../../types/enums';
+import { AssetStatus } from '../../types/enums';
 import { Permission } from '../../services/permissions';
 import { usePermission } from '../../hooks/usePermission';
-import { translateAssetType, translateChannel, translateStatus } from '../../utils/i18n';
+import { translateChannel } from '../../utils/i18n';
+import { PRODUCT_LINK_ENTRIES } from './ProductLinkCreator';
 
 const { Title, Text } = Typography;
+
+const formatDateTime = (value: string) =>
+  new Date(value).toLocaleString('zh-CN', { hour12: false });
 
 interface AssetDetailViewProps {
   asset: TrackingAsset;
@@ -37,8 +41,8 @@ interface AssetDetailViewProps {
 }
 
 /**
- * Asset Detail View
- * Shows complete asset information with inline editing
+ * Product link detail view
+ * Shows product information, attribution link, and performance metrics.
  */
 const AssetDetailView: React.FC<AssetDetailViewProps> = ({
   asset,
@@ -84,7 +88,7 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
       await onUpdate(editValues);
       setEditing(false);
     } catch (error) {
-      message.error('资产更新失败');
+      message.error('商品信息更新失败');
     }
   };
 
@@ -117,11 +121,9 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
             <Button icon={<CopyOutlined />} onClick={handleCopyLink}>
               复制链接
             </Button>
-            {asset.type === AssetType.QR_CODE && (
-              <Button icon={<QrcodeOutlined />} onClick={handleGenerateQR}>
-                生成二维码
-              </Button>
-            )}
+            <Button icon={<QrcodeOutlined />} onClick={handleGenerateQR}>
+              生成二维码
+            </Button>
           </>
         ) : (
           <>
@@ -135,15 +137,15 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
         )}
       </Space>
 
-      {/* Asset Info */}
+      {/* Product Info */}
       <Descriptions bordered column={1} size="small">
-        <Descriptions.Item label="资产 ID">
+        <Descriptions.Item label="链接编号">
           <Text code copyable>
             {asset.id}
           </Text>
         </Descriptions.Item>
 
-        <Descriptions.Item label="名称">
+        <Descriptions.Item label="商品名称">
           {editing ? (
             <Input
               value={editValues.name}
@@ -155,10 +157,6 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="类型">
-          <Tag color="blue">{translateAssetType(asset.type)}</Tag>
-        </Descriptions.Item>
-
         <Descriptions.Item label="状态">
           {editing ? (
             <Select
@@ -167,50 +165,48 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
               style={{ width: 120 }}
             >
               <Select.Option value={AssetStatus.ACTIVE}>启用</Select.Option>
-              <Select.Option value={AssetStatus.DISABLED}>已停用</Select.Option>
+              <Select.Option value={AssetStatus.DISABLED}>失效</Select.Option>
             </Select>
           ) : (
             <Tag color={asset.status === AssetStatus.ACTIVE ? 'success' : 'default'}>
-              {translateStatus(asset.status)}
+              {asset.status === AssetStatus.ACTIVE ? '启用' : '失效'}
             </Tag>
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="渠道">
+        <Descriptions.Item label="入口">
           {editing ? (
             <Select
               value={editValues.channelTag}
               onChange={(value) => setEditValues({ ...editValues, channelTag: value })}
               style={{ width: 150 }}
             >
-              <Select.Option value="wechat">微信</Select.Option>
-              <Select.Option value="douyin">抖音</Select.Option>
-              <Select.Option value="xiaohongshu">小红书</Select.Option>
-              <Select.Option value="weibo">微博</Select.Option>
-              <Select.Option value="other">其他</Select.Option>
+              {PRODUCT_LINK_ENTRIES.map(entry => (
+                <Select.Option key={entry.id} value={entry.name}>{entry.name}</Select.Option>
+              ))}
             </Select>
           ) : (
             <Tag>{translateChannel(asset.channelTag)}</Tag>
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="资产值">
+        <Descriptions.Item label="商品链接">
           <Text code copyable style={{ fontSize: 12 }}>
             {asset.assetValue}
           </Text>
         </Descriptions.Item>
 
         <Descriptions.Item label="创建时间">
-          {new Date(asset.createdAt).toLocaleString()}
+          {formatDateTime(asset.createdAt)}
         </Descriptions.Item>
 
         <Descriptions.Item label="最近使用">
-          {asset.lastUsedAt ? new Date(asset.lastUsedAt).toLocaleString() : '从未使用'}
+          {asset.lastUsedAt ? formatDateTime(asset.lastUsedAt) : '从未使用'}
         </Descriptions.Item>
 
         {asset.expiresAt && (
           <Descriptions.Item label="过期时间">
-            {new Date(asset.expiresAt).toLocaleString()}
+            {formatDateTime(asset.expiresAt)}
           </Descriptions.Item>
         )}
       </Descriptions>
@@ -218,7 +214,7 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
       <Divider />
 
       {/* Performance Metrics */}
-      <Title level={5}>表现指标</Title>
+      <Title level={5}>链接表现</Title>
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={8}>
           <Card>
@@ -241,8 +237,8 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
         </Col>
       </Row>
 
-      {/* Bound Content */}
-      <Title level={5}>绑定内容项</Title>
+      {/* Bound SPU */}
+      <Title level={5}>关联 SPU</Title>
       <Card>
         {asset.boundContentIds.length > 0 ? (
           <Space direction="vertical">
@@ -253,7 +249,7 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
             ))}
           </Space>
         ) : (
-          <Text type="secondary">此资产尚未绑定内容项</Text>
+          <Text type="secondary">此商品链接尚未关联 SPU</Text>
         )}
       </Card>
 

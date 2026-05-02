@@ -23,7 +23,7 @@ const PageBreadcrumb: React.FC = () => {
     '/': '首页',
     '/assets': '链接',
     '/content': '内容',
-    '/leads': '协同遴选',
+    '/leads': '共选',
     '/admin': '管理',
     '/admin/review-queue': '审核队列',
     '/earnings': '收益',

@@ -58,7 +58,7 @@ const LEAD_CATEGORIES = ['餐饮', '零售', '旅游', '金融', '教育', '医�
 export function generateAssets(count: number = 15): TrackingAsset[] {
   const assets: TrackingAsset[] = [];
   const assetTypes = [AssetType.SHORT_LINK, AssetType.QR_CODE, AssetType.INVITE_CODE];
-  const statuses = [AssetStatus.ACTIVE, AssetStatus.DISABLED, AssetStatus.EXPIRED, AssetStatus.REVOKED];
+  const statuses = [AssetStatus.ACTIVE, AssetStatus.DISABLED];
 
   for (let i = 0; i < count; i++) {
     const type = assetTypes[i % assetTypes.length];
@@ -80,7 +80,7 @@ export function generateAssets(count: number = 15): TrackingAsset[] {
       channelTag: CHANNEL_TAGS[Math.floor(Math.random() * CHANNEL_TAGS.length)],
       status,
       createdAt: createdDate.toISOString(),
-      expiresAt: status === AssetStatus.EXPIRED ? createdDate.add(30, 'day').toISOString() : expiresDate.toISOString(),
+      expiresAt: expiresDate.toISOString(),
       lastUsedAt: status === AssetStatus.ACTIVE && Math.random() > 0.3 
         ? dayjs().subtract(Math.floor(Math.random() * 7), 'day').toISOString() 
         : undefined,

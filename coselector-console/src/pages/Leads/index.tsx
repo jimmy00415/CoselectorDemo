@@ -275,7 +275,7 @@ export const Leads: React.FC = () => {
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>协同遴选线索</h1>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>共选线索</h1>
             <p style={{ margin: '8px 0 0 0', color: '#8c8c8c' }}>提交并追踪商户线索的审核流程</p>
           </div>
           {canCreate && (

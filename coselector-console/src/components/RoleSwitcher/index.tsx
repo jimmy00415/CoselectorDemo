@@ -15,9 +15,9 @@ const { Text } = Typography;
 const ROLE_OPTIONS = [
   {
     value: UserRole.CO_SELECTOR,
-    label: '协同遴选者',
+    label: '共选者',
     icon: <UserOutlined />,
-    description: '默认角色，可使用协同遴选者功能',
+    description: '默认角色，可使用共选者功能',
     color: '#1890ff',
   },
   {

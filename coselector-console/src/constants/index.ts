@@ -47,7 +47,7 @@ export const NAV_ITEMS = [
   },
   {
     key: 'leads',
-    label: '协同遴选',
+    label: '共选',
     path: ROUTES.LEADS,
     icon: 'TeamOutlined',
   },
@@ -178,12 +178,12 @@ export const GLOSSARY_TERMS = [
   {
     term: '线索',
     definition:
-      '协同遴选者提交的结构化商户/服务商机会，用于平台审核和入驻。',
+      '共选者提交的结构化商户/服务商机会，用于平台审核和入驻。',
   },
   {
     term: '线索负责人',
     definition:
-      '负责审核和推进线索的内部运营/BD 处理人（对协同遴选者显示为“已分配负责人”）。',
+      '负责审核和推进线索的内部运营/BD 处理人（对共选者显示为“已分配负责人”）。',
   },
   {
     term: '利益冲突声明（COI）',

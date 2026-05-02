@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
       <PageBreadcrumb />
       <Title level={2}>仪表盘</Title>
       <Paragraph type="secondary">
-        查看你的协同遴选表现与近期活动概览
+        查看你的共选表现与近期活动概览
       </Paragraph>
 
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>

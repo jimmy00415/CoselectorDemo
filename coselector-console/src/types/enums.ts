@@ -24,8 +24,6 @@ export enum AssetType {
 export enum AssetStatus {
   ACTIVE = 'ACTIVE',
   DISABLED = 'DISABLED',
-  EXPIRED = 'EXPIRED',
-  REVOKED = 'REVOKED',
 }
 
 // Content platforms

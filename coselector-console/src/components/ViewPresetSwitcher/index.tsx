@@ -1,12 +1,6 @@
 import React from 'react';
 import { Radio } from 'antd';
 import type { RadioChangeEvent } from 'antd';
-import {
-  DashboardOutlined,
-  ToolOutlined,
-  LineChartOutlined,
-  DollarOutlined,
-} from '@ant-design/icons';
 import { useAuth, ViewPreset } from '../../contexts/AuthContext';
 import './styles.css';
 
@@ -14,25 +8,21 @@ const VIEW_PRESET_OPTIONS = [
   {
     value: ViewPreset.OWNER,
     label: '所有者',
-    icon: <DashboardOutlined />,
     description: '资产归属与表现',
   },
   {
     value: ViewPreset.OPERATOR,
     label: '运营',
-    icon: <ToolOutlined />,
     description: '运营与转化',
   },
   {
     value: ViewPreset.ANALYST,
     label: '分析',
-    icon: <LineChartOutlined />,
     description: '分析与趋势',
   },
   {
     value: ViewPreset.FINANCE,
     label: '财务',
-    icon: <DollarOutlined />,
     description: '财务流与提现',
   },
 ];
@@ -79,7 +69,6 @@ export const ViewPresetSwitcher: React.FC<ViewPresetSwitcherProps> = ({
             className="view-preset-button"
             title={option.description}
           >
-            <span className="view-preset-icon">{option.icon}</span>
             <span className="view-preset-label">{option.label}</span>
           </Radio.Button>
         ))}

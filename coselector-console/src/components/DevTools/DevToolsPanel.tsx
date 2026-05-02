@@ -256,7 +256,7 @@ export const DevToolsPanel: React.FC = () => {
                 onClick={() => handleRoleSwitch(UserRole.CO_SELECTOR)}
                 icon={<UserSwitchOutlined />}
               >
-                协同遴选者（CO_SELECTOR）
+                共选者（CO_SELECTOR）
               </Button>
               <Button
                 block
@@ -403,7 +403,7 @@ export const DevToolsPanel: React.FC = () => {
                 rules={[{ required: true, message: '请选择操作者类型' }]}
               >
                 <Select placeholder="选择操作者类型">
-                  <Select.Option value={ActorType.CO_SELECTOR}>协同遴选者</Select.Option>
+                  <Select.Option value={ActorType.CO_SELECTOR}>共选者</Select.Option>
                   <Select.Option value={ActorType.OPS_BD}>运营/BD</Select.Option>
                   <Select.Option value={ActorType.SYSTEM}>系统</Select.Option>
                   <Select.Option value={ActorType.FINANCE}>财务</Select.Option>

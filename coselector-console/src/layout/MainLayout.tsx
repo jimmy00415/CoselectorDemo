@@ -19,7 +19,7 @@ import {
   ControlOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { ViewPresetSwitcher, RoleSwitcher } from '../components';
+import { RoleSwitcher } from '../components';
 import { useAuth } from '../contexts/AuthContext';
 import { Permission } from '../services/permissions';
 import { usePermission } from '../hooks/usePermission';
@@ -67,7 +67,7 @@ export const MainLayout: React.FC = () => {
     {
       key: '/leads',
       icon: <TeamOutlined />,
-      label: '协同遴选',
+      label: '共选',
     },
     // Admin menu item - only visible to OPS_BD role (Sprint 1 §8.1)
     can(Permission.LEAD_CHANGE_STATUS) ? {
@@ -143,7 +143,7 @@ export const MainLayout: React.FC = () => {
         theme="light"
       >
         <div className="logo">
-          <span className="logo-text">{collapsed ? 'CS' : '协同遴选台'}</span>
+          <span className="logo-text">{collapsed ? 'CS' : '共选者后台'}</span>
         </div>
         <Menu
           mode="inline"
@@ -165,11 +165,6 @@ export const MainLayout: React.FC = () => {
               onClick={() => setCollapsed(!collapsed)}
               className="trigger-button"
             />
-          </div>
-
-          <div className="header-center">
-            {/* View Preset Switcher */}
-            <ViewPresetSwitcher size="small" />
           </div>
 
           <div className="header-right">

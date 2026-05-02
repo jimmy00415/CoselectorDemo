@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Space, Button, message } from 'antd';
-import { PlusOutlined, DownloadOutlined } from '@ant-design/icons';
+import { Typography, Button, message, Card, Input, Select, Tag } from 'antd';
+import { DownloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import PageBreadcrumb from '../../layout/PageBreadcrumb';
-import { DataTable, FilterRail, ActionBar, DetailsDrawer, EmptyState, ConfirmModal } from '../../components';
+import { DataTable, ActionBar, DetailsDrawer, EmptyState, ConfirmModal } from '../../components';
 import { TrackingAsset } from '../../types';
 import { AssetStatus } from '../../types/enums';
 import { Permission } from '../../services/permissions';
 import { usePermission } from '../../hooks/usePermission';
 import * as mockApi from '../../services/mockApi';
-import AssetCreateModal from './AssetCreateModal';
 import AssetDetailView from './AssetDetailView';
 import { getAssetColumns, getAssetFilters } from './config';
+import ProductLinkCreator, { ProductLinkAssetInput } from './ProductLinkCreator';
 import './styles.css';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 /**
  * Assets (Links) Module - Main Page
@@ -38,9 +38,9 @@ const AssetsPage: React.FC = () => {
   const [selectedAsset, setSelectedAsset] = useState<TrackingAsset | null>(null);
   const [selectedRows, setSelectedRows] = useState<TrackingAsset[]>([]);
   const [filters, setFilters] = useState<Record<string, any>>({});
-  const [createModalVisible, setCreateModalVisible] = useState(false);
   const [confirmModalVisible, setConfirmModalVisible] = useState(false);
   const [actionType, setActionType] = useState<'disable' | 'enable' | 'delete'>('disable');
+  const [actionAssets, setActionAssets] = useState<TrackingAsset[]>([]);
 
   // Load assets
   useEffect(() => {
@@ -63,7 +63,7 @@ const AssetsPage: React.FC = () => {
       const data = await mockApi.getAssets();
       setAssets(data);
     } catch (error) {
-      message.error('资产加载失败');
+      message.error('商品链接加载失败');
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,6 @@ const AssetsPage: React.FC = () => {
 
   // Filter assets based on active filters
   const filteredAssets = assets.filter(asset => {
-    if (filters.type && asset.type !== filters.type) return false;
     if (filters.status && asset.status !== filters.status) return false;
     if (filters.channelTag && asset.channelTag !== filters.channelTag) return false;
     if (filters.search) {
@@ -85,6 +84,43 @@ const AssetsPage: React.FC = () => {
     return true;
   });
 
+  const assetFilters = getAssetFilters();
+  const getFilterOptions = (key: string) => assetFilters.find(filter => filter.key === key)?.options || [];
+  const activeFilterEntries = [
+    { key: 'search', label: '搜索', value: filters.search },
+    { key: 'channelTag', label: '入口', value: filters.channelTag },
+    { key: 'status', label: '状态', value: filters.status },
+  ].filter(entry => entry.value !== undefined && entry.value !== null && entry.value !== '');
+  const activeAssets = assets.filter(asset => asset.status === AssetStatus.ACTIVE).length;
+  const totalClicks = filteredAssets.reduce((total, asset) => total + asset.clickCount, 0);
+  const totalConversions = filteredAssets.reduce((total, asset) => total + asset.conversionCount, 0);
+  const actionTargetCount = actionAssets.length;
+  const confirmActionText = actionType === 'disable' ? '设为失效' : actionType === 'enable' ? '启用' : '删除';
+  const confirmMessage =
+    actionType === 'disable'
+      ? `确定要将 ${actionTargetCount} 个商品链接设为失效吗？`
+      : actionType === 'enable'
+        ? `确定要启用 ${actionTargetCount} 个商品链接吗？`
+        : `确定要删除 ${actionTargetCount} 个商品链接吗？此操作无法撤销。`;
+
+  const getFilterLabel = (key: string, value: any) => {
+    if (key === 'search') return String(value);
+    const option = getFilterOptions(key).find(filterOption => filterOption.value === value);
+    return option?.label || String(value);
+  };
+
+  const handleFilterChange = (key: string, value: any) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilter = (key: string) => {
+    setFilters(prev => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
   const handleRowClick = (record: TrackingAsset) => {
     setSelectedAsset(record);
     navigate(`/assets/${record.id}`);
@@ -95,74 +131,74 @@ const AssetsPage: React.FC = () => {
     navigate('/assets');
   };
 
-  const handleCreateAsset = async (values: any) => {
-    try {
-      const newAsset = await mockApi.createAsset({
-        type: values.type,
-        name: values.name,
-        assetValue: values.assetValue || `https://short.link/${Math.random().toString(36).substr(2, 8)}`,
-        channelTag: values.channelTag,
-        status: AssetStatus.ACTIVE,
-        clickCount: 0,
-        conversionCount: 0,
-        boundContentIds: [],
-      });
-      setAssets([newAsset, ...assets]);
-      setCreateModalVisible(false);
-      message.success('资产创建成功');
-    } catch (error) {
-      message.error('资产创建失败');
-    }
+  const handleCreateProductLink = async (assetInput: ProductLinkAssetInput) => {
+    const newAsset = await mockApi.createAsset(assetInput);
+    setAssets(prev => [newAsset, ...prev]);
+    return newAsset;
   };
 
   const handleBulkAction = (action: 'disable' | 'enable' | 'delete') => {
     if (selectedRows.length === 0) {
-      message.warning('请先选择资产');
+      message.warning('请先选择商品链接');
       return;
     }
     setActionType(action);
+    setActionAssets(selectedRows);
+    setConfirmModalVisible(true);
+  };
+
+  const handleSingleDelete = (asset: TrackingAsset) => {
+    setActionType('delete');
+    setActionAssets([asset]);
     setConfirmModalVisible(true);
   };
 
   const handleConfirmAction = async () => {
+    const targets = actionAssets;
+
+    if (targets.length === 0) {
+      setConfirmModalVisible(false);
+      return;
+    }
+
     try {
       if (actionType === 'disable') {
         await Promise.all(
-          selectedRows.map(asset =>
+          targets.map(asset =>
             mockApi.updateAsset(asset.id, { status: AssetStatus.DISABLED })
           )
         );
-        message.success(`已停用 ${selectedRows.length} 个资产`);
+        message.success(`已将 ${targets.length} 个商品链接设为失效`);
       } else if (actionType === 'enable') {
         await Promise.all(
-          selectedRows.map(asset =>
+          targets.map(asset =>
             mockApi.updateAsset(asset.id, { status: AssetStatus.ACTIVE })
           )
         );
-        message.success(`已启用 ${selectedRows.length} 个资产`);
+        message.success(`已启用 ${targets.length} 个商品链接`);
       } else if (actionType === 'delete') {
         await Promise.all(
-          selectedRows.map(asset => mockApi.deleteAsset(asset.id))
+          targets.map(asset => mockApi.deleteAsset(asset.id))
         );
-        message.success(`已删除 ${selectedRows.length} 个资产`);
+        message.success(`已删除 ${targets.length} 个商品链接`);
       }
       await loadAssets();
       setSelectedRows([]);
+      setActionAssets([]);
       setConfirmModalVisible(false);
     } catch (error) {
-      message.error('资产操作失败');
+      message.error('商品链接操作失败');
     }
   };
 
   const handleExport = () => {
     const csv = [
-      ['ID', '名称', '类型', '渠道', '状态', '点击', '转化', '创建时间'],
+      ['链接编号', '商品名称', '入口', '状态', '点击', '转化', '创建时间'],
       ...filteredAssets.map(asset => [
         asset.id,
         asset.name,
-        asset.type,
         asset.channelTag,
-        asset.status,
+        asset.status === AssetStatus.ACTIVE ? '启用' : '失效',
         asset.clickCount,
         asset.conversionCount,
         asset.createdAt,
@@ -175,10 +211,10 @@ const AssetsPage: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `assets-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `product-links-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    message.success('资产已导出');
+    message.success('商品链接已导出');
   };
 
   return (
@@ -190,84 +226,137 @@ const AssetsPage: React.FC = () => {
         <div>
           <Title level={2}>链接管理</Title>
           <Paragraph type="secondary">
-            管理追踪链接、二维码和邀请码
+            为八大入口下的商家 SPU 生成唯一归因商品链接和二维码
           </Paragraph>
         </div>
-        <Space>
-          <Button
-            icon={<DownloadOutlined />}
-            onClick={handleExport}
-            disabled={filteredAssets.length === 0}
-          >
-            导出 CSV
-          </Button>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setCreateModalVisible(true)}
-            disabled={!can(Permission.ASSET_CREATE)}
-          >
-            创建资产
-          </Button>
-        </Space>
       </div>
 
-      {/* Action Bar */}
-      {selectedRows.length > 0 && (
-        <ActionBar
-          selectedCount={selectedRows.length}
-          onClearSelection={() => setSelectedRows([])}
-          bulkActions={[
-            {
-              key: 'disable',
-              label: '停用',
-              onClick: () => handleBulkAction('disable'),
-              danger: true,
-              disabled: !can(Permission.ASSET_UPDATE),
-            },
-            {
-              key: 'enable',
-              label: '启用',
-              onClick: () => handleBulkAction('enable'),
-              disabled: !can(Permission.ASSET_UPDATE),
-            },
-            {
-              key: 'delete',
-              label: '删除',
-              onClick: () => handleBulkAction('delete'),
-              danger: true,
-              disabled: !can(Permission.ASSET_DELETE),
-            },
-          ]}
-        />
-      )}
+      <ProductLinkCreator
+        disabled={!can(Permission.ASSET_CREATE)}
+        onCreateAsset={handleCreateProductLink}
+      />
 
-      {/* Main Content Area */}
-      <div className="page-content">
-        {/* Filter Rail */}
-        <FilterRail
-          filters={getAssetFilters()}
-          values={filters}
-          onChange={(key: string, value: any) => {
-            setFilters(prev => ({...prev, [key]: value}));
-          }}
-          onClear={() => setFilters({})}
-        />
+      <section className="asset-history-section">
+        <Card className="asset-history-card">
+          <div className="asset-history-header">
+            <div>
+              <Title level={3}>已生成商品链接</Title>
+              <Text type="secondary">查看、筛选和管理已创建的唯一归因链接。</Text>
+            </div>
+            <div className="asset-history-stats">
+              <div className="asset-history-stat">
+                <span>全部链接</span>
+                <strong>{assets.length.toLocaleString()}</strong>
+              </div>
+              <div className="asset-history-stat">
+                <span>启用中</span>
+                <strong>{activeAssets.toLocaleString()}</strong>
+              </div>
+              <div className="asset-history-stat">
+                <span>点击</span>
+                <strong>{totalClicks.toLocaleString()}</strong>
+              </div>
+              <div className="asset-history-stat">
+                <span>转化</span>
+                <strong>{totalConversions.toLocaleString()}</strong>
+              </div>
+            </div>
+          </div>
 
-        {/* Data Table */}
-        <div className="content-main">
+          <div className="asset-history-toolbar">
+            <Input
+              className="asset-history-search"
+              placeholder="搜索商品链接、ID 或入口"
+              prefix={<SearchOutlined />}
+              allowClear
+              value={filters.search}
+              onChange={event => handleFilterChange('search', event.target.value)}
+            />
+            <Select
+              placeholder="入口"
+              allowClear
+              value={filters.channelTag}
+              onChange={value => handleFilterChange('channelTag', value)}
+              options={getFilterOptions('channelTag')}
+            />
+            <Select
+              placeholder="状态"
+              allowClear
+              value={filters.status}
+              onChange={value => handleFilterChange('status', value)}
+              options={getFilterOptions('status')}
+            />
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={handleExport}
+              disabled={filteredAssets.length === 0}
+            >
+              导出
+            </Button>
+          </div>
+
+          {activeFilterEntries.length > 0 && (
+            <div className="asset-filter-chip-row">
+              <Text type="secondary">已筛选</Text>
+              {activeFilterEntries.map(entry => (
+                <Tag
+                  key={entry.key}
+                  closable
+                  onClose={event => {
+                    event.preventDefault();
+                    handleClearFilter(entry.key);
+                  }}
+                >
+                  {entry.label}: {getFilterLabel(entry.key, entry.value)}
+                </Tag>
+              ))}
+              <Button type="link" size="small" onClick={() => setFilters({})}>
+                清空
+              </Button>
+            </div>
+          )}
+
+          {selectedRows.length > 0 && (
+            <ActionBar
+              selectedCount={selectedRows.length}
+              onClearSelection={() => setSelectedRows([])}
+              bulkActions={[
+                {
+                  key: 'disable',
+                  label: '设为失效',
+                  onClick: () => handleBulkAction('disable'),
+                  danger: true,
+                  disabled: !can(Permission.ASSET_UPDATE),
+                },
+                {
+                  key: 'enable',
+                  label: '启用',
+                  onClick: () => handleBulkAction('enable'),
+                  disabled: !can(Permission.ASSET_UPDATE),
+                },
+                {
+                  key: 'delete',
+                  label: '删除',
+                  onClick: () => handleBulkAction('delete'),
+                  danger: true,
+                  disabled: !can(Permission.ASSET_DELETE),
+                },
+              ]}
+            />
+          )}
+
+          <div className="asset-history-table">
           {assets.length === 0 && !loading ? (
             <EmptyState
-              title="暂无资产"
-              description="创建第一个追踪链接、二维码或邀请码，开始追踪转化"
-              action={{
-                label: '创建资产',
-                onClick: () => setCreateModalVisible(true),
-              }}
+              title="暂无商品链接"
+              description="上方生成链接后，记录会出现在这里。"
             />
           ) : (
             <DataTable
-              columns={getAssetColumns()}
+              columns={getAssetColumns({
+                onDelete: handleSingleDelete,
+                canDelete: can(Permission.ASSET_DELETE),
+              })}
               data={filteredAssets}
               loading={loading}
               rowKey="id"
@@ -275,31 +364,25 @@ const AssetsPage: React.FC = () => {
               selectable
               selectedRowKeys={selectedRows.map(r => r.id)}
               onSelectionChange={(_keys: React.Key[], rows: TrackingAsset[]) => setSelectedRows(rows)}
-              searchable
-              searchPlaceholder="按名称、ID 或渠道搜索..."
-              onSearch={(value) => setFilters({ ...filters, search: value })}
+              bordered={false}
+              scroll={{ x: 1120 }}
+              ariaLabel="商品链接"
             />
           )}
-        </div>
-      </div>
-
-      {/* Create Asset Modal */}
-      <AssetCreateModal
-        visible={createModalVisible}
-        onClose={() => setCreateModalVisible(false)}
-        onSubmit={handleCreateAsset}
-      />
+          </div>
+        </Card>
+      </section>
 
       {/* Detail Drawer */}
       <DetailsDrawer
         visible={!!selectedAsset}
         onClose={handleDrawerClose}
-        title="资产详情"
+        title="商品详情"
         width={720}
         sections={[
           {
             key: 'details',
-            title: '资产信息',
+            title: '商品信息',
             content: selectedAsset && (
               <AssetDetailView
                 asset={selectedAsset}
@@ -308,9 +391,9 @@ const AssetsPage: React.FC = () => {
                     const updated = await mockApi.updateAsset(selectedAsset.id, updates);
                     setAssets(assets.map(a => (a.id === updated.id ? updated : a)));
                     setSelectedAsset(updated);
-                    message.success('资产已更新');
+                    message.success('商品信息已更新');
                   } catch (error) {
-                    message.error('资产更新失败');
+                    message.error('商品信息更新失败');
                   }
                 }}
               />
@@ -323,11 +406,13 @@ const AssetsPage: React.FC = () => {
       <ConfirmModal
         visible={confirmModalVisible}
         title="确认操作"
-        message={`确定要${actionType === 'disable' ? '停用' : actionType === 'enable' ? '启用' : '删除'} ${selectedRows.length} 个资产吗？${
-          actionType === 'delete' ? '此操作无法撤销。' : ''
-        }`}
+        message={confirmMessage}
         onConfirm={handleConfirmAction}
-        onClose={() => setConfirmModalVisible(false)}
+        onClose={() => {
+          setConfirmModalVisible(false);
+          setActionAssets([]);
+        }}
+        confirmText={confirmActionText}
         danger={actionType === 'delete' || actionType === 'disable'}
       />
     </div>

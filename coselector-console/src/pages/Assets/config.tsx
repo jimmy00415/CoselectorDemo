@@ -2,24 +2,29 @@ import { ColumnsType } from 'antd/es/table';
 import { Tag, Space, Typography, Tooltip, Button } from 'antd';
 import {
   LinkOutlined,
-  QrcodeOutlined,
-  MailOutlined,
   CopyOutlined,
   EyeOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import { TrackingAsset } from '../../types';
-import { AssetType, AssetStatus } from '../../types/enums';
+import { AssetStatus } from '../../types/enums';
 import { FilterConfig } from '../../components/FilterRail/FilterRail';
-import { translateAssetType, translateChannel, translateStatus } from '../../utils/i18n';
+import { translateChannel, translateStatus } from '../../utils/i18n';
+import { PRODUCT_LINK_ENTRIES } from './ProductLinkCreator';
 
 const { Text } = Typography;
+
+interface AssetColumnActions {
+  onDelete?: (asset: TrackingAsset) => void;
+  canDelete?: boolean;
+}
 
 /**
  * Asset table columns configuration
  */
-export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
+export const getAssetColumns = ({ onDelete, canDelete = false }: AssetColumnActions = {}): ColumnsType<TrackingAsset> => [
   {
-    title: '资产',
+    title: '商品链接',
     dataIndex: 'name',
     key: 'name',
     width: 250,
@@ -27,9 +32,7 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
     render: (name: string, record: TrackingAsset) => (
       <Space direction="vertical" size={0}>
         <Space>
-          {record.type === AssetType.SHORT_LINK && <LinkOutlined />}
-          {record.type === AssetType.QR_CODE && <QrcodeOutlined />}
-          {record.type === AssetType.INVITE_CODE && <MailOutlined />}
+          <LinkOutlined />
           <Text strong>{name}</Text>
         </Space>
         <Text type="secondary" style={{ fontSize: 12 }}>
@@ -39,7 +42,7 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
     ),
   },
   {
-    title: '渠道',
+    title: '入口',
     dataIndex: 'channelTag',
     key: 'channelTag',
     width: 120,
@@ -51,13 +54,9 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
     key: 'status',
     width: 100,
     render: (status: AssetStatus) => {
-      const config: Record<AssetStatus, { color: string; text: string }> = {
-        [AssetStatus.ACTIVE]: { color: 'success', text: '启用' },
-        [AssetStatus.DISABLED]: { color: 'default', text: '已停用' },
-        [AssetStatus.EXPIRED]: { color: 'warning', text: '已过期' },
-        [AssetStatus.REVOKED]: { color: 'error', text: '已撤销' },
-      };
-      const { color, text } = config[status];
+      const isActive = status === AssetStatus.ACTIVE;
+      const color = isActive ? 'success' : 'default';
+      const text = isActive ? '启用' : '失效';
       return <Tag color={color}>{text}</Tag>;
     },
   },
@@ -90,13 +89,13 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
     },
   },
   {
-    title: '绑定内容',
+    title: '绑定 SPU',
     dataIndex: 'boundContentIds',
     key: 'boundContentIds',
     width: 120,
     align: 'center',
     render: (ids: string[]) => (
-      <Tooltip title={ids.length > 0 ? `已绑定 ${ids.length} 个内容项` : '未绑定内容'}>
+      <Tooltip title={ids.length > 0 ? `已关联 ${ids.length} 个 SPU` : '未关联 SPU'}>
         <Tag>{ids.length}</Tag>
       </Tooltip>
     ),
@@ -126,7 +125,7 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
   {
     title: '操作',
     key: 'actions',
-    width: 120,
+    width: 150,
     fixed: 'right',
     render: (_, record: TrackingAsset) => (
       <Space size="small">
@@ -144,6 +143,20 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
         <Tooltip title="查看详情">
           <Button type="text" size="small" icon={<EyeOutlined />} />
         </Tooltip>
+        <Tooltip title="删除商品链接">
+          <Button
+            type="text"
+            size="small"
+            danger
+            disabled={!canDelete}
+            aria-label="删除商品链接"
+            icon={<DeleteOutlined />}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.(record);
+            }}
+          />
+        </Tooltip>
       </Space>
     ),
   },
@@ -154,35 +167,18 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
  */
 export const getAssetFilters = (): FilterConfig[] => [
   {
-    key: 'type',
-    label: '类型',
-    type: 'select',
-    options: [
-      { label: translateAssetType(AssetType.SHORT_LINK), value: AssetType.SHORT_LINK },
-      { label: translateAssetType(AssetType.QR_CODE), value: AssetType.QR_CODE },
-      { label: translateAssetType(AssetType.INVITE_CODE), value: AssetType.INVITE_CODE },
-    ],
-  },
-  {
     key: 'status',
     label: '状态',
     type: 'select',
     options: [
       { label: translateStatus(AssetStatus.ACTIVE), value: AssetStatus.ACTIVE },
       { label: translateStatus(AssetStatus.DISABLED), value: AssetStatus.DISABLED },
-      { label: translateStatus(AssetStatus.EXPIRED), value: AssetStatus.EXPIRED },
     ],
   },
   {
     key: 'channelTag',
-    label: '渠道',
+    label: '入口',
     type: 'select',
-    options: [
-      { label: '微信', value: 'wechat' },
-      { label: '抖音', value: 'douyin' },
-      { label: '小红书', value: 'xiaohongshu' },
-      { label: '微博', value: 'weibo' },
-      { label: '其他', value: 'other' },
-    ],
+    options: PRODUCT_LINK_ENTRIES.map(entry => ({ label: entry.name, value: entry.name })),
   },
 ];

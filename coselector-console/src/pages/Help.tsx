@@ -33,9 +33,9 @@ const HelpPage: React.FC = () => {
         />
 
         <Collapse defaultActiveKey={['1']}>
-          <Panel header="什么是协同遴选？" key="1">
+          <Panel header="什么是共选？" key="1">
             <Paragraph>
-              协同遴选是一种合作模式，KOL 或合作伙伴与品牌协作推广产品，并根据实际表现获得佣金。
+              共选是一种合作模式，KOL 或合作伙伴与品牌协作推广产品，并根据实际表现获得佣金。
             </Paragraph>
           </Panel>
           <Panel header="如何追踪我的收益？" key="2">

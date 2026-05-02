@@ -223,12 +223,12 @@ export function getRolePermissions(role: UserRole): Permission[] {
  */
 export const PERMISSION_DENIAL_MESSAGES: Record<Permission, string> = {
   // Assets
-  [Permission.ASSET_VIEW]: '你没有查看资产的权限',
-  [Permission.ASSET_CREATE]: '你没有创建资产的权限',
-  [Permission.ASSET_EDIT]: '你没有编辑资产的权限',
-  [Permission.ASSET_UPDATE]: '你没有更新资产的权限',
-  [Permission.ASSET_DISABLE]: '你没有停用资产的权限',
-  [Permission.ASSET_DELETE]: '你没有删除资产的权限',
+  [Permission.ASSET_VIEW]: '你没有查看商品链接的权限',
+  [Permission.ASSET_CREATE]: '你没有创建商品链接的权限',
+  [Permission.ASSET_EDIT]: '你没有编辑商品链接的权限',
+  [Permission.ASSET_UPDATE]: '你没有更新商品链接的权限',
+  [Permission.ASSET_DISABLE]: '你没有将商品链接设为失效的权限',
+  [Permission.ASSET_DELETE]: '你没有删除商品链接的权限',
   
   // Content
   [Permission.CONTENT_VIEW]: '你没有查看内容的权限',

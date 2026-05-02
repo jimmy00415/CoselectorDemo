@@ -9,6 +9,7 @@
   UserProfile,
 } from '../types';
 import {
+  AssetStatus,
   LeadStatus,
   EarningsState,
   PayoutStatus,
@@ -107,9 +108,21 @@ function updateLastSyncTime(): void {
 // ASSETS API
 // ============================================================================
 
+const normalizeAssetStatus = (asset: TrackingAsset): TrackingAsset => ({
+  ...asset,
+  status: asset.status === AssetStatus.ACTIVE ? AssetStatus.ACTIVE : AssetStatus.DISABLED,
+});
+
 export async function getAssets(): Promise<TrackingAsset[]> {
   await delay();
-  return storage.get<TrackingAsset[]>(STORAGE_KEYS.ASSETS) || [];
+  const assets = storage.get<TrackingAsset[]>(STORAGE_KEYS.ASSETS) || [];
+  const normalizedAssets = assets.map(normalizeAssetStatus);
+
+  if (normalizedAssets.some((asset, index) => asset.status !== assets[index].status)) {
+    storage.set(STORAGE_KEYS.ASSETS, normalizedAssets);
+  }
+
+  return normalizedAssets;
 }
 
 export async function getAssetById(id: string): Promise<TrackingAsset | null> {

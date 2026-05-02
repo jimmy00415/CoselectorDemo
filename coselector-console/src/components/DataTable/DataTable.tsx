@@ -245,54 +245,58 @@ export function DataTable<T extends Record<string, any>>({
       }
     : undefined;
 
+  const hasActionBar = searchable || refreshable || exportable || Object.keys(filteredInfo).length > 0 || !!searchText;
+
   return (
     <div className="data-table-container">
       {/* Action Bar */}
-      <div className="table-action-bar">
-        <Space size="middle">
-          {searchable && (
-            <Input
-              placeholder={searchPlaceholder}
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => handleSearch(e.target.value)}
-              onPressEnter={() => handleSearch(searchText)}
-              style={{ width: 250 }}
-              allowClear
-              aria-label="搜索表格"
-            />
-          )}
-          {(Object.keys(filteredInfo).length > 0 || searchText) && (
-            <Button onClick={handleClearFilters} size="small">
-              清除筛选
-            </Button>
-          )}
-        </Space>
-
-        <Space size="small">
-          {refreshable && (
-            <Tooltip title="刷新数据">
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={onRefresh}
-                loading={loading}
-                aria-label="刷新数据"
+      {hasActionBar && (
+        <div className="table-action-bar">
+          <Space size="middle">
+            {searchable && (
+              <Input
+                placeholder={searchPlaceholder}
+                prefix={<SearchOutlined />}
+                value={searchText}
+                onChange={(e) => handleSearch(e.target.value)}
+                onPressEnter={() => handleSearch(searchText)}
+                style={{ width: 250 }}
+                allowClear
+                aria-label="搜索表格"
               />
-            </Tooltip>
-          )}
-          {exportable && (
-            <Tooltip title={`导出为 ${exportFileName}`}>
-              <Button
-                icon={<DownloadOutlined />}
-                onClick={onExport}
-                aria-label="导出数据"
-              >
-                导出
+            )}
+            {(Object.keys(filteredInfo).length > 0 || searchText) && (
+              <Button onClick={handleClearFilters} size="small">
+                清除筛选
               </Button>
-            </Tooltip>
-          )}
-        </Space>
-      </div>
+            )}
+          </Space>
+
+          <Space size="small">
+            {refreshable && (
+              <Tooltip title="刷新数据">
+                <Button
+                  icon={<ReloadOutlined />}
+                  onClick={onRefresh}
+                  loading={loading}
+                  aria-label="刷新数据"
+                />
+              </Tooltip>
+            )}
+            {exportable && (
+              <Tooltip title={`导出为 ${exportFileName}`}>
+                <Button
+                  icon={<DownloadOutlined />}
+                  onClick={onExport}
+                  aria-label="导出数据"
+                >
+                  导出
+                </Button>
+              </Tooltip>
+            )}
+          </Space>
+        </div>
+      )}
 
       {/* Table */}
       <Table<T>
