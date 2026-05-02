@@ -26,6 +26,7 @@ import HelpPage from './pages/Help';
 import NotFoundPage from './pages/NotFound';
 import ComponentShowcase from './pages/ComponentShowcase';
 import { AdminReviewQueue } from './pages/Admin';
+import { FEATURE_FLAGS } from './constants';
 
 import './styles/global.css';
 
@@ -68,9 +69,13 @@ const App: React.FC = () => {
               <Route path="assets/:assetId" element={<AssetsPage />} />
               <Route path="content" element={<ContentPage />} />
               <Route path="content/:contentId" element={<ContentPage />} />
-              <Route path="leads" element={<LeadsPage />} />
-              <Route path="leads/:id" element={<LeadDetailView />} />
-              <Route path="admin/review-queue" element={<AdminReviewQueue />} />
+              {FEATURE_FLAGS.CO_SELECTION && (
+                <>
+                  <Route path="leads" element={<LeadsPage />} />
+                  <Route path="leads/:id" element={<LeadDetailView />} />
+                  <Route path="admin/review-queue" element={<AdminReviewQueue />} />
+                </>
+              )}
               <Route path="earnings" element={<EarningsPage />} />
               <Route path="earnings/:transactionId" element={<EarningsPage />} />
               <Route path="payouts" element={<PayoutsPage />} />

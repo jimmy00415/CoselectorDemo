@@ -9,6 +9,7 @@ import {
   ShoppingOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { FEATURE_FLAGS } from '../constants';
 import './GlobalSearch.css';
 
 const { Text } = Typography;
@@ -87,13 +88,13 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
         description: '1 万次观看，500 次转化',
         url: '/content/content_123',
       },
-      {
+      ...(FEATURE_FLAGS.CO_SELECTION ? [{
         id: 'lead_456',
         type: 'lead' as const,
         title: '连锁餐饮线索',
         description: '审核中 - 上海',
         url: '/leads/lead_456',
-      },
+      }] : []),
       {
         id: 'tx_789',
         type: 'transaction' as const,
@@ -184,7 +185,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
     >
       <Input
         size="large"
-        placeholder="搜索资产、内容、线索、交易、提现..."
+        placeholder="搜索商品链接、内容、交易、提现..."
         prefix={<SearchOutlined />}
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
@@ -219,7 +220,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
                     </Space>
                   }
                   description={
-                    <Space direction="vertical" size={0}>
+                    <Space orientation="vertical" size={0}>
                       <Text type="secondary">{item.description}</Text>
                       <Text type="secondary" style={{ fontSize: 12 }}>
                         ID: {item.id}
@@ -239,7 +240,6 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
               <ul>
                 <li>商品链接 / 订单链接 ID（例如 link_001）</li>
                 <li>内容 ID（例如 content_123）</li>
-                <li>线索 ID（例如 lead_456）</li>
                 <li>交易 ID（例如 tx_789）</li>
                 <li>提现 ID（例如 payout_012）</li>
               </ul>

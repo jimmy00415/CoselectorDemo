@@ -2,8 +2,8 @@ import React from 'react';
 import { Card, Row, Col, Typography, Space } from 'antd';
 import {
   DollarOutlined,
+  FileTextOutlined,
   RiseOutlined,
-  TeamOutlined,
   LinkOutlined,
 } from '@ant-design/icons';
 import PageBreadcrumb from '../layout/PageBreadcrumb';
@@ -47,11 +47,11 @@ const HomePage: React.FC = () => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <KPICard
-            title="待处理线索"
-            value="8"
-            change={-20}
-            changeType="decrease"
-            prefix={<TeamOutlined style={{ color: '#faad14' }} />}
+            title="商品内容"
+            value="126"
+            change={8.4}
+            changeType="increase"
+            prefix={<FileTextOutlined style={{ color: '#faad14' }} />}
           />
         </Col>
         <Col xs={24} sm={12} lg={6}>
@@ -73,7 +73,7 @@ const HomePage: React.FC = () => {
         </Col>
         <Col xs={24} lg={8}>
           <Card title="快捷操作">
-            <Space direction="vertical" style={{ width: '100%' }}>
+            <Space orientation="vertical" style={{ width: '100%' }}>
               <Paragraph>快捷操作按钮将在此展示</Paragraph>
             </Space>
           </Card>

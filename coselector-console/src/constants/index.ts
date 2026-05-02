@@ -25,6 +25,10 @@ export const ROUTES = {
   GLOSSARY: '/glossary',
 } as const;
 
+export const FEATURE_FLAGS = {
+  CO_SELECTION: false,
+} as const;
+
 // Navigation menu items
 export const NAV_ITEMS = [
   {
@@ -45,18 +49,20 @@ export const NAV_ITEMS = [
     path: ROUTES.CONTENT,
     icon: 'FileTextOutlined',
   },
-  {
-    key: 'leads',
-    label: '共选',
-    path: ROUTES.LEADS,
-    icon: 'TeamOutlined',
-  },
-  {
-    key: 'admin',
-    label: '管理',
-    path: ROUTES.ADMIN_REVIEW_QUEUE,
-    icon: 'ControlOutlined',
-  },
+  ...(FEATURE_FLAGS.CO_SELECTION ? [
+    {
+      key: 'leads',
+      label: '共选',
+      path: ROUTES.LEADS,
+      icon: 'TeamOutlined',
+    },
+    {
+      key: 'admin',
+      label: '管理',
+      path: ROUTES.ADMIN_REVIEW_QUEUE,
+      icon: 'ControlOutlined',
+    },
+  ] : []),
   {
     key: 'earnings',
     label: '浏览与收益',

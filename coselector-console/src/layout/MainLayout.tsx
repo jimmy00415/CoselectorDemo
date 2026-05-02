@@ -25,6 +25,7 @@ import { Permission } from '../services/permissions';
 import { usePermission } from '../hooks/usePermission';
 import GlobalSearch from './GlobalSearch';
 import NotificationPanel from './NotificationPanel';
+import { FEATURE_FLAGS } from '../constants';
 import './styles.css';
 
 const { Header, Sider, Content } = Layout;
@@ -64,17 +65,18 @@ export const MainLayout: React.FC = () => {
       icon: <FileTextOutlined />,
       label: '内容',
     },
-    {
-      key: '/leads',
-      icon: <TeamOutlined />,
-      label: '共选',
-    },
-    // Admin menu item - only visible to OPS_BD role (Sprint 1 §8.1)
-    can(Permission.LEAD_CHANGE_STATUS) ? {
-      key: '/admin/review-queue',
-      icon: <ControlOutlined />,
-      label: '管理',
-    } : null,
+    ...(FEATURE_FLAGS.CO_SELECTION ? [
+      {
+        key: '/leads',
+        icon: <TeamOutlined />,
+        label: '共选',
+      },
+      can(Permission.LEAD_CHANGE_STATUS) ? {
+        key: '/admin/review-queue',
+        icon: <ControlOutlined />,
+        label: '管理',
+      } : null,
+    ] : []),
     {
       key: '/earnings',
       icon: <DollarOutlined />,
