@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/CoselectorDemo/static/css/main.ffbf8523.css",
-    "main.js": "/CoselectorDemo/static/js/main.699dfaab.js",
+    "main.css": "/CoselectorDemo/static/css/main.44583bda.css",
+    "main.js": "/CoselectorDemo/static/js/main.17860fe6.js",
     "static/js/453.1a522e4d.chunk.js": "/CoselectorDemo/static/js/453.1a522e4d.chunk.js",
     "index.html": "/CoselectorDemo/index.html",
-    "main.ffbf8523.css.map": "/CoselectorDemo/static/css/main.ffbf8523.css.map",
-    "main.699dfaab.js.map": "/CoselectorDemo/static/js/main.699dfaab.js.map",
+    "main.44583bda.css.map": "/CoselectorDemo/static/css/main.44583bda.css.map",
+    "main.17860fe6.js.map": "/CoselectorDemo/static/js/main.17860fe6.js.map",
     "453.1a522e4d.chunk.js.map": "/CoselectorDemo/static/js/453.1a522e4d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.ffbf8523.css",
-    "static/js/main.699dfaab.js"
+    "static/css/main.44583bda.css",
+    "static/js/main.17860fe6.js"
   ]
 }
