@@ -10,6 +10,7 @@ import {
 import type { DisputeCase } from '../../types';
 import { DisputeStatus } from '../../types/enums';
 import { formatDate } from '../../utils/format';
+import { translateStatus, translateText } from '../../utils/i18n';
 
 const { Text, Title } = Typography;
 
@@ -34,28 +35,28 @@ export const DisputeCaseHeader: React.FC<DisputeCaseHeaderProps> = ({ disputeCas
     if (daysRemaining <= 0) {
       return {
         color: 'red',
-        text: 'OVERDUE',
+        text: '已逾期',
         icon: <ExclamationCircleOutlined />,
         pulse: true,
       };
     } else if (daysRemaining <= 2) {
       return {
         color: 'red',
-        text: `URGENT - ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left`,
+        text: `紧急 - 剩余 ${daysRemaining} 天`,
         icon: <ClockCircleOutlined />,
         pulse: false,
       };
     } else if (daysRemaining <= 7) {
       return {
         color: 'orange',
-        text: `Action Soon - ${daysRemaining} days left`,
+        text: `尽快处理 - 剩余 ${daysRemaining} 天`,
         icon: <ClockCircleOutlined />,
         pulse: false,
       };
     } else {
       return {
         color: 'green',
-        text: 'On Track',
+        text: '正常',
         icon: <CheckCircleOutlined />,
         pulse: false,
       };
@@ -91,20 +92,20 @@ export const DisputeCaseHeader: React.FC<DisputeCaseHeaderProps> = ({ disputeCas
           <Space direction="vertical" size="small">
             <Space>
               <Title level={4} style={{ margin: 0 }}>
-                Dispute Case #{disputeCase.id.substring(0, 8)}
+                争议案件 #{disputeCase.id.substring(0, 8)}
               </Title>
-              <Tag color={getStatusColor(disputeCase.status)}>{disputeCase.status}</Tag>
+              <Tag color={getStatusColor(disputeCase.status)}>{translateStatus(disputeCase.status)}</Tag>
             </Space>
             <Space split={<Divider type="vertical" />}>
               <Text type="secondary">
-                <strong>Type:</strong> {disputeCase.type || 'Transaction Dispute'}
+                <strong>类型：</strong> {translateText(disputeCase.type) || '交易争议'}
               </Text>
               <Text type="secondary">
-                <strong>Opened:</strong> {formatDate(disputeCase.openedAt)}
+                <strong>打开：</strong> {formatDate(disputeCase.openedAt)}
               </Text>
               {disputeCase.resolvedAt && (
                 <Text type="secondary">
-                  <strong>Resolved:</strong> {formatDate(disputeCase.resolvedAt)}
+                  <strong>解决：</strong> {formatDate(disputeCase.resolvedAt)}
                 </Text>
               )}
             </Space>
@@ -127,7 +128,7 @@ export const DisputeCaseHeader: React.FC<DisputeCaseHeaderProps> = ({ disputeCas
                   {urgency.text}
                 </Tag>
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  Deadline: {formatDate(disputeCase.deadlineAt)}
+                  截止时间：{formatDate(disputeCase.deadlineAt)}
                 </Text>
               </Space>
             </Card>
@@ -140,7 +141,7 @@ export const DisputeCaseHeader: React.FC<DisputeCaseHeaderProps> = ({ disputeCas
       <Row gutter={16}>
         <Col span={8}>
           <Statistic
-            title="Evidence Uploaded"
+            title="已上传证据"
             value={disputeCase.evidence.filter(e => e).length}
             suffix={`/ ${disputeCase.requiredEvidenceCount || 3}`}
             prefix={<FileTextOutlined />}
@@ -155,7 +156,7 @@ export const DisputeCaseHeader: React.FC<DisputeCaseHeaderProps> = ({ disputeCas
 
         <Col span={8}>
           <Statistic
-            title="Messages"
+            title="消息"
             value={disputeCase.messageCount || 0}
             prefix={<MessageOutlined />}
           />
@@ -163,7 +164,7 @@ export const DisputeCaseHeader: React.FC<DisputeCaseHeaderProps> = ({ disputeCas
 
         <Col span={8}>
           <Statistic
-            title="Timeline Events"
+            title="时间线事件"
             value={disputeCase.timeline.length}
             prefix={<ClockCircleOutlined />}
           />
@@ -173,7 +174,7 @@ export const DisputeCaseHeader: React.FC<DisputeCaseHeaderProps> = ({ disputeCas
       {daysRemaining <= 0 && disputeCase.status !== DisputeStatus.RESOLVED && (
         <div style={{ marginTop: 16 }}>
           <Tag color="red" icon={<ExclamationCircleOutlined />} style={{ width: '100%', padding: '8px 16px', fontSize: 14 }}>
-            ⚠️ Deadline has passed. Please submit your response immediately to avoid automatic case closure.
+            截止时间已过。请立即提交回复，以免案件自动关闭。
           </Tag>
         </div>
       )}

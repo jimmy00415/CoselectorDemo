@@ -27,6 +27,7 @@ import { ContentPlatform } from '../../types/enums';
 import { Permission } from '../../services/permissions';
 import { usePermission } from '../../hooks/usePermission';
 import dayjs from 'dayjs';
+import { translateChannel, translatePlatform } from '../../utils/i18n';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -72,9 +73,9 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
     try {
       await onUpdate(editValues);
       setEditing(false);
-      message.success('Content updated');
+      message.success('内容已更新');
     } catch (error) {
-      message.error('Failed to update content');
+      message.error('内容更新失败');
     }
   };
 
@@ -114,8 +115,8 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
       {/* No Bound Assets Warning - Per PRD §7.3.3 Empty State */}
       {hasNoBoundAssets && (
         <Alert
-          message="Not trackable until assets are bound"
-          description="This content has no tracking assets bound to it. Bind assets to start tracking clicks and conversions."
+          message="绑定资产后才能追踪"
+          description="此内容尚未绑定追踪资产。绑定资产后即可开始追踪点击和转化。"
           type="warning"
           icon={<ExclamationCircleOutlined />}
           action={
@@ -125,7 +126,7 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
               onClick={onBindAssets}
               disabled={!can(Permission.CONTENT_BIND_ASSET)}
             >
-              Bind Now
+              立即绑定
             </Button>
           }
           showIcon
@@ -137,10 +138,10 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
         {editing ? (
           <Space>
             <Button icon={<CloseOutlined />} onClick={handleCancel}>
-              Cancel
+              取消
             </Button>
             <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
-              Save
+              保存
             </Button>
           </Space>
         ) : (
@@ -149,31 +150,31 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
             onClick={() => setEditing(true)}
             disabled={!can(Permission.CONTENT_EDIT)}
           >
-            Edit
+            编辑
           </Button>
         )}
       </div>
 
       {/* Basic Information */}
-      <Card title="Content Information" size="small">
+      <Card title="内容信息" size="small">
         <Descriptions column={1} bordered size="small">
           <Descriptions.Item label="ID">
             {content.id}
           </Descriptions.Item>
-          <Descriptions.Item label="Title">
+          <Descriptions.Item label="标题">
             {editing ? (
               <Input
                 value={editValues.title}
                 onChange={(e) => setEditValues({ ...editValues, title: e.target.value })}
-                placeholder="Content title"
+                placeholder="内容标题"
               />
             ) : (
               content.title
             )}
           </Descriptions.Item>
-          <Descriptions.Item label="Platform">
+          <Descriptions.Item label="平台">
             <Tag color={getPlatformColor(content.platform)}>
-              {content.platform}
+              {translatePlatform(content.platform)}
             </Tag>
           </Descriptions.Item>
           <Descriptions.Item label="URL">
@@ -193,21 +194,21 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
               )
             )}
           </Descriptions.Item>
-          <Descriptions.Item label="Publish Date">
+          <Descriptions.Item label="发布日期">
             {content.publishDate
               ? dayjs(content.publishDate).format('YYYY-MM-DD HH:mm')
               : '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="Created At">
+          <Descriptions.Item label="创建时间">
             {dayjs(content.createdAt).format('YYYY-MM-DD HH:mm')}
           </Descriptions.Item>
-          <Descriptions.Item label="Notes">
+          <Descriptions.Item label="备注">
             {editing ? (
               <TextArea
                 value={editValues.notes}
                 onChange={(e) => setEditValues({ ...editValues, notes: e.target.value })}
                 rows={3}
-                placeholder="Optional notes"
+                placeholder="可选备注"
               />
             ) : (
               content.notes || <Text type="secondary">-</Text>
@@ -217,18 +218,18 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
       </Card>
 
       {/* Performance Metrics - Funnel */}
-      <Card title="Performance Funnel" size="small">
+      <Card title="表现漏斗" size="small">
         <Row gutter={16}>
           <Col span={6}>
             <Statistic
-              title="Views"
+              title="观看"
               value={content.viewCount || 0}
               valueStyle={{ color: '#3f8600' }}
             />
           </Col>
           <Col span={6}>
             <Statistic
-              title="Clicks"
+              title="点击"
               value={content.clickCount}
               suffix={
                 <Text type="secondary" style={{ fontSize: '14px' }}>
@@ -240,7 +241,7 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
           </Col>
           <Col span={6}>
             <Statistic
-              title="Conversions"
+              title="转化"
               value={content.conversionCount}
               suffix={
                 <Text type="secondary" style={{ fontSize: '14px' }}>
@@ -252,7 +253,7 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
           </Col>
           <Col span={6}>
             <Statistic
-              title="Est. Earnings"
+              title="预估收益"
               value={content.estimatedEarnings || 0}
               prefix="¥"
               precision={2}
@@ -265,7 +266,7 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
       <Card
         title={
           <Space>
-            <span>Bound Assets ({boundAssets.length})</span>
+            <span>绑定资产（{boundAssets.length}）</span>
           </Space>
         }
         size="small"
@@ -277,13 +278,13 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
             onClick={onBindAssets}
             disabled={!can(Permission.CONTENT_BIND_ASSET)}
           >
-            Manage Bindings
+            管理绑定
           </Button>
         }
       >
         {boundAssets.length === 0 ? (
           <Empty
-            description="No assets bound"
+            description="暂无绑定资产"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
         ) : (
@@ -295,7 +296,7 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
                   title={
                     <Space>
                       <span>{asset.name}</span>
-                      <Tag color="blue">{asset.channelTag}</Tag>
+                      <Tag color="blue">{translateChannel(asset.channelTag)}</Tag>
                     </Space>
                   }
                   description={
@@ -305,10 +306,10 @@ const ContentDetailView: React.FC<ContentDetailViewProps> = ({
                       </Text>
                       <Space>
                         <Text type="secondary" style={{ fontSize: '12px' }}>
-                          {asset.clickCount} clicks
+                          {asset.clickCount} 次点击
                         </Text>
                         <Text type="secondary" style={{ fontSize: '12px' }}>
-                          {asset.conversionCount} conversions
+                          {asset.conversionCount} 次转化
                         </Text>
                       </Space>
                     </Space>

@@ -41,32 +41,32 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
 
   const handleAccept = () => {
     Modal.confirm({
-      title: 'Accept Resolution',
+      title: '接受处理结果',
       icon: <ExclamationCircleOutlined />,
       content: (
         <div>
           <p>
-            <strong>You are about to accept the resolution for this dispute.</strong>
+            <strong>你将接受此争议的处理结果。</strong>
           </p>
           <p>
-            Once accepted, this action is <strong>final and irreversible</strong>. You will not be able to appeal or reopen this case.
+            一旦接受，此操作将<strong>最终生效且不可撤销</strong>。你将无法申诉或重新打开此案件。
           </p>
-          <p>Are you sure you want to proceed?</p>
+          <p>确定要继续吗？</p>
         </div>
       ),
-      okText: 'Yes, Accept Resolution',
+      okText: '确认接受处理结果',
       okType: 'primary',
-      cancelText: 'Cancel',
+      cancelText: '取消',
       onOk: () => {
         onAcceptResolution();
-        message.success('Resolution accepted. Case is now closed.');
+        message.success('已接受处理结果，案件已关闭。');
       },
     });
   };
 
   const handleAppealSubmit = async () => {
     if (appealReason.trim().length < 100) {
-      message.error('Appeal reason must be at least 100 characters');
+      message.error('申诉原因至少需要 100 个字符');
       return;
     }
 
@@ -74,11 +74,11 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
 
     try {
       onAppealResolution(appealReason);
-      message.success('Appeal submitted successfully. Our team will review your case.');
+      message.success('申诉提交成功。我们的团队将重新审核你的案件。');
       setAppealModalVisible(false);
       setAppealReason('');
     } catch (error) {
-      message.error('Failed to submit appeal. Please try again.');
+      message.error('申诉提交失败，请重试。');
     } finally {
       setIsSubmitting(false);
     }
@@ -97,13 +97,13 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
           type="info"
           message={
             disputeCase.resolutionStatus === 'ACCEPTED'
-              ? 'Case Closed'
-              : 'Appeal Pending'
+              ? '案件已关闭'
+              : '申诉待处理'
           }
           description={
             disputeCase.resolutionStatus === 'ACCEPTED'
-              ? 'You have accepted the resolution. This case is now closed and cannot be reopened.'
-              : 'Your appeal has been submitted and is under review by our operations team. We will notify you once a decision is made.'
+              ? '你已接受处理结果。此案件现已关闭，无法重新打开。'
+              : '你的申诉已提交，运营团队正在审核。做出决定后我们会通知你。'
           }
           showIcon
         />
@@ -117,20 +117,20 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
       title={
         <Space>
           <ExclamationCircleOutlined style={{ color: '#1890ff' }} />
-          <span>Resolution Decision Required</span>
+          <span>需要确认处理结果</span>
         </Space>
       }
     >
       <Alert
         type="warning"
-        message="Action Required"
+        message="需要操作"
         description={
           <div>
             <p>
-              This dispute has been resolved. Please review the resolution details in the timeline and decide whether to accept or appeal.
+              此争议已解决。请在时间线中查看处理详情，并决定接受或申诉。
             </p>
             <p style={{ marginBottom: 0 }}>
-              <strong>Auto-close in {daysUntilAutoClose} day{daysUntilAutoClose !== 1 ? 's' : ''}:</strong> If no action is taken, this case will automatically close and the resolution will be considered accepted.
+              <strong>{daysUntilAutoClose} 天后自动关闭：</strong>如果未采取操作，此案件将自动关闭，处理结果将视为已接受。
             </p>
           </div>
         }
@@ -139,15 +139,15 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
       />
 
       <div style={{ padding: '16px 0' }}>
-        <Title level={5}>Resolution Summary</Title>
+        <Title level={5}>处理结果摘要</Title>
         <div style={{ backgroundColor: '#fafafa', padding: 16, borderRadius: 8, marginBottom: 16 }}>
           <Text>
-            {disputeCase.resolution || 'Please review the timeline for detailed resolution information.'}
+            {disputeCase.resolution || '请查看时间线了解详细处理信息。'}
           </Text>
         </div>
 
         <Text type="secondary" style={{ fontSize: 12 }}>
-          Resolved on: {disputeCase.resolvedAt ? formatDate(disputeCase.resolvedAt) : 'N/A'}
+          解决时间：{disputeCase.resolvedAt ? formatDate(disputeCase.resolvedAt) : '不适用'}
         </Text>
       </div>
 
@@ -158,7 +158,7 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
           icon={<CheckCircleOutlined />}
           onClick={handleAccept}
         >
-          Accept Resolution
+          接受处理结果
         </Button>
         <Button
           danger
@@ -166,31 +166,31 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
           icon={<CloseCircleOutlined />}
           onClick={() => setAppealModalVisible(true)}
         >
-          Appeal Decision
+          申诉决定
         </Button>
       </Space>
 
       <Modal
-        title="Appeal Resolution"
+        title="申诉处理结果"
         open={appealModalVisible}
         onOk={handleAppealSubmit}
         onCancel={() => {
           setAppealModalVisible(false);
           setAppealReason('');
         }}
-        okText="Submit Appeal"
+        okText="提交申诉"
         okButtonProps={{ disabled: appealReason.trim().length < 100, loading: isSubmitting }}
         width={600}
       >
         <Alert
           type="info"
-          message="Appeal Guidelines"
+          message="申诉指引"
           description={
             <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
-              <li>Clearly explain why you disagree with the resolution</li>
-              <li>Provide any additional evidence or context</li>
-              <li>Appeals are reviewed by senior operations team members</li>
-              <li>Appeal review may take 3-5 business days</li>
+              <li>清楚说明你不同意处理结果的原因</li>
+              <li>提供任何补充证据或背景信息</li>
+              <li>申诉将由高级运营成员审核</li>
+              <li>申诉审核可能需要 3-5 个工作日</li>
             </ul>
           }
           showIcon
@@ -200,7 +200,7 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
         <TextArea
           value={appealReason}
           onChange={(e) => setAppealReason(e.target.value)}
-          placeholder="Explain why you are appealing this resolution... (minimum 100 characters)"
+          placeholder="说明你为什么申诉此处理结果...（至少 100 个字符）"
           rows={6}
           maxLength={1000}
           showCount
@@ -208,7 +208,7 @@ export const ResolutionWorkflow: React.FC<ResolutionWorkflowProps> = ({
 
         {appealReason.trim().length > 0 && appealReason.trim().length < 100 && (
           <Text type="danger" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
-            Please provide at least {100 - appealReason.trim().length} more characters
+            请至少再输入 {100 - appealReason.trim().length} 个字符
           </Text>
         )}
       </Modal>

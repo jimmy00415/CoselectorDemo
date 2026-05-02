@@ -172,7 +172,7 @@ export function TableKit<T extends Record<string, any>>({
     showQuickJumper: true,
     pageSizeOptions: ['10', '20', '50', '100'],
     showTotal: (total: number, range: [number, number]) =>
-      `${range[0]}-${range[1]} of ${total} items`,
+      `${range[0]}-${range[1]} / 共 ${total} 条`,
   },
   onPaginationChange,
   emptyState,
@@ -252,7 +252,7 @@ export function TableKit<T extends Record<string, any>>({
           description={emptyState.description}
           action={
             emptyState.action || {
-              label: 'Clear filters',
+              label: '清除筛选',
               onClick: onFilterClear || (() => {}),
             }
           }
@@ -263,7 +263,7 @@ export function TableKit<T extends Record<string, any>>({
     // Default empty state
     return (
       <Empty
-        description="No data available"
+        description="暂无数据"
         image={Empty.PRESENTED_IMAGE_SIMPLE}
       />
     );
@@ -292,7 +292,7 @@ export function TableKit<T extends Record<string, any>>({
             ...(onRefresh
               ? [
                   {
-                    label: 'Refresh',
+                    label: '刷新',
                     icon: <ReloadOutlined />,
                     onClick: onRefresh,
                   },
@@ -306,7 +306,7 @@ export function TableKit<T extends Record<string, any>>({
             resultCount !== undefined ? (
               <Space>
                 <Text type="secondary">
-                  {resultCount} {resultCount === 1 ? 'item' : 'items'}
+                  共 {resultCount} 条
                 </Text>
               </Space>
             ) : undefined
@@ -361,7 +361,7 @@ export function TableKit<T extends Record<string, any>>({
             bordered
             size="middle"
             scroll={{ x: 'max-content' }}
-            aria-label={ariaLabel ? `${ariaLabel} table` : undefined}
+            aria-label={ariaLabel ? `${ariaLabel} 表格` : undefined}
             locale={{
               emptyText: renderEmptyState(),
             }}

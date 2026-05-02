@@ -12,14 +12,14 @@ const ProfilePage: React.FC = () => {
   return (
     <div>
       <PageBreadcrumb />
-      <Title level={2}>Profile & Compliance</Title>
+      <Title level={2}>资料与合规</Title>
       <Paragraph type="secondary">
-        Manage your profile and compliance documentation
+        管理你的资料和合规文件
       </Paragraph>
 
       <Card style={{ marginTop: 24 }}>
         <Paragraph>
-          Profile management and compliance documentation will be implemented here.
+          资料管理和合规文件将在此处实现。
         </Paragraph>
       </Card>
     </div>

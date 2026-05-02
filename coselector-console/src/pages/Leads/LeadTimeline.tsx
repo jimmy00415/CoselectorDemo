@@ -9,7 +9,14 @@ import {
 } from '@ant-design/icons';
 import { TimelineEvent } from '../../types';
 import { ActorType } from '../../types/enums';
-import { formatDate } from '../../utils';
+import {
+  formatDate,
+  translateActorName,
+  translateEventType,
+  translateReasonCode,
+  translateStatus,
+  translateText,
+} from '../../utils';
 
 /**
  * LeadTimeline Component
@@ -74,7 +81,7 @@ const getEventIcon = (eventType: string) => {
 
 export const LeadTimeline: React.FC<LeadTimelineProps> = ({ 
   events, 
-  title = 'Timeline & Audit Trail' 
+  title = '时间线与审计记录' 
 }) => {
   // Sort events by timestamp (newest first)
   const sortedEvents = [...events].sort((a, b) => 
@@ -85,7 +92,7 @@ export const LeadTimeline: React.FC<LeadTimelineProps> = ({
     return (
       <Card>
         <Title level={4}>{title}</Title>
-        <Text type="secondary">No timeline events yet</Text>
+        <Text type="secondary">暂无时间线事件</Text>
       </Card>
     );
   }
@@ -103,7 +110,7 @@ export const LeadTimeline: React.FC<LeadTimelineProps> = ({
               <Space direction="vertical" size={4} style={{ width: '100%' }}>
                 {/* Event Type & Timestamp */}
                 <Space>
-                  <Text strong>{event.eventType}</Text>
+                  <Text strong>{translateEventType(event.eventType)}</Text>
                   <Text type="secondary" style={{ fontSize: 12 }}>
                     {formatDate(event.occurredAt)}
                   </Text>
@@ -113,18 +120,18 @@ export const LeadTimeline: React.FC<LeadTimelineProps> = ({
                 <Space>
                   {getActorIcon(event.actorType)}
                   <Tag color={getActorColor(event.actorType)}>
-                    {event.actorType}
+                    {translateActorName(event.actorType)}
                   </Tag>
-                  <Text type="secondary">{event.actorName}</Text>
+                  <Text type="secondary">{translateActorName(event.actorName)}</Text>
                 </Space>
 
                 {/* Event Description */}
-                <Text>{event.description}</Text>
+                <Text>{translateText(event.description)}</Text>
 
                 {/* Reason Code (if present) */}
                 {event.reasonCode && (
                   <Tag color="orange" style={{ marginTop: 4 }}>
-                    Reason: {event.reasonCode}
+                    原因：{translateReasonCode(event.reasonCode)}
                   </Tag>
                 )}
 
@@ -139,7 +146,7 @@ export const LeadTimeline: React.FC<LeadTimelineProps> = ({
                     }}
                   >
                     <Text type="secondary" style={{ fontSize: 12 }}>
-                      Note: {event.metadata.reasonNote}
+                      备注：{translateText(event.metadata.reasonNote)}
                     </Text>
                   </Card>
                 )}
@@ -147,9 +154,9 @@ export const LeadTimeline: React.FC<LeadTimelineProps> = ({
                 {/* Status Transition Details */}
                 {event.metadata?.previousStatus && event.metadata?.newStatus && (
                   <Space size={4} style={{ marginTop: 4 }}>
-                    <Tag color="default">{event.metadata.previousStatus}</Tag>
+                    <Tag color="default">{translateStatus(event.metadata.previousStatus)}</Tag>
                     <Text type="secondary">→</Text>
-                    <Tag color="blue">{event.metadata.newStatus}</Tag>
+                    <Tag color="blue">{translateStatus(event.metadata.newStatus)}</Tag>
                   </Space>
                 )}
               </Space>

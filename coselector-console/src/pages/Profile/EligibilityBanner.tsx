@@ -44,18 +44,18 @@ export const EligibilityBanner: React.FC<EligibilityBannerProps> = ({
       if (userProfile.kycStatus === KYCStatus.NOT_STARTED) {
         issues.push({
           key: 'kyc',
-          label: 'KYC verification not started',
+          label: '尚未开始 KYC 验证',
           resolved: false,
-          action: 'Start KYC',
+          action: '开始 KYC',
           target: '/profile?tab=kyc&highlight=true',
           priority: 1,
         });
       } else if (userProfile.kycStatus === KYCStatus.REJECTED) {
         issues.push({
           key: 'kyc',
-          label: 'KYC verification rejected - resubmit required',
+          label: 'KYC 验证已拒绝 - 需要重新提交',
           resolved: false,
-          action: 'Resubmit KYC',
+          action: '重新提交 KYC',
           target: '/profile?tab=kyc&highlight=true',
           priority: 1,
         });
@@ -63,9 +63,9 @@ export const EligibilityBanner: React.FC<EligibilityBannerProps> = ({
         // Non-blocking for SUBMITTED (under review)
         issues.push({
           key: 'kyc',
-          label: 'KYC under review (non-blocking)',
+          label: 'KYC 审核中（不阻塞）',
           resolved: false,
-          action: 'Check Status',
+          action: '查看状态',
           target: '/profile?tab=kyc',
           priority: 3,
         });
@@ -76,18 +76,18 @@ export const EligibilityBanner: React.FC<EligibilityBannerProps> = ({
     if (!userProfile.bankAccount?.bankName) {
       issues.push({
         key: 'bank',
-        label: 'Bank account not configured',
+        label: '尚未配置银行账户',
         resolved: false,
-        action: 'Add Bank Account',
+        action: '添加银行账户',
         target: '/profile?tab=payout&highlight=true',
         priority: 2,
       });
     } else if (!userProfile.bankAccount?.verified) {
       issues.push({
         key: 'bank-verify',
-        label: 'Bank account not verified',
+        label: '银行账户尚未验证',
         resolved: false,
-        action: 'Verify Account',
+        action: '验证账户',
         target: '/profile?tab=payout&highlight=true',
         priority: 2,
       });
@@ -97,9 +97,9 @@ export const EligibilityBanner: React.FC<EligibilityBannerProps> = ({
     if (payableBalance < minThreshold) {
       issues.push({
         key: 'threshold',
-        label: `Payable balance below minimum threshold (¥${minThreshold})`,
+        label: `可提现余额低于最低门槛（¥${minThreshold}）`,
         resolved: false,
-        action: 'View Earnings',
+        action: '查看收益',
         target: '/earnings',
         priority: 3,
       });
@@ -109,9 +109,9 @@ export const EligibilityBanner: React.FC<EligibilityBannerProps> = ({
     if (userProfile.accountFrozen) {
       issues.push({
         key: 'frozen',
-        label: 'Account is frozen or under review',
+        label: '账户已冻结或正在审核',
         resolved: false,
-        action: 'Contact Support',
+        action: '联系支持',
         target: '/profile?tab=compliance',
         priority: 1,
       });
@@ -147,14 +147,14 @@ export const EligibilityBanner: React.FC<EligibilityBannerProps> = ({
     return (
       <Alert
         type="success"
-        message="Eligible for Payout"
-        description={`All requirements met. You can request a withdrawal for your payable balance of ¥${payableBalance.toFixed(2)}.`}
+        message="符合提现条件"
+        description={`所有要求均已满足。你可以申请提取 ¥${payableBalance.toFixed(2)} 的可提现余额。`}
         icon={<CheckCircleOutlined />}
         showIcon
         style={{ marginBottom: 16 }}
         action={
           <Button type="primary" size="small" onClick={() => navigate('/earnings?tab=payouts')}>
-            Request Payout
+            申请提现
           </Button>
         }
       />
@@ -164,12 +164,11 @@ export const EligibilityBanner: React.FC<EligibilityBannerProps> = ({
   return (
     <Alert
       type="error"
-      message="Payout Blocked"
+      message="提现受阻"
       description={
         <Space direction="vertical" size="small" style={{ width: '100%' }}>
           <span>
-            Please resolve the following issues before requesting a payout (
-            {blockingIssues.length} blocking):
+            申请提现前请先解决以下问题（{blockingIssues.length} 项阻塞）：
           </span>
           <Divider style={{ margin: '8px 0' }} />
           {issues.map((issue) => {
@@ -191,11 +190,11 @@ export const EligibilityBanner: React.FC<EligibilityBannerProps> = ({
                   <span>{issue.label}</span>
                   {isBlocking ? (
                     <Tag color="red" icon={<CloseCircleOutlined />}>
-                      Blocking
+                      阻塞
                     </Tag>
                   ) : (
                     <Tag color="orange" icon={<ExclamationCircleOutlined />}>
-                      Warning
+                      警告
                     </Tag>
                   )}
                 </Space>

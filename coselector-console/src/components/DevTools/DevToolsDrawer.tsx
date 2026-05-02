@@ -15,6 +15,7 @@ import { mockApi } from '../../services/mockApi';
 import type { Transaction, Lead } from '../../types';
 import { EarningsState, LeadStatus, KYCStatus, ReversalReason } from '../../types/enums';
 import { useAuth } from '../../contexts/AuthContext';
+import { translateReasonCode, translateStatus } from '../../utils/i18n';
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -52,7 +53,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       setTransactions(txs.filter(t => t.state !== EarningsState.REVERSED));
       setLeads(lds);
     } catch (error) {
-      message.error('Failed to load data');
+      message.error('数据加载失败');
     }
   };
 
@@ -76,7 +77,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
               tx.id,
               {
                 actorType: 'SYSTEM' as any,
-                actorName: 'System',
+                actorName: '系统',
                 transactionAmount: tx.amount,
               },
               EarningsState.PAYABLE
@@ -86,10 +87,10 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
         }
       }
 
-      message.success(`Time advanced ${advanceDays} days. ${updatedCount} transactions unlocked.`);
+      message.success(`时间已推进 ${advanceDays} 天，${updatedCount} 笔交易已解锁。`);
       loadData();
     } catch (error) {
-      message.error('Failed to advance time');
+      message.error('推进时间失败');
     } finally {
       setLoading(false);
     }
@@ -98,7 +99,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
   // Transaction Reversal
   const handleTriggerReversal = async () => {
     if (!selectedTransaction) {
-      message.warning('Please select a transaction');
+      message.warning('请选择交易');
       return;
     }
 
@@ -109,18 +110,18 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
         selectedTransaction,
         {
           actorType: 'SYSTEM' as any,
-          actorName: 'Dev Tools',
+          actorName: '开发工具',
           reasonCode: reversalReason,
           transactionAmount: tx?.amount || 0,
         },
         EarningsState.REVERSED
       );
 
-      message.success('Transaction reversed successfully');
+      message.success('交易已成功冲正');
       setSelectedTransaction('');
       loadData();
     } catch (error) {
-      message.error('Failed to reverse transaction');
+      message.error('交易冲正失败');
     } finally {
       setLoading(false);
     }
@@ -129,7 +130,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
   // Lead Status Changer
   const handleChangeLeadStatus = async () => {
     if (!selectedLead) {
-      message.warning('Please select a lead');
+      message.warning('请选择线索');
       return;
     }
 
@@ -137,7 +138,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
     try {
       const lead = leads.find(l => l.id === selectedLead);
       if (!lead) {
-        message.error('Lead not found');
+        message.error('未找到线索');
         return;
       }
 
@@ -145,16 +146,16 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
         selectedLead,
         {
           actorType: 'OPS_BD' as any,
-          actorName: 'Dev Tools',
+          actorName: '开发工具',
         },
         targetLeadStatus
       );
 
-      message.success(`Lead status changed to ${targetLeadStatus}`);
+      message.success(`线索状态已变更为 ${translateStatus(targetLeadStatus)}`);
       setSelectedLead('');
       loadData();
     } catch (error) {
-      message.error('Failed to change lead status');
+      message.error('线索状态变更失败');
     } finally {
       setLoading(false);
     }
@@ -163,7 +164,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
   // KYC Manager
   const handleKycAction = async () => {
     if (!user) {
-      message.error('User not found');
+      message.error('未找到用户');
       return;
     }
 
@@ -177,13 +178,13 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       if (kycAction === 'approve') {
         updates.kycApprovedAt = new Date().toISOString();
       } else {
-        updates.kycRejectionReason = 'Simulated rejection for testing purposes';
+        updates.kycRejectionReason = '用于测试的模拟拒绝';
       }
 
       await updateUser(updates);
-      message.success(`KYC ${kycAction === 'approve' ? 'approved' : 'rejected'} successfully`);
+      message.success(`KYC 已${kycAction === 'approve' ? '通过' : '拒绝'}`);
     } catch (error) {
-      message.error('Failed to update KYC status');
+      message.error('KYC 状态更新失败');
     } finally {
       setLoading(false);
     }
@@ -195,9 +196,9 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
     try {
       // Note: In real implementation, would save these via mockApi
       // Simulating generation without storing for demo purposes
-      message.success(`Generated ${generateCount} new events (simulated)`);
+      message.success(`已生成 ${generateCount} 个新事件（模拟）`);
     } catch (error) {
-      message.error('Failed to generate events');
+      message.error('事件生成失败');
     } finally {
       setLoading(false);
     }
@@ -208,11 +209,11 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
     setLoading(true);
     try {
       await mockApi.resetToSeedData();
-      message.success('Data reset to seed state successfully');
+      message.success('数据已重置为种子状态');
       loadData();
       window.location.reload(); // Reload to refresh all data
     } catch (error) {
-      message.error('Failed to reset data');
+      message.error('重置数据失败');
     } finally {
       setLoading(false);
     }
@@ -222,10 +223,10 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
     setLoading(true);
     try {
       await mockApi.clearAllData();
-      message.success('All data cleared successfully');
+      message.success('所有数据已清除');
       loadData();
     } catch (error) {
-      message.error('Failed to clear data');
+      message.error('清除数据失败');
     } finally {
       setLoading(false);
     }
@@ -237,15 +238,15 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       label: (
         <Space>
           <ClockCircleOutlined />
-          Time Machine
+          时间机器
         </Space>
       ),
       children: (
         <div style={{ padding: '16px 0' }}>
           <Alert
             type="info"
-            message="Simulate Time Passage"
-            description="Advance system time to unlock transactions and test deadline-based features."
+            message="模拟时间推进"
+            description="推进系统时间以解锁交易，并测试基于截止时间的功能。"
             showIcon
             style={{ marginBottom: 16 }}
           />
@@ -253,13 +254,13 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
           <Card>
             <Space direction="vertical" style={{ width: '100%' }} size="large">
               <div>
-                <Text strong>Advance Time By:</Text>
+                <Text strong>时间推进：</Text>
                 <InputNumber
                   value={advanceDays}
                   onChange={(val) => setAdvanceDays(val || 0)}
                   min={1}
                   max={365}
-                  addonAfter="days"
+                  addonAfter="天"
                   style={{ width: '100%', marginTop: 8 }}
                 />
               </div>
@@ -269,14 +270,14 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
               <Row gutter={16}>
                 <Col span={12}>
                   <Statistic
-                    title="Locked Transactions"
+                    title="已锁定交易"
                     value={transactions.filter(t => t.state === EarningsState.LOCKED).length}
                     prefix={<ClockCircleOutlined />}
                   />
                 </Col>
                 <Col span={12}>
                   <Statistic
-                    title="Will Unlock"
+                    title="将解锁"
                     value={transactions.filter(t => 
                       t.state === EarningsState.LOCKED && 
                       t.lockEndAt && 
@@ -296,7 +297,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
                 block
                 size="large"
               >
-                Advance Time
+                推进时间
               </Button>
             </Space>
           </Card>
@@ -308,15 +309,15 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       label: (
         <Space>
           <SwapOutlined />
-          Reversal
+          冲正
         </Space>
       ),
       children: (
         <div style={{ padding: '16px 0' }}>
           <Alert
             type="warning"
-            message="Trigger Transaction Reversal"
-            description="Simulate refunds, chargebacks, or fraud holds to test reversal handling."
+            message="触发交易冲正"
+            description="模拟退款、拒付或欺诈冻结，以测试冲正处理。"
             showIcon
             style={{ marginBottom: 16 }}
           />
@@ -324,35 +325,35 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
           <Card>
             <Space direction="vertical" style={{ width: '100%' }} size="large">
               <div>
-                <Text strong>Select Transaction:</Text>
+                <Text strong>选择交易：</Text>
                 <Select
                   value={selectedTransaction}
                   onChange={setSelectedTransaction}
                   style={{ width: '100%', marginTop: 8 }}
-                  placeholder="Choose a transaction to reverse"
+                  placeholder="选择要冲正的交易"
                   showSearch
                   filterOption={(input, option) =>
                     (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
                   options={transactions.map(tx => ({
                     value: tx.id,
-                    label: `${tx.id.substring(0, 8)} - ¥${tx.amount} (${tx.state})`,
+                    label: `${tx.id.substring(0, 8)} - ¥${tx.amount}（${translateStatus(tx.state)}）`,
                   }))}
                 />
               </div>
 
               <div>
-                <Text strong>Reversal Reason:</Text>
+                <Text strong>冲正原因：</Text>
                 <Select
                   value={reversalReason}
                   onChange={setReversalReason}
                   style={{ width: '100%', marginTop: 8 }}
                 >
-                  <Option value={ReversalReason.REFUND}>Refund</Option>
-                  <Option value={ReversalReason.DISPUTE_CHARGEBACK}>Dispute/Chargeback</Option>
-                  <Option value={ReversalReason.FRAUD_HOLD}>Fraud Hold</Option>
-                  <Option value={ReversalReason.ORDER_VOID_CANCEL}>Order Void/Cancel</Option>
-                  <Option value={ReversalReason.SYSTEM_REATTRIBUTED}>System Reattributed</Option>
+                  <Option value={ReversalReason.REFUND}>{translateReasonCode(ReversalReason.REFUND)}</Option>
+                  <Option value={ReversalReason.DISPUTE_CHARGEBACK}>{translateReasonCode(ReversalReason.DISPUTE_CHARGEBACK)}</Option>
+                  <Option value={ReversalReason.FRAUD_HOLD}>{translateReasonCode(ReversalReason.FRAUD_HOLD)}</Option>
+                  <Option value={ReversalReason.ORDER_VOID_CANCEL}>{translateReasonCode(ReversalReason.ORDER_VOID_CANCEL)}</Option>
+                  <Option value={ReversalReason.SYSTEM_REATTRIBUTED}>{translateReasonCode(ReversalReason.SYSTEM_REATTRIBUTED)}</Option>
                 </Select>
               </div>
 
@@ -365,7 +366,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
                 block
                 size="large"
               >
-                Trigger Reversal
+                触发冲正
               </Button>
             </Space>
           </Card>
@@ -377,15 +378,15 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       label: (
         <Space>
           <CheckCircleOutlined />
-          Leads
+          线索
         </Space>
       ),
       children: (
         <div style={{ padding: '16px 0' }}>
           <Alert
             type="info"
-            message="Simulate Lead Review"
-            description="Change lead status to test approval/rejection workflows."
+            message="模拟线索审核"
+            description="变更线索状态以测试通过/拒绝工作流。"
             showIcon
             style={{ marginBottom: 16 }}
           />
@@ -393,34 +394,34 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
           <Card>
             <Space direction="vertical" style={{ width: '100%' }} size="large">
               <div>
-                <Text strong>Select Lead:</Text>
+                <Text strong>选择线索：</Text>
                 <Select
                   value={selectedLead}
                   onChange={setSelectedLead}
                   style={{ width: '100%', marginTop: 8 }}
-                  placeholder="Choose a lead"
+                  placeholder="选择线索"
                   showSearch
                   filterOption={(input, option) =>
                     (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
                   }
                   options={leads.map(lead => ({
                     value: lead.id,
-                    label: `${lead.merchantName} (${lead.status})`,
+                    label: `${lead.merchantName}（${translateStatus(lead.status)}）`,
                   }))}
                 />
               </div>
 
               <div>
-                <Text strong>Change Status To:</Text>
+                <Text strong>变更状态为：</Text>
                 <Select
                   value={targetLeadStatus}
                   onChange={setTargetLeadStatus}
                   style={{ width: '100%', marginTop: 8 }}
                 >
-                  <Option value={LeadStatus.APPROVED}>Approved</Option>
-                  <Option value={LeadStatus.REJECTED}>Rejected</Option>
-                  <Option value={LeadStatus.INFO_REQUESTED}>Info Requested</Option>
-                  <Option value={LeadStatus.UNDER_REVIEW}>Under Review</Option>
+                  <Option value={LeadStatus.APPROVED}>{translateStatus(LeadStatus.APPROVED)}</Option>
+                  <Option value={LeadStatus.REJECTED}>{translateStatus(LeadStatus.REJECTED)}</Option>
+                  <Option value={LeadStatus.INFO_REQUESTED}>{translateStatus(LeadStatus.INFO_REQUESTED)}</Option>
+                  <Option value={LeadStatus.UNDER_REVIEW}>{translateStatus(LeadStatus.UNDER_REVIEW)}</Option>
                 </Select>
               </div>
 
@@ -433,7 +434,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
                 block
                 size="large"
               >
-                Change Status
+                变更状态
               </Button>
             </Space>
           </Card>
@@ -452,8 +453,8 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
         <div style={{ padding: '16px 0' }}>
           <Alert
             type="info"
-            message="KYC Status Manager"
-            description="Approve or reject KYC submissions to test payout eligibility flows."
+            message="KYC 状态管理"
+            description="通过或拒绝 KYC 提交，以测试提现资格流程。"
             showIcon
             style={{ marginBottom: 16 }}
           />
@@ -461,21 +462,21 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
           <Card>
             <Space direction="vertical" style={{ width: '100%' }} size="large">
               <div>
-                <Text strong>Current KYC Status:</Text>
+                <Text strong>当前 KYC 状态：</Text>
                 <div style={{ marginTop: 8 }}>
-                  <Text code>{user?.kycStatus || 'NOT_STARTED'}</Text>
+                  <Text code>{translateStatus(user?.kycStatus || 'NOT_STARTED')}</Text>
                 </div>
               </div>
 
               <div>
-                <Text strong>Action:</Text>
+                <Text strong>操作：</Text>
                 <Select
                   value={kycAction}
                   onChange={setKycAction}
                   style={{ width: '100%', marginTop: 8 }}
                 >
-                  <Option value="approve">Approve KYC</Option>
-                  <Option value="reject">Reject KYC</Option>
+                  <Option value="approve">通过 KYC</Option>
+                  <Option value="reject">拒绝 KYC</Option>
                 </Select>
               </div>
 
@@ -487,7 +488,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
                 block
                 size="large"
               >
-                Execute Action
+                执行操作
               </Button>
             </Space>
           </Card>
@@ -499,15 +500,15 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       label: (
         <Space>
           <ThunderboltOutlined />
-          Generate
+          生成
         </Space>
       ),
       children: (
         <div style={{ padding: '16px 0' }}>
           <Alert
             type="info"
-            message="Event Generator"
-            description="Create new clicks, registrations, and orders for testing."
+            message="事件生成器"
+            description="创建新的点击、注册和订单事件用于测试。"
             showIcon
             style={{ marginBottom: 16 }}
           />
@@ -515,7 +516,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
           <Card>
             <Space direction="vertical" style={{ width: '100%' }} size="large">
               <div>
-                <Text strong>Number of Events:</Text>
+                <Text strong>事件数量：</Text>
                 <InputNumber
                   value={generateCount}
                   onChange={(val) => setGenerateCount(val || 0)}
@@ -527,8 +528,8 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
 
               <Alert
                 type="warning"
-                message="Simulated Generation"
-                description="This will simulate event generation. Refresh the page to see real changes."
+                message="模拟生成"
+                description="这将模拟事件生成。刷新页面可查看实际变化。"
                 showIcon
               />
 
@@ -540,7 +541,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
                 block
                 size="large"
               >
-                Generate Events
+                生成事件
               </Button>
             </Space>
           </Card>
@@ -552,15 +553,15 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       label: (
         <Space>
           <ReloadOutlined />
-          Data
+          数据
         </Space>
       ),
       children: (
         <div style={{ padding: '16px 0' }}>
           <Alert
             type="warning"
-            message="Data Management"
-            description="Reset or clear all data. Use with caution!"
+            message="数据管理"
+            description="重置或清除所有数据，请谨慎使用。"
             showIcon
             style={{ marginBottom: 16 }}
           />
@@ -568,9 +569,9 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
           <Card>
             <Space direction="vertical" style={{ width: '100%' }} size="large">
               <div>
-                <Title level={5}>Reset to Seed Data</Title>
+                <Title level={5}>重置为种子数据</Title>
                 <Text type="secondary">
-                  Restore original seed data with all default values.
+                  恢复包含默认值的原始种子数据。
                 </Text>
                 <Button
                   type="primary"
@@ -581,16 +582,16 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
                   size="large"
                   style={{ marginTop: 12 }}
                 >
-                  Reset Data
+                  重置数据
                 </Button>
               </div>
 
               <Divider />
 
               <div>
-                <Title level={5}>Clear All Data</Title>
+                <Title level={5}>清除所有数据</Title>
                 <Text type="secondary">
-                  Delete all data from localStorage. Cannot be undone.
+                  从 localStorage 删除所有数据。此操作无法撤销。
                 </Text>
                 <Button
                   danger
@@ -601,7 +602,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
                   size="large"
                   style={{ marginTop: 12 }}
                 >
-                  Clear All Data
+                  清除所有数据
                 </Button>
               </div>
             </Space>
@@ -616,7 +617,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       title={
         <Space>
           <WarningOutlined style={{ color: '#faad14' }} />
-          <span>Development Tools</span>
+          <span>开发工具</span>
         </Space>
       }
       placement="right"
@@ -626,8 +627,8 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
     >
       <Alert
         type="warning"
-        message="Prototype Tools Only"
-        description="These tools are for testing and demonstration purposes. They simulate backend operations using localStorage."
+        message="仅限原型工具"
+        description="这些工具用于测试和演示，通过 localStorage 模拟后端操作。"
         showIcon
         style={{ marginBottom: 16 }}
       />

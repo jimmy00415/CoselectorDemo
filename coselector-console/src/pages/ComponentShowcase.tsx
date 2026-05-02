@@ -19,7 +19,7 @@ import {
 import type { DataTableColumn, RowAction, DrawerSection, FilterConfig } from '../components';
 import { TimelineEvent } from '../types';
 import { ActorType } from '../types/enums';
-import { formatCurrency, formatDate, getStatusColor } from '../utils';
+import { formatCurrency, formatDate, getStatusColor, translateStatus } from '../utils';
 
 const { Title, Paragraph } = Typography;
 
@@ -47,24 +47,24 @@ const ComponentShowcase: React.FC = () => {
   const sampleData: SampleRecord[] = [
     {
       id: '1',
-      name: 'Sample Asset 1',
-      type: 'Short Link',
+      name: '示例资产 1',
+      type: '短链接',
       status: 'ACTIVE',
       amount: 1500.50,
       date: '2026-01-01',
     },
     {
       id: '2',
-      name: 'Sample Asset 2',
-      type: 'QR Code',
+      name: '示例资产 2',
+      type: '二维码',
       status: 'PENDING',
       amount: 2300.75,
       date: '2026-01-02',
     },
     {
       id: '3',
-      name: 'Sample Asset 3',
-      type: 'Invite Code',
+      name: '示例资产 3',
+      type: '邀请码',
       status: 'LOCKED',
       amount: 980.00,
       date: '2026-01-03',
@@ -74,33 +74,33 @@ const ComponentShowcase: React.FC = () => {
   // Table columns
   const columns: DataTableColumn<SampleRecord>[] = [
     {
-      title: 'Name',
+      title: '名称',
       dataIndex: 'name',
       key: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
       searchable: true,
     },
     {
-      title: 'Type',
+      title: '类型',
       dataIndex: 'type',
       key: 'type',
       filters: [
-        { text: 'Short Link', value: 'Short Link' },
-        { text: 'QR Code', value: 'QR Code' },
-        { text: 'Invite Code', value: 'Invite Code' },
+        { text: '短链接', value: '短链接' },
+        { text: '二维码', value: '二维码' },
+        { text: '邀请码', value: '邀请码' },
       ],
       onFilter: (value, record) => record.type === value,
     },
     {
-      title: 'Status',
+      title: '状态',
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
-        <Tag color={getStatusColor(status)}>{status}</Tag>
+        <Tag color={getStatusColor(status)}>{translateStatus(status)}</Tag>
       ),
     },
     {
-      title: 'Amount',
+      title: '金额',
       dataIndex: 'amount',
       key: 'amount',
       align: 'right',
@@ -108,7 +108,7 @@ const ComponentShowcase: React.FC = () => {
       render: (amount: number) => formatCurrency(amount),
     },
     {
-      title: 'Date',
+      title: '日期',
       dataIndex: 'date',
       key: 'date',
       sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
@@ -120,7 +120,7 @@ const ComponentShowcase: React.FC = () => {
   const rowActions: RowAction<SampleRecord>[] = [
     {
       key: 'view',
-      label: 'View',
+      label: '查看',
       icon: <EyeOutlined />,
       onClick: (record) => {
         setSelectedRecord(record);
@@ -129,7 +129,7 @@ const ComponentShowcase: React.FC = () => {
     },
     {
       key: 'edit',
-      label: 'Edit',
+      label: '编辑',
       icon: <EditOutlined />,
       onClick: (_record) => {
         // Edit functionality to be implemented
@@ -137,7 +137,7 @@ const ComponentShowcase: React.FC = () => {
     },
     {
       key: 'delete',
-      label: 'Delete',
+      label: '删除',
       icon: <DeleteOutlined />,
       danger: true,
       onClick: (record) => {
@@ -151,21 +151,21 @@ const ComponentShowcase: React.FC = () => {
   const drawerSections: DrawerSection[] = [
     {
       key: 'basic',
-      title: 'Basic Information',
+      title: '基础信息',
       collapsible: false,
       content: (
         <Descriptions column={1}>
-          <Descriptions.Item label="Name">{selectedRecord?.name}</Descriptions.Item>
-          <Descriptions.Item label="Type">{selectedRecord?.type}</Descriptions.Item>
-          <Descriptions.Item label="Status">
+          <Descriptions.Item label="名称">{selectedRecord?.name}</Descriptions.Item>
+          <Descriptions.Item label="类型">{selectedRecord?.type}</Descriptions.Item>
+          <Descriptions.Item label="状态">
             <Tag color={getStatusColor(selectedRecord?.status || '')}>
-              {selectedRecord?.status}
+              {translateStatus(selectedRecord?.status || '')}
             </Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="Amount">
+          <Descriptions.Item label="金额">
             {formatCurrency(selectedRecord?.amount || 0)}
           </Descriptions.Item>
-          <Descriptions.Item label="Date">
+          <Descriptions.Item label="日期">
             {formatDate(selectedRecord?.date || '')}
           </Descriptions.Item>
         </Descriptions>
@@ -173,12 +173,11 @@ const ComponentShowcase: React.FC = () => {
     },
     {
       key: 'details',
-      title: 'Additional Details',
+      title: '补充详情',
       defaultOpen: false,
       content: (
         <Paragraph>
-          This is additional information about the selected record. It can contain
-          any React component or HTML content.
+          这里展示所选记录的补充信息，可放置任意 React 组件或 HTML 内容。
         </Paragraph>
       ),
     },
@@ -189,27 +188,27 @@ const ComponentShowcase: React.FC = () => {
     {
       id: '1',
       actorType: ActorType.SYSTEM,
-      actorName: 'System',
+      actorName: '系统',
       occurredAt: '2026-01-04T10:00:00Z',
       eventType: 'Created',
-      description: 'Record was created',
+      description: '记录已创建',
     },
     {
       id: '2',
       actorType: ActorType.CO_SELECTOR,
-      actorName: 'John Doe',
+      actorName: '张三',
       occurredAt: '2026-01-04T11:30:00Z',
       eventType: 'Status Changed',
-      description: 'Status changed from Draft to Active',
+      description: '状态已从草稿变更为启用',
       reasonCode: 'USER_ACTION',
     },
     {
       id: '3',
       actorType: ActorType.OPS,
-      actorName: 'Admin User',
+      actorName: '管理员',
       occurredAt: '2026-01-04T14:15:00Z',
       eventType: 'Approved',
-      description: 'Record approved for processing',
+      description: '记录已批准处理',
       reasonCode: 'VERIFICATION_COMPLETE',
     },
   ];
@@ -218,59 +217,59 @@ const ComponentShowcase: React.FC = () => {
   const filterConfig: FilterConfig[] = [
     {
       key: 'type',
-      label: 'Type',
+      label: '类型',
       type: 'select',
       options: [
-        { label: 'Short Link', value: 'short_link' },
-        { label: 'QR Code', value: 'qr_code' },
-        { label: 'Invite Code', value: 'invite_code' },
+        { label: '短链接', value: 'short_link' },
+        { label: '二维码', value: 'qr_code' },
+        { label: '邀请码', value: 'invite_code' },
       ],
     },
     {
       key: 'status',
-      label: 'Status',
+      label: '状态',
       type: 'multiSelect',
       options: [
-        { label: 'Active', value: 'active' },
-        { label: 'Pending', value: 'pending' },
-        { label: 'Locked', value: 'locked' },
+        { label: '启用', value: 'active' },
+        { label: '待处理', value: 'pending' },
+        { label: '已锁定', value: 'locked' },
       ],
     },
     {
       key: 'dateRange',
-      label: 'Date Range',
+      label: '日期范围',
       type: 'dateRange',
       advanced: true,
     },
     {
       key: 'search',
-      label: 'Search',
+      label: '搜索',
       type: 'input',
-      placeholder: 'Search by name...',
+      placeholder: '按名称搜索...',
       advanced: true,
     },
   ];
 
   return (
     <div className="app-content">
-      <Title level={2}>Component Showcase</Title>
+      <Title level={2}>组件展示</Title>
       <Paragraph>
-        This page demonstrates all reusable components in the design system.
+        此页面展示设计系统中的所有可复用组件。
       </Paragraph>
 
       <Divider />
 
       {/* KPI Cards */}
       <section>
-        <Title level={3}>KPI Cards</Title>
+        <Title level={3}>KPI 卡片</Title>
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={8} lg={6}>
             <KPICard
-              title="Total Revenue"
+              title="总收入"
               value={formatCurrency(125000)}
               change={12.5}
               changeType="increase"
-              tooltip="Total revenue for this period"
+              tooltip="本周期总收入"
               onClick={() => {
                 // Navigate to revenue detail
               }}
@@ -278,7 +277,7 @@ const ComponentShowcase: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} md={8} lg={6}>
             <KPICard
-              title="Active Assets"
+              title="启用资产"
               value={1523}
               change={-3.2}
               changeType="decrease"
@@ -289,7 +288,7 @@ const ComponentShowcase: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} md={8} lg={6}>
             <KPICard
-              title="Conversion Rate"
+              title="转化率"
               value="3.45%"
               change={8.1}
               changeType="increase"
@@ -297,9 +296,9 @@ const ComponentShowcase: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} md={8} lg={6}>
             <KPICard
-              title="Pending Review"
+              title="待审核"
               value={45}
-              tooltip="Items waiting for review"
+              tooltip="等待审核的项目"
             />
           </Col>
         </Row>
@@ -309,10 +308,10 @@ const ComponentShowcase: React.FC = () => {
 
       {/* Action Bar */}
       <section>
-        <Title level={3}>Action Bar</Title>
+        <Title level={3}>操作栏</Title>
         <ActionBar
           primaryAction={{
-            label: 'Create New',
+            label: '新建',
             icon: <PlusOutlined />,
             onClick: () => {
               // Open create modal
@@ -320,7 +319,7 @@ const ComponentShowcase: React.FC = () => {
           }}
           secondaryActions={[
             {
-              label: 'Export',
+              label: '导出',
               onClick: () => {
                 // Export data
               },
@@ -329,7 +328,7 @@ const ComponentShowcase: React.FC = () => {
           bulkActions={[
             {
               key: 'delete',
-              label: 'Delete Selected',
+              label: '删除所选',
               danger: true,
               onClick: () => {
                 // Bulk delete action
@@ -344,7 +343,7 @@ const ComponentShowcase: React.FC = () => {
 
       {/* Data Table with Filters */}
       <section>
-        <Title level={3}>Data Table with Filters</Title>
+        <Title level={3}>带筛选的数据表</Title>
         <Row gutter={16}>
           <Col xs={24} lg={6}>
             <FilterRail
@@ -374,12 +373,12 @@ const ComponentShowcase: React.FC = () => {
                 // Refresh table data
               }}
               searchable
-              searchPlaceholder="Search records..."
+              searchPlaceholder="搜索记录..."
               exportable
               onExport={() => {
                 // Export data to CSV
               }}
-              ariaLabel="Sample data table"
+              ariaLabel="示例数据表"
             />
           </Col>
         </Row>
@@ -389,7 +388,7 @@ const ComponentShowcase: React.FC = () => {
 
       {/* Timeline */}
       <section>
-        <Title level={3}>Timeline (Audit Trail)</Title>
+        <Title level={3}>时间线（审计轨迹）</Title>
         <Timeline events={timelineEvents} showRelativeTime />
       </section>
 
@@ -397,18 +396,18 @@ const ComponentShowcase: React.FC = () => {
 
       {/* Empty State */}
       <section>
-        <Title level={3}>Empty State</Title>
+        <Title level={3}>空状态</Title>
         <EmptyState
-          title="No data available"
-          description="Get started by creating your first item"
+          title="暂无数据"
+          description="创建第一个项目开始使用"
           action={{
-            label: 'Create Item',
+            label: '创建项目',
             onClick: () => {
               // Open create dialog
             },
           }}
           secondaryAction={{
-            label: 'Learn More',
+            label: '了解更多',
             onClick: () => {
               // Open documentation
             },
@@ -420,17 +419,17 @@ const ComponentShowcase: React.FC = () => {
       <DetailsDrawer
         visible={drawerVisible}
         onClose={() => setDrawerVisible(false)}
-        title={`Details: ${selectedRecord?.name || ''}`}
+        title={`详情：${selectedRecord?.name || ''}`}
         sections={drawerSections}
         headerActions={
           <Button size="small" icon={<EditOutlined />}>
-            Edit
+            编辑
           </Button>
         }
         footerActions={
           <>
-            <Button onClick={() => setDrawerVisible(false)}>Close</Button>
-            <Button type="primary">Save Changes</Button>
+            <Button onClick={() => setDrawerVisible(false)}>关闭</Button>
+            <Button type="primary">保存更改</Button>
           </>
         }
       />
@@ -439,11 +438,11 @@ const ComponentShowcase: React.FC = () => {
       <ConfirmModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        title="Delete Record?"
-        message={`Are you sure you want to delete "${selectedRecord?.name}"?`}
-        consequenceText="This action cannot be undone. The record will be permanently deleted."
-        confirmText="Delete"
-        cancelText="Cancel"
+        title="删除记录？"
+        message={`确定要删除“${selectedRecord?.name}”吗？`}
+        consequenceText="此操作无法撤销。记录将被永久删除。"
+        confirmText="删除"
+        cancelText="取消"
         danger
         onConfirm={async () => {
           // Simulate async delete operation

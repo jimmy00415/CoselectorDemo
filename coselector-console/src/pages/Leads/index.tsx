@@ -63,7 +63,7 @@ export const Leads: React.FC = () => {
       const data = await mockApi.leads.getAll();
       setLeads(data);
     } catch (error) {
-      message.error('Failed to load leads');
+      message.error('线索加载失败');
       console.error(error);
     } finally {
       setLoading(false);
@@ -105,11 +105,11 @@ export const Leads: React.FC = () => {
         ...values as any,
         status: LeadStatus.DRAFT,
       });
-      message.success('Lead created successfully');
+      message.success('线索创建成功');
       setCreateModalVisible(false);
       loadLeads();
     } catch (error) {
-      message.error('Failed to create lead');
+      message.error('线索创建失败');
       console.error(error);
     }
   };
@@ -119,12 +119,12 @@ export const Leads: React.FC = () => {
 
     try {
       await mockApi.leads.update(selectedLead.id, values);
-      message.success('Lead updated successfully');
+      message.success('线索更新成功');
       setEditModalVisible(false);
       setSelectedLead(null);
       loadLeads();
     } catch (error) {
-      message.error('Failed to update lead');
+      message.error('线索更新失败');
       console.error(error);
     }
   };
@@ -136,7 +136,7 @@ export const Leads: React.FC = () => {
   const handleEditClick = (lead: Lead) => {
     // Permission check: Can only edit DRAFT or INFO_REQUESTED
     if (lead.status !== LeadStatus.DRAFT && lead.status !== LeadStatus.INFO_REQUESTED) {
-      message.warning('Can only edit leads in DRAFT or INFO_REQUESTED status');
+      message.warning('只能编辑草稿或需补充信息状态的线索');
       return;
     }
 
@@ -146,15 +146,16 @@ export const Leads: React.FC = () => {
 
   const handleSubmitLead = (lead: Lead) => {
     Modal.confirm({
-      title: 'Submit Lead for Review',
+      title: '提交线索审核',
       icon: <ExclamationCircleOutlined />,
-      content: 'Are you sure you want to submit this lead? It will be sent to the operations team for review.',
-      okText: 'Submit',
+      content: '确定要提交此线索吗？线索将发送给运营团队审核。',
+      okText: '提交',
+      cancelText: '取消',
       onOk: async () => {
         try {
           // Check if required fields are complete
           if (hasMissingInfo(lead)) {
-            message.warning('Please complete all required fields before submitting');
+            message.warning('请先补全所有必填字段再提交');
             return;
           }
 
@@ -163,13 +164,13 @@ export const Leads: React.FC = () => {
             {
               currentStatus: lead.status,
               actorType: ActorType.CO_SELECTOR,
-              actorName: user?.displayName || 'Unknown User',
+              actorName: user?.displayName || '未知用户',
             },
             LeadStatus.SUBMITTED
           );
 
           if (!result.isValid) {
-            message.error(result.error || 'Cannot submit lead');
+            message.error(result.error || '无法提交线索');
             return;
           }
 
@@ -181,10 +182,10 @@ export const Leads: React.FC = () => {
             lastUpdatedAt: new Date().toISOString(),
           });
 
-          message.success('Lead submitted successfully');
+          message.success('线索提交成功');
           loadLeads();
         } catch (error) {
-          message.error('Failed to submit lead');
+          message.error('线索提交失败');
           console.error(error);
         }
       },
@@ -197,33 +198,34 @@ export const Leads: React.FC = () => {
       const { id, timeline, ...leadData } = lead; // Omit id and timeline
       await mockApi.leads.create({
         ...leadData,
-        merchantName: `${lead.merchantName} (Copy)`,
+        merchantName: `${lead.merchantName}（副本）`,
         status: LeadStatus.DRAFT,
         submittedAt: undefined,
         lastUpdatedAt: new Date().toISOString(),
         assignedOwner: undefined,
       });
-      message.success('Lead duplicated successfully');
+      message.success('线索复制成功');
       loadLeads();
     } catch (error) {
-      message.error('Failed to duplicate lead');
+      message.error('线索复制失败');
       console.error(error);
     }
   };
 
   const handleDelete = (lead: Lead) => {
     Modal.confirm({
-      title: 'Delete Lead',
-      content: 'Are you sure you want to delete this lead? This action cannot be undone.',
-      okText: 'Delete',
+      title: '删除线索',
+      content: '确定要删除此线索吗？此操作无法撤销。',
+      okText: '删除',
+      cancelText: '取消',
       okType: 'danger',
       onOk: async () => {
         try {
           await mockApi.leads.delete(lead.id);
-          message.success('Lead deleted successfully');
+          message.success('线索删除成功');
           loadLeads();
         } catch (error) {
-          message.error('Failed to delete lead');
+          message.error('线索删除失败');
           console.error(error);
         }
       },
@@ -238,26 +240,26 @@ export const Leads: React.FC = () => {
         render: (_: any, record: Lead) => (
           <Space size="small">
             <Button type="link" size="small" onClick={() => handleView(record)}>
-              View
+              查看
             </Button>
             {canEdit && (record.status === LeadStatus.DRAFT || record.status === LeadStatus.INFO_REQUESTED) && (
               <Button type="link" size="small" onClick={() => handleEditClick(record)}>
-                Edit
+                编辑
               </Button>
             )}
             {canSubmit && record.status === LeadStatus.DRAFT && (
               <Button type="link" size="small" onClick={() => handleSubmitLead(record)}>
-                Submit
+                提交
               </Button>
             )}
             {canCreate && (
               <Button type="link" size="small" onClick={() => handleDuplicate(record)}>
-                Duplicate
+                复制
               </Button>
             )}
             {canEdit && record.status === LeadStatus.DRAFT && (
               <Button type="link" size="small" danger onClick={() => handleDelete(record)}>
-                Delete
+                删除
               </Button>
             )}
           </Space>
@@ -273,8 +275,8 @@ export const Leads: React.FC = () => {
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>Co-selection Leads</h1>
-            <p style={{ margin: '8px 0 0 0', color: '#8c8c8c' }}>Submit and track merchant leads through the review process</p>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>协同遴选线索</h1>
+            <p style={{ margin: '8px 0 0 0', color: '#8c8c8c' }}>提交并追踪商户线索的审核流程</p>
           </div>
           {canCreate && (
             <Button
@@ -282,7 +284,7 @@ export const Leads: React.FC = () => {
               icon={<PlusOutlined />}
               onClick={() => setCreateModalVisible(true)}
             >
-              Submit New Lead
+              提交新线索
             </Button>
           )}
         </div>
@@ -293,7 +295,7 @@ export const Leads: React.FC = () => {
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={6}>
             <Select
-              placeholder="Status"
+              placeholder="状态"
               value={statusFilter}
               onChange={setStatusFilter}
               options={leadFilterOptions.status}
@@ -302,7 +304,7 @@ export const Leads: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} md={6}>
             <Select
-              placeholder="Category"
+              placeholder="类目"
               value={categoryFilter}
               onChange={setCategoryFilter}
               options={leadFilterOptions.category}
@@ -311,7 +313,7 @@ export const Leads: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} md={6}>
             <Select
-              placeholder="Region"
+              placeholder="区域"
               value={regionFilter}
               onChange={setRegionFilter}
               options={leadFilterOptions.region}
@@ -320,7 +322,7 @@ export const Leads: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} md={6}>
             <Select
-              placeholder="Owner Assigned"
+              placeholder="负责人分配"
               value={ownerFilter}
               onChange={setOwnerFilter}
               options={leadFilterOptions.ownerAssigned}
@@ -329,7 +331,7 @@ export const Leads: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} md={6}>
             <Select
-              placeholder="Missing Info"
+              placeholder="缺失信息"
               value={missingInfoFilter}
               onChange={setMissingInfoFilter}
               options={leadFilterOptions.missingInfo}
@@ -338,7 +340,7 @@ export const Leads: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} md={10}>
             <RangePicker
-              placeholder={['Submitted From', 'Submitted To']}
+              placeholder={['提交起始日', '提交结束日']}
               onChange={(dates) => setDateRange(dates as any)}
               style={{ width: '100%' }}
             />
@@ -354,7 +356,7 @@ export const Leads: React.FC = () => {
                 setDateRange(null);
               }}
             >
-              Clear Filters
+              清除筛选
             </Button>
           </Col>
         </Row>
@@ -369,7 +371,7 @@ export const Leads: React.FC = () => {
         pagination={{
           pageSize: 20,
           showSizeChanger: true,
-          showTotal: (total) => `Total ${total} leads`,
+          showTotal: (total) => `共 ${total} 条线索`,
         }}
         scroll={{ x: 1200 }}
       />

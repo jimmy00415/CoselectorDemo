@@ -10,6 +10,7 @@ import {
 import type { DisputeCase } from '../../types';
 import { DisputeStatus } from '../../types/enums';
 import { formatDate } from '../../utils/format';
+import { translateStatus, translateText } from '../../utils/i18n';
 
 interface DisputeListTableProps {
   disputes: DisputeCase[];
@@ -42,25 +43,25 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
     if (daysRemaining <= 0) {
       return (
         <Tag color="red" icon={<ExclamationCircleOutlined />}>
-          OVERDUE
+          已逾期
         </Tag>
       );
     } else if (daysRemaining <= 2) {
       return (
         <Tag color="red" icon={<ClockCircleOutlined />}>
-          {daysRemaining}d left
+          剩余 {daysRemaining} 天
         </Tag>
       );
     } else if (daysRemaining <= 7) {
       return (
         <Tag color="orange" icon={<ClockCircleOutlined />}>
-          {daysRemaining}d left
+          剩余 {daysRemaining} 天
         </Tag>
       );
     } else {
       return (
         <Tag color="green" icon={<CheckCircleOutlined />}>
-          On track
+          正常
         </Tag>
       );
     }
@@ -83,7 +84,7 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
 
   const columns: ColumnsType<DisputeCase> = [
     {
-      title: 'Case ID',
+      title: '案件 ID',
       dataIndex: 'id',
       key: 'id',
       width: 120,
@@ -94,14 +95,14 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
       ),
     },
     {
-      title: 'Type',
+      title: '类型',
       dataIndex: 'type',
       key: 'type',
       width: 180,
-      render: (type: string) => type || 'Transaction Dispute',
+      render: (type: string) => translateText(type) || '交易争议',
     },
     {
-      title: 'Transaction ID',
+      title: '交易 ID',
       dataIndex: 'transactionId',
       key: 'transactionId',
       width: 140,
@@ -112,22 +113,22 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
       ),
     },
     {
-      title: 'Status',
+      title: '状态',
       dataIndex: 'status',
       key: 'status',
       width: 120,
       render: (status: DisputeStatus) => (
-        <Tag color={getStatusColor(status)}>{status}</Tag>
+        <Tag color={getStatusColor(status)}>{translateStatus(status)}</Tag>
       ),
       filters: [
-        { text: 'Open', value: DisputeStatus.OPEN },
-        { text: 'Waiting', value: DisputeStatus.WAITING },
-        { text: 'Resolved', value: DisputeStatus.RESOLVED },
+        { text: '处理中', value: DisputeStatus.OPEN },
+        { text: '等待中', value: DisputeStatus.WAITING },
+        { text: '已解决', value: DisputeStatus.RESOLVED },
       ],
       onFilter: (value, record) => record.status === value,
     },
     {
-      title: 'Deadline',
+      title: '截止时间',
       dataIndex: 'deadlineAt',
       key: 'deadlineAt',
       width: 160,
@@ -144,7 +145,7 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
       },
     },
     {
-      title: 'Evidence',
+      title: '证据',
       key: 'evidence',
       width: 120,
       render: (_, record) => {
@@ -160,7 +161,7 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
       },
     },
     {
-      title: 'Opened',
+      title: '打开时间',
       dataIndex: 'openedAt',
       key: 'openedAt',
       width: 140,
@@ -168,14 +169,14 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
       sorter: (a, b) => new Date(a.openedAt).getTime() - new Date(b.openedAt).getTime(),
     },
     {
-      title: 'Resolved',
+      title: '解决时间',
       dataIndex: 'resolvedAt',
       key: 'resolvedAt',
       width: 140,
       render: (date: string) => date ? formatDate(date) : '-',
     },
     {
-      title: 'Actions',
+      title: '操作',
       key: 'actions',
       width: 100,
       fixed: 'right',
@@ -186,7 +187,7 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
           icon={<EyeOutlined />}
           onClick={() => onViewDetails(record.id)}
         >
-          View
+          查看
         </Button>
       ),
     },
@@ -201,7 +202,7 @@ export const DisputeListTable: React.FC<DisputeListTableProps> = ({
       pagination={{
         pageSize: 10,
         showSizeChanger: true,
-        showTotal: (total) => `Total ${total} dispute${total !== 1 ? 's' : ''}`,
+        showTotal: (total) => `共 ${total} 个争议`,
       }}
       scroll={{ x: 1200 }}
     />

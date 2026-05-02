@@ -247,10 +247,10 @@ export async function createLead(lead: Omit<Lead, 'id' | 'timeline'>): Promise<L
     timeline: [{
       id: `event_${Date.now()}`,
       actorType: ActorType.CO_SELECTOR,
-      actorName: 'Current User',
+      actorName: '当前用户',
       occurredAt: new Date().toISOString(),
       eventType: 'Created',
-      description: 'Lead created',
+      description: '线索已创建',
     }],
   };
   
@@ -454,10 +454,10 @@ export async function createPayout(payout: Omit<Payout, 'id' | 'timeline'>): Pro
     timeline: [{
       id: `event_${Date.now()}`,
       actorType: ActorType.CO_SELECTOR,
-      actorName: 'Current User',
+      actorName: '当前用户',
       occurredAt: new Date().toISOString(),
       eventType: 'Requested',
-      description: `Payout requested: 楼${payout.amount.toFixed(2)}`,
+      description: `提现已申请：¥${payout.amount.toFixed(2)}`,
     }],
   };
   
@@ -543,10 +543,10 @@ export async function createDisputeCase(disputeCase: Omit<DisputeCase, 'id' | 't
     timeline: [{
       id: `event_${Date.now()}`,
       actorType: ActorType.CO_SELECTOR,
-      actorName: 'Current User',
+      actorName: '当前用户',
       occurredAt: new Date().toISOString(),
       eventType: 'Opened',
-      description: `Dispute opened: ${disputeCase.reason}`,
+      description: `争议已打开：${disputeCase.reason}`,
     }],
   };
   

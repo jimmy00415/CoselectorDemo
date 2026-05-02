@@ -16,6 +16,7 @@ import { TransactionTraceDrawer } from './TransactionTraceDrawer';
 import { getTransactionColumns, getDaysUntilLock, canLockNow } from './config';
 import { EarningsStateMachine } from '../../services/stateMachines';
 import { StatementsPage } from '../Statements';
+import { translateStatus } from '../../utils';
 import './styles.css';
 
 /**
@@ -69,7 +70,7 @@ export const Earnings: React.FC = () => {
       setTransactions(updated);
       setFilteredTransactions(updated);
     } catch (error) {
-      message.error('Failed to load transactions');
+      message.error('交易加载失败');
       console.error(error);
     } finally {
       setLoading(false);
@@ -94,7 +95,7 @@ export const Earnings: React.FC = () => {
             {
               currentState: tx.state,
               actorType: 'SYSTEM' as any,
-              actorName: 'System Auto-Lock',
+              actorName: '系统自动锁定',
               lockEndDate: tx.lockEndAt,
               transactionAmount: tx.amount,
             },
@@ -113,7 +114,7 @@ export const Earnings: React.FC = () => {
               tx.id,
               {
                 actorType: 'SYSTEM' as any,
-                actorName: 'System Auto-Lock',
+                actorName: '系统自动锁定',
                 lockEndDate: tx.lockEndAt,
                 transactionAmount: tx.amount,
               },
@@ -129,7 +130,7 @@ export const Earnings: React.FC = () => {
     }
 
     if (hasChanges) {
-      message.success('Pending transactions auto-locked');
+      message.success('待锁定交易已自动锁定');
     }
 
     return updated;
@@ -149,7 +150,7 @@ export const Earnings: React.FC = () => {
   const handleFilterByState = (state: EarningsState) => {
     setStateFilter(state);
     setActiveTab('transactions');
-    message.info(`Filtered transactions by state: ${state}`);
+    message.info(`已按状态筛选交易：${translateStatus(state)}`);
   };
 
   const handleFilterByLockRange = (minDays: number, maxDays: number) => {
@@ -164,20 +165,20 @@ export const Earnings: React.FC = () => {
     setFilteredTransactions(filtered);
     setStateFilter(null);
     setActiveTab('transactions');
-    message.info(`Filtered ${filtered.length} transactions locking in ${minDays}-${maxDays} days`);
+    message.info(`已筛选 ${filtered.length} 笔将在 ${minDays}-${maxDays} 天内锁定的交易`);
   };
 
   const handleClearFilters = () => {
     setStateFilter(null);
     setFilteredTransactions(transactions);
-    message.success('Filters cleared');
+    message.success('筛选已清除');
   };
 
   // Check eligibility (placeholder logic)
   const isEligible = user?.kycStatus === 'APPROVED';
   const eligibilityIssues = [
-    ...(user?.kycStatus !== 'APPROVED' ? [{ label: 'KYC Verification', action: 'Submit KYC', actionUrl: '/profile' }] : []),
-    ...(!user?.bankAccount ? [{ label: 'Payout Method', action: 'Add Bank Account', actionUrl: '/profile' }] : []),
+    ...(user?.kycStatus !== 'APPROVED' ? [{ label: 'KYC 验证', action: '提交 KYC', actionUrl: '/profile' }] : []),
+    ...(!user?.bankAccount ? [{ label: '提现方式', action: '添加银行账户', actionUrl: '/profile' }] : []),
   ];
 
   const columns = getTransactionColumns(handleViewTrace);
@@ -187,9 +188,9 @@ export const Earnings: React.FC = () => {
       {/* Page Header */}
       <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>Earnings & Payouts</h1>
+          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>收益与提现</h1>
           <p style={{ margin: '8px 0 0 0', color: '#8c8c8c' }}>
-            Track your earnings lifecycle from pending to paid
+            追踪收益从待锁定到已支付的完整生命周期
           </p>
         </div>
         <Button
@@ -197,7 +198,7 @@ export const Earnings: React.FC = () => {
           onClick={loadTransactions}
           loading={loading}
         >
-          Refresh
+          刷新
         </Button>
       </div>
 
@@ -211,7 +212,7 @@ export const Earnings: React.FC = () => {
             label: (
               <span>
                 <DollarOutlined />
-                Overview
+                总览
               </span>
             ),
             children: (
@@ -229,7 +230,7 @@ export const Earnings: React.FC = () => {
             label: (
               <span>
                 <UnorderedListOutlined />
-                Transactions
+                交易
               </span>
             ),
             children: (
@@ -238,9 +239,9 @@ export const Earnings: React.FC = () => {
                 {stateFilter && (
                   <div style={{ marginBottom: 16 }}>
                     <Space>
-                      <span>Filtered by state: <strong>{stateFilter}</strong></span>
+                      <span>按状态筛选：<strong>{translateStatus(stateFilter)}</strong></span>
                       <Button size="small" onClick={handleClearFilters}>
-                        Clear Filter
+                        清除筛选
                       </Button>
                     </Space>
                   </div>
@@ -254,7 +255,7 @@ export const Earnings: React.FC = () => {
                   pagination={{
                     pageSize: 20,
                     showSizeChanger: true,
-                    showTotal: (total) => `Total ${total} transactions`,
+                    showTotal: (total) => `共 ${total} 笔交易`,
                   }}
                   scroll={{ x: 1200 }}
                   onRow={(record) => ({
@@ -280,17 +281,17 @@ export const Earnings: React.FC = () => {
             label: (
               <span>
                 <BankOutlined />
-                Payouts
+                提现
               </span>
             ),
-            children: <div style={{ padding: 24 }}>Payouts feature available in dedicated Payouts page</div>,
+            children: <div style={{ padding: 24 }}>提现功能可在专门的提现页面使用</div>,
           },
           {
             key: 'statements',
             label: (
               <span>
                 <FileTextOutlined />
-                Statements
+                对账单
               </span>
             ),
             children: <StatementsPage />,

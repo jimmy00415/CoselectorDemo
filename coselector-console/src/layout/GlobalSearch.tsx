@@ -76,36 +76,36 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
       {
         id: 'asset_001',
         type: 'asset' as const,
-        title: 'Short Link #001',
-        description: 'Active link for Campaign A',
+        title: '短链接 #001',
+        description: '活动 A 的启用链接',
         url: '/assets/asset_001',
       },
       {
         id: 'content_123',
         type: 'content' as const,
-        title: 'Douyin Video - Product Demo',
-        description: '10K views, 500 conversions',
+        title: '抖音视频 - 产品演示',
+        description: '1 万次观看，500 次转化',
         url: '/content/content_123',
       },
       {
         id: 'lead_456',
         type: 'lead' as const,
-        title: 'Restaurant Chain Lead',
-        description: 'Under Review - Shanghai',
+        title: '连锁餐饮线索',
+        description: '审核中 - 上海',
         url: '/leads/lead_456',
       },
       {
         id: 'tx_789',
         type: 'transaction' as const,
-        title: 'Transaction #789',
-        description: '¥150.00 - Payable',
+        title: '交易 #789',
+        description: '¥150.00 - 可提现',
         url: '/earnings/tx_789',
       },
       {
         id: 'payout_012',
         type: 'payout' as const,
-        title: 'Payout Request #012',
-        description: '¥5,000.00 - Approved',
+        title: '提现申请 #012',
+        description: '¥5,000.00 - 已通过',
         url: '/payouts/payout_012',
       },
     ].filter(item =>
@@ -151,6 +151,17 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
     }
   };
 
+  const getTypeLabel = (type: SearchResult['type']) => {
+    const labels: Record<SearchResult['type'], string> = {
+      asset: '资产',
+      content: '内容',
+      lead: '线索',
+      transaction: '交易',
+      payout: '提现',
+    };
+    return labels[type];
+  };
+
   const handleResultClick = (result: SearchResult) => {
     navigate(result.url);
     onClose();
@@ -162,7 +173,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
       title={
         <Space>
           <SearchOutlined />
-          <span>Global Search</span>
+          <span>全局搜索</span>
         </Space>
       }
       open={visible}
@@ -173,7 +184,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
     >
       <Input
         size="large"
-        placeholder="Search assets, content, leads, transactions, payouts..."
+        placeholder="搜索资产、内容、线索、交易、提现..."
         prefix={<SearchOutlined />}
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
@@ -189,7 +200,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
             locale={{
               emptyText: (
                 <Empty
-                  description="No results found"
+                  description="未找到结果"
                   image={Empty.PRESENTED_IMAGE_SIMPLE}
                 />
               ),
@@ -204,7 +215,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
                   title={
                     <Space>
                       <Text strong>{item.title}</Text>
-                      <Tag color={getTypeColor(item.type)}>{item.type}</Tag>
+                      <Tag color={getTypeColor(item.type)}>{getTypeLabel(item.type)}</Tag>
                     </Space>
                   }
                   description={
@@ -224,13 +235,13 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
         {!searchText && (
           <div className="search-tips">
             <Text type="secondary">
-              Try searching by:
+              可按以下内容搜索：
               <ul>
-                <li>Asset ID (e.g., asset_001)</li>
-                <li>Content ID (e.g., content_123)</li>
-                <li>Lead ID (e.g., lead_456)</li>
-                <li>Transaction ID (e.g., tx_789)</li>
-                <li>Payout ID (e.g., payout_012)</li>
+                <li>资产 ID（例如 asset_001）</li>
+                <li>内容 ID（例如 content_123）</li>
+                <li>线索 ID（例如 lead_456）</li>
+                <li>交易 ID（例如 tx_789）</li>
+                <li>提现 ID（例如 payout_012）</li>
               </ul>
             </Text>
           </div>
@@ -239,7 +250,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
 
       <div className="search-footer">
         <Text type="secondary" style={{ fontSize: 12 }}>
-          <kbd>Ctrl</kbd> + <kbd>K</kbd> to open search anywhere
+          在任意位置按 <kbd>Ctrl</kbd> + <kbd>K</kbd> 打开搜索
         </Text>
       </div>
     </Modal>

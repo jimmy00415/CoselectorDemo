@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { translateStatus } from './i18n';
 
 /**
  * Format currency value
@@ -243,28 +244,5 @@ export const getStatusColor = (status: string): string => {
  * Get status text
  */
 export const getStatusText = (status: string): string => {
-  const statusTexts: Record<string, string> = {
-    ACTIVE: 'Active',
-    INACTIVE: 'Inactive',
-    DISABLED: 'Disabled',
-    PENDING: 'Pending',
-    LOCKED: 'Locked',
-    PAYABLE: 'Payable',
-    PAID: 'Paid',
-    REVERSED: 'Reversed',
-    APPROVED: 'Approved',
-    REJECTED: 'Rejected',
-    UNDER_REVIEW: 'Under Review',
-    SUBMITTED: 'Submitted',
-    DRAFT: 'Draft',
-    INFO_REQUESTED: 'Info Requested',
-    RESUBMITTED: 'Resubmitted',
-    OPEN: 'Open',
-    WAITING_FOR_RESPONSE: 'Waiting for Response',
-    RESOLVED: 'Resolved',
-    FAILED: 'Failed',
-    REQUESTED: 'Requested',
-  };
-  
-  return statusTexts[status] || status;
+  return translateStatus(status);
 };

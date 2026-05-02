@@ -82,7 +82,7 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
       title={
         <Space>
           <BellOutlined />
-          Notification Preferences
+          通知偏好
         </Space>
       }
     >
@@ -93,13 +93,13 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
         onValuesChange={() => setHasChanges(true)}
       >
         {/* Delivery Methods */}
-        <Title level={5}>Delivery Methods</Title>
-        <Form.Item label="Email Notifications" name="emailEnabled" valuePropName="checked">
-          <Checkbox>Enable email notifications to {userProfile.email}</Checkbox>
+        <Title level={5}>送达方式</Title>
+        <Form.Item label="邮件通知" name="emailEnabled" valuePropName="checked">
+          <Checkbox>向 {userProfile.email} 启用邮件通知</Checkbox>
         </Form.Item>
 
-        <Form.Item label="SMS Notifications" name="smsEnabled" valuePropName="checked">
-          <Checkbox>Enable SMS notifications to {userProfile.phone || '(not set)'}</Checkbox>
+        <Form.Item label="短信通知" name="smsEnabled" valuePropName="checked">
+          <Checkbox>向 {userProfile.phone || '（未设置）'} 启用短信通知</Checkbox>
         </Form.Item>
 
         <Divider />
@@ -109,12 +109,12 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Title level={5}>
             <Space>
               <LockOutlined style={{ color: '#ff4d4f' }} />
-              Critical Notifications (Cannot be disabled)
+              关键通知（不可关闭）
             </Space>
           </Title>
           <Alert
             type="warning"
-            message="These notifications are mandatory for compliance and security reasons."
+            message="出于合规和安全原因，这些通知为强制开启。"
             showIcon
             style={{ marginBottom: 8 }}
           />
@@ -122,8 +122,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Form.Item name={['criticalNotifications', 'kycRejected']} valuePropName="checked">
             <Checkbox checked disabled>
               <Space>
-                <Text strong>KYC Rejected</Text>
-                <Text type="secondary">- Identity verification failed</Text>
+                <Text strong>KYC 被拒绝</Text>
+                <Text type="secondary">- 身份验证失败</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -131,8 +131,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Form.Item name={['criticalNotifications', 'accountFrozen']} valuePropName="checked">
             <Checkbox checked disabled>
               <Space>
-                <Text strong>Account Frozen</Text>
-                <Text type="secondary">- Account suspended or under review</Text>
+                <Text strong>账户冻结</Text>
+                <Text type="secondary">- 账户已暂停或正在审核</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -140,8 +140,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Form.Item name={['criticalNotifications', 'disputeDeadline']} valuePropName="checked">
             <Checkbox checked disabled>
               <Space>
-                <Text strong>Dispute Deadline Approaching</Text>
-                <Text type="secondary">- Response required within 48 hours</Text>
+                <Text strong>争议截止时间临近</Text>
+                <Text type="secondary">- 需在 48 小时内回复</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -149,8 +149,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Form.Item name={['criticalNotifications', 'payoutFailed']} valuePropName="checked">
             <Checkbox checked disabled>
               <Space>
-                <Text strong>Payout Failed</Text>
-                <Text type="secondary">- Bank transfer unsuccessful</Text>
+                <Text strong>提现失败</Text>
+                <Text type="secondary">- 银行转账未成功</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -163,7 +163,7 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Title level={5}>
             <Space>
               <SafetyOutlined style={{ color: '#1890ff' }} />
-              Important Notifications (Recommended)
+              重要通知（推荐开启）
             </Space>
           </Title>
 
@@ -173,8 +173,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           >
             <Checkbox>
               <Space>
-                <Text strong>Transaction Locked</Text>
-                <Text type="secondary">- Earnings moved to locked state</Text>
+                <Text strong>交易已锁定</Text>
+                <Text type="secondary">- 收益已进入锁定状态</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -182,8 +182,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Form.Item name={['importantNotifications', 'payoutApproved']} valuePropName="checked">
             <Checkbox>
               <Space>
-                <Text strong>Payout Approved</Text>
-                <Text type="secondary">- Withdrawal request approved by finance</Text>
+                <Text strong>提现已批准</Text>
+                <Text type="secondary">- 提现请求已由财务批准</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -191,8 +191,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Form.Item name={['importantNotifications', 'leadApproved']} valuePropName="checked">
             <Checkbox>
               <Space>
-                <Text strong>Lead Approved</Text>
-                <Text type="secondary">- Lead submission accepted</Text>
+                <Text strong>线索已通过</Text>
+                <Text type="secondary">- 线索提交已接受</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -200,8 +200,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Form.Item name={['importantNotifications', 'leadRejected']} valuePropName="checked">
             <Checkbox>
               <Space>
-                <Text strong>Lead Rejected</Text>
-                <Text type="secondary">- Lead submission declined</Text>
+                <Text strong>线索已拒绝</Text>
+                <Text type="secondary">- 线索提交已被拒绝</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -214,7 +214,7 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           <Title level={5}>
             <Space>
               <BellOutlined style={{ color: '#52c41a' }} />
-              Informational Notifications (Optional)
+              信息通知（可选）
             </Space>
           </Title>
 
@@ -224,8 +224,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           >
             <Checkbox>
               <Space>
-                <Text strong>Policy Updates</Text>
-                <Text type="secondary">- Changes to terms and policies</Text>
+                <Text strong>政策更新</Text>
+                <Text type="secondary">- 条款和政策变更</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -236,8 +236,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           >
             <Checkbox>
               <Space>
-                <Text strong>Rulebook Version Updates</Text>
-                <Text type="secondary">- New commission rule versions released</Text>
+                <Text strong>规则手册版本更新</Text>
+                <Text type="secondary">- 新佣金规则版本已发布</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -248,8 +248,8 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
           >
             <Checkbox>
               <Space>
-                <Text strong>Monthly Statement Available</Text>
-                <Text type="secondary">- New earnings statement ready for download</Text>
+                <Text strong>月度对账单可用</Text>
+                <Text type="secondary">- 新收益对账单可下载</Text>
               </Space>
             </Checkbox>
           </Form.Item>
@@ -259,9 +259,9 @@ export const NotificationPreferences: React.FC<NotificationPreferencesProps> = (
 
         <Space>
           <Button type="primary" onClick={handleSave} disabled={!hasChanges}>
-            Save Preferences
+            保存偏好
           </Button>
-          <Button onClick={handleReset}>Reset to Defaults</Button>
+          <Button onClick={handleReset}>重置为默认值</Button>
         </Space>
       </Form>
     </Card>

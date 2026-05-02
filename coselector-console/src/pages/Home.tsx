@@ -21,15 +21,15 @@ const HomePage: React.FC = () => {
   return (
     <div>
       <PageBreadcrumb />
-      <Title level={2}>Dashboard</Title>
+      <Title level={2}>仪表盘</Title>
       <Paragraph type="secondary">
-        Overview of your Co-Selector performance and activities
+        查看你的协同遴选表现与近期活动概览
       </Paragraph>
 
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} sm={12} lg={6}>
           <KPICard
-            title="Total Earnings"
+            title="累计收益"
             value="¥12,450.00"
             change={15.3}
             changeType="increase"
@@ -38,7 +38,7 @@ const HomePage: React.FC = () => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <KPICard
-            title="Active Links"
+            title="启用链接"
             value="24"
             change={12.5}
             changeType="increase"
@@ -47,7 +47,7 @@ const HomePage: React.FC = () => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <KPICard
-            title="Pending Leads"
+            title="待处理线索"
             value="8"
             change={-20}
             changeType="decrease"
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
         </Col>
         <Col xs={24} sm={12} lg={6}>
           <KPICard
-            title="Conversion Rate"
+            title="转化率"
             value="12.5%"
             change={2.1}
             changeType="increase"
@@ -67,14 +67,14 @@ const HomePage: React.FC = () => {
 
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
         <Col xs={24} lg={16}>
-          <Card title="Recent Activity">
-            <Paragraph>Recent activity timeline will be displayed here</Paragraph>
+          <Card title="近期活动">
+            <Paragraph>近期活动时间线将在此展示</Paragraph>
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="Quick Actions">
+          <Card title="快捷操作">
             <Space direction="vertical" style={{ width: '100%' }}>
-              <Paragraph>Quick action buttons will be displayed here</Paragraph>
+              <Paragraph>快捷操作按钮将在此展示</Paragraph>
             </Space>
           </Card>
         </Col>

@@ -5,6 +5,7 @@ import { DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { Statement, Transaction, Payout } from '../../types';
 import { PayoutStatus, EarningsState } from '../../types/enums';
 import { formatCurrency } from '../../utils/format';
+import { translateChannel, translateStatus, translateText } from '../../utils/i18n';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
@@ -137,25 +138,25 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
     
     if (detailed) {
       // Detailed CSV with all fields
-      csv = 'Date,Source,Reference,Amount,State,Lock End At,Rule Version,Commission Rate,Asset ID,Channel Tag\n';
+      csv = '日期,来源,引用,金额,状态,锁定结束时间,规则版本,佣金率,资产 ID,渠道标签\n';
       monthTransactions.forEach((t) => {
-        csv += `${t.date},${t.source},${t.referenceId},${t.amount},${t.state},${t.lockEndAt},${t.ruleVersion},${t.commissionRate},${t.assetId},${t.channelTag}\n`;
+        csv += `${t.date},${translateText(t.source)},${t.referenceId},${t.amount},${translateStatus(t.state)},${t.lockEndAt},${t.ruleVersion},${t.commissionRate},${t.assetId},${translateChannel(t.channelTag)}\n`;
       });
     } else {
       // Summary CSV with essential fields only
-      csv = 'Date,Source,Reference,Amount,State\n';
+      csv = '日期,来源,引用,金额,状态\n';
       monthTransactions.forEach((t) => {
-        csv += `${t.date},${t.source},${t.referenceId},${t.amount},${t.state}\n`;
+        csv += `${t.date},${translateText(t.source)},${t.referenceId},${t.amount},${translateStatus(t.state)}\n`;
       });
     }
 
     // Add summary section
-    csv += '\n\nSummary\n';
-    csv += `Opening Balance,${statement.openingBalance}\n`;
-    csv += `Earnings,${statement.earnings}\n`;
-    csv += `Reversals,${-statement.reversals}\n`;
-    csv += `Payouts,${-statement.payouts}\n`;
-    csv += `Closing Balance,${statement.closingBalance}\n`;
+    csv += '\n\n摘要\n';
+    csv += `期初余额,${statement.openingBalance}\n`;
+    csv += `收益,${statement.earnings}\n`;
+    csv += `冲正,${-statement.reversals}\n`;
+    csv += `提现,${-statement.payouts}\n`;
+    csv += `期末余额,${statement.closingBalance}\n`;
 
     // Trigger download
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -166,12 +167,12 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
     a.click();
     window.URL.revokeObjectURL(url);
 
-    message.success(`Statement exported: ${statement.period} (${detailed ? 'Detailed' : 'Summary'})`);
+    message.success(`对账单已导出：${statement.period}（${detailed ? '明细' : '摘要'}）`);
   };
 
   const columns: ColumnsType<MonthlyStatement> = [
     {
-      title: 'Month',
+      title: '月份',
       dataIndex: 'period',
       key: 'period',
       width: 150,
@@ -185,7 +186,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
       ),
     },
     {
-      title: 'Opening Balance',
+      title: '期初余额',
       dataIndex: 'openingBalance',
       key: 'openingBalance',
       width: 150,
@@ -193,7 +194,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
       render: (balance: number) => formatCurrency(balance),
     },
     {
-      title: 'Earnings',
+      title: '收益',
       dataIndex: 'earnings',
       key: 'earnings',
       width: 150,
@@ -203,7 +204,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
       ),
     },
     {
-      title: 'Reversals',
+      title: '冲正',
       dataIndex: 'reversals',
       key: 'reversals',
       width: 150,
@@ -213,7 +214,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
       ),
     },
     {
-      title: 'Payouts',
+      title: '提现',
       dataIndex: 'payouts',
       key: 'payouts',
       width: 150,
@@ -223,7 +224,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
       ),
     },
     {
-      title: 'Closing Balance',
+      title: '期末余额',
       dataIndex: 'closingBalance',
       key: 'closingBalance',
       width: 150,
@@ -235,7 +236,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
       ),
     },
     {
-      title: 'Export',
+      title: '导出',
       key: 'export',
       width: 200,
       fixed: 'right',
@@ -247,7 +248,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
             icon={<DownloadOutlined />}
             onClick={() => exportCSV(record, false)}
           >
-            Summary
+            摘要
           </Button>
           <Button
             type="link"
@@ -255,7 +256,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
             icon={<FileTextOutlined />}
             onClick={() => exportCSV(record, true)}
           >
-            Detailed
+            明细
           </Button>
         </Space>
       ),
@@ -281,28 +282,28 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
         {/* Header */}
         <Space style={{ justifyContent: 'space-between', width: '100%' }}>
           <Title level={4} style={{ margin: 0 }}>
-            Monthly Statements
+            月度对账单
           </Title>
           <RangePicker
             picker="month"
             value={dateRange}
             onChange={(dates) => setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
-            placeholder={['Start Month', 'End Month']}
+            placeholder={['开始月份', '结束月份']}
           />
         </Space>
 
         {/* Info Alert */}
         <Alert
           type="info"
-          message="Statement Calculation"
+          message="对账单计算方式"
           description={
             <span>
-              <strong>Opening Balance</strong> (previous month's closing) + <strong>Earnings</strong>{' '}
-              (approved transactions) − <strong>Reversals</strong> (refunds/disputes) −{' '}
-              <strong>Payouts</strong> (paid withdrawals) = <strong>Closing Balance</strong>
+              <strong>期初余额</strong>（上月期末） + <strong>收益</strong>
+              （已批准交易） - <strong>冲正</strong>（退款/争议） -{' '}
+              <strong>提现</strong>（已支付提现） = <strong>期末余额</strong>
               <br />
               <Text type="secondary" style={{ fontSize: '12px' }}>
-                Statements are calculated based on your local timezone. Each month is locked at 23:59:59 on the last day.
+                对账单基于你的本地时区计算。每个月会在最后一天 23:59:59 锁定。
               </Text>
             </span>
           }
@@ -316,7 +317,7 @@ export const StatementList: React.FC<StatementListProps> = ({ transactions, payo
           rowKey="id"
           pagination={{
             pageSize: 12,
-            showTotal: (total) => `Total ${total} months`,
+            showTotal: (total) => `共 ${total} 个月`,
           }}
           scroll={{ x: 1000 }}
         />

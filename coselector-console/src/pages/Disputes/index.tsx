@@ -24,7 +24,7 @@ export const Disputes: React.FC = () => {
       const data = await mockApi.disputes.getAll();
       setDisputes(data);
     } catch (error) {
-      message.error('Failed to load disputes');
+      message.error('争议加载失败');
     } finally {
       setLoading(false);
     }
@@ -63,10 +63,10 @@ export const Disputes: React.FC = () => {
           {
             id: `evt-${Date.now()}`,
             actorType: ActorType.CO_SELECTOR,
-            actorName: user?.displayName || 'Unknown User',
+            actorName: user?.displayName || '未知用户',
             occurredAt: new Date().toISOString(),
             eventType: 'EVIDENCE_UPLOADED',
-            description: `Uploaded evidence: ${itemName}`,
+            description: `已上传证据：${itemName}`,
           },
         ],
       };
@@ -77,9 +77,9 @@ export const Disputes: React.FC = () => {
         prev.map((d) => (d.id === updatedDispute.id ? updatedDispute : d))
       );
 
-      message.success('Evidence uploaded successfully');
+      message.success('证据上传成功');
     } catch (error) {
-      message.error('Failed to upload evidence');
+      message.error('证据上传失败');
     }
   };
 
@@ -98,10 +98,10 @@ export const Disputes: React.FC = () => {
           {
             id: `evt-${Date.now()}`,
             actorType: ActorType.CO_SELECTOR,
-            actorName: user?.displayName || 'Unknown User',
+            actorName: user?.displayName || '未知用户',
             occurredAt: new Date().toISOString(),
             eventType: 'EVIDENCE_DELETED',
-            description: 'Deleted evidence item',
+            description: '已删除证据项',
           },
         ],
       };
@@ -111,9 +111,9 @@ export const Disputes: React.FC = () => {
         prev.map((d) => (d.id === updatedDispute.id ? updatedDispute : d))
       );
 
-      message.success('Evidence deleted');
+      message.success('证据已删除');
     } catch (error) {
-      message.error('Failed to delete evidence');
+      message.error('证据删除失败');
     }
   };
 
@@ -130,10 +130,10 @@ export const Disputes: React.FC = () => {
           {
             id: `evt-${Date.now()}`,
             actorType: ActorType.CO_SELECTOR,
-            actorName: user?.displayName || 'Unknown User',
+            actorName: user?.displayName || '未知用户',
             occurredAt: new Date().toISOString(),
             eventType: 'MESSAGE_SENT',
-            description: `Sent message: ${content.substring(0, 50)}${content.length > 50 ? '...' : ''}`,
+            description: `已发送消息：${content.substring(0, 50)}${content.length > 50 ? '...' : ''}`,
           },
         ],
       };
@@ -160,10 +160,10 @@ export const Disputes: React.FC = () => {
           {
             id: `evt-${Date.now()}`,
             actorType: ActorType.CO_SELECTOR,
-            actorName: user?.displayName || 'Unknown User',
+            actorName: user?.displayName || '未知用户',
             occurredAt: new Date().toISOString(),
             eventType: 'RESOLUTION_ACCEPTED',
-            description: 'Accepted resolution. Case closed.',
+            description: '已接受处理结果，案件已关闭。',
           },
         ],
       };
@@ -173,9 +173,9 @@ export const Disputes: React.FC = () => {
         prev.map((d) => (d.id === updatedDispute.id ? updatedDispute : d))
       );
 
-      message.success('Resolution accepted. Case is now closed.');
+      message.success('已接受处理结果，案件已关闭。');
     } catch (error) {
-      message.error('Failed to accept resolution');
+      message.error('接受处理结果失败');
     }
   };
 
@@ -193,10 +193,10 @@ export const Disputes: React.FC = () => {
           {
             id: `evt-${Date.now()}`,
             actorType: ActorType.CO_SELECTOR,
-            actorName: user?.displayName || 'Unknown User',
+            actorName: user?.displayName || '未知用户',
             occurredAt: new Date().toISOString(),
             eventType: 'RESOLUTION_APPEALED',
-            description: `Appealed resolution. Reason: ${reason.substring(0, 100)}${reason.length > 100 ? '...' : ''}`,
+            description: `已申诉处理结果。原因：${reason.substring(0, 100)}${reason.length > 100 ? '...' : ''}`,
           },
         ],
       };
@@ -206,9 +206,9 @@ export const Disputes: React.FC = () => {
         prev.map((d) => (d.id === updatedDispute.id ? updatedDispute : d))
       );
 
-      message.success('Appeal submitted successfully');
+      message.success('申诉提交成功');
     } catch (error) {
-      message.error('Failed to submit appeal');
+      message.error('申诉提交失败');
     }
   };
 
@@ -221,11 +221,11 @@ export const Disputes: React.FC = () => {
   return (
     <div className="disputes-page">
       <Card
-        title="Disputes"
+        title="争议"
         extra={
           <Space>
             <Button icon={<ReloadOutlined />} onClick={loadDisputes}>
-              Refresh
+              刷新
             </Button>
           </Space>
         }
@@ -235,7 +235,7 @@ export const Disputes: React.FC = () => {
             <Spin size="large" />
           </div>
         ) : disputes.length === 0 ? (
-          <Empty description="No disputes found" />
+          <Empty description="未找到争议" />
         ) : (
           <DisputeListTable
             disputes={disputes}

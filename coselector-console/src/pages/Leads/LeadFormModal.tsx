@@ -114,7 +114,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
       
       // Custom validation: At least phone OR email required
       if (!values.contactPhone && !values.contactEmail) {
-        const errors = ['At least phone or email is required'];
+        const errors = ['至少需要填写电话或邮箱'];
         form.setFields([
           {
             name: 'contactPhone',
@@ -125,13 +125,13 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
             errors,
           },
         ]);
-        setValidationErrors([...errors, 'Please provide either phone or email in Contact section']);
+        setValidationErrors([...errors, '请在联系人部分填写电话或邮箱中的至少一项']);
         return;
       }
 
       // COI declaration is required before submit
       if (!coiDeclared) {
-        const errors = ['COI declaration must be confirmed before submitting'];
+        const errors = ['提交前必须确认利益冲突声明'];
         form.setFields([
           {
             name: 'coiDeclared',
@@ -175,19 +175,19 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
 
   return (
     <Modal
-      title={lead ? 'Edit Lead' : 'Submit New Lead'}
+      title={lead ? '编辑线索' : '提交新线索'}
       open={visible}
       onCancel={handleCancel}
       onOk={handleSubmit}
       width={800}
-      okText="Submit"
-      cancelText="Save as Draft"
+      okText="提交"
+      cancelText="保存为草稿"
       destroyOnClose={false} // Keep form state
     >
       {/* Validation Summary Banner per Sprint 1 §7.2 & §2.2 */}
       {validationErrors.length > 0 && (
         <Alert
-          message="Form Validation Errors"
+          message="表单校验错误"
           description={
             <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
               {validationErrors.map((error, index) => (
@@ -209,7 +209,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
           message={
             <Space>
               <CheckCircleOutlined />
-              Draft auto-saved at {lastSaved.toLocaleTimeString()}
+              草稿已于 {lastSaved.toLocaleTimeString()} 自动保存
             </Space>
           }
           type="success"
@@ -226,32 +226,32 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         {/* Section A: Merchant Basics (required) - Sprint 1 §7.2 */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          A) Merchant Basics *
+          A) 商户基础信息 *
         </Title>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name="merchantName"
-              label="Merchant Name"
-              rules={[{ required: true, message: 'Merchant name is required' }]}
+              label="商户名称"
+              rules={[{ required: true, message: '商户名称为必填项' }]}
             >
-              <Input placeholder="Enter merchant name" />
+              <Input placeholder="输入商户名称" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               name="category"
-              label="Category"
-              rules={[{ required: true, message: 'Category is required' }]}
+              label="类目"
+              rules={[{ required: true, message: '类目为必填项' }]}
             >
-              <Select placeholder="Select category">
-                <Select.Option value="Restaurant">Restaurant</Select.Option>
-                <Select.Option value="Retail">Retail</Select.Option>
-                <Select.Option value="Beauty & Spa">Beauty & Spa</Select.Option>
-                <Select.Option value="Entertainment">Entertainment</Select.Option>
-                <Select.Option value="Education">Education</Select.Option>
-                <Select.Option value="Healthcare">Healthcare</Select.Option>
-                <Select.Option value="Other">Other</Select.Option>
+              <Select placeholder="选择类目">
+                <Select.Option value="Restaurant">餐饮</Select.Option>
+                <Select.Option value="Retail">零售</Select.Option>
+                <Select.Option value="Beauty & Spa">美妆与护理</Select.Option>
+                <Select.Option value="Entertainment">娱乐</Select.Option>
+                <Select.Option value="Education">教育</Select.Option>
+                <Select.Option value="Healthcare">医疗健康</Select.Option>
+                <Select.Option value="Other">其他</Select.Option>
               </Select>
             </Form.Item>
           </Col>
@@ -260,34 +260,34 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
           <Col span={12}>
             <Form.Item
               name="region"
-              label="Region"
-              rules={[{ required: true, message: 'Region is required' }]}
+              label="区域"
+              rules={[{ required: true, message: '区域为必填项' }]}
             >
-              <Select placeholder="Select region">
-                <Select.Option value="Beijing">Beijing</Select.Option>
-                <Select.Option value="Shanghai">Shanghai</Select.Option>
-                <Select.Option value="Guangdong">Guangdong</Select.Option>
-                <Select.Option value="Zhejiang">Zhejiang</Select.Option>
-                <Select.Option value="Jiangsu">Jiangsu</Select.Option>
-                <Select.Option value="Sichuan">Sichuan</Select.Option>
+              <Select placeholder="选择区域">
+                <Select.Option value="Beijing">北京</Select.Option>
+                <Select.Option value="Shanghai">上海</Select.Option>
+                <Select.Option value="Guangdong">广东</Select.Option>
+                <Select.Option value="Zhejiang">浙江</Select.Option>
+                <Select.Option value="Jiangsu">江苏</Select.Option>
+                <Select.Option value="Sichuan">四川</Select.Option>
               </Select>
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               name="city"
-              label="City"
-              rules={[{ required: true, message: 'City is required' }]}
+              label="城市"
+              rules={[{ required: true, message: '城市为必填项' }]}
             >
-              <Input placeholder="Enter city" />
+              <Input placeholder="输入城市" />
             </Form.Item>
           </Col>
         </Row>
         <Form.Item
           name="website"
-          label="Website / Social Media"
+          label="网站 / 社交媒体"
           rules={[
-            { type: 'url', message: 'Please enter a valid URL' },
+            { type: 'url', message: '请输入有效 URL' },
           ]}
         >
           <Input placeholder="https://example.com" />
@@ -298,24 +298,24 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         {/* Section B: Contact (at least one method required) - Sprint 1 §7.2 */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          B) Contact *
+          B) 联系人 *
         </Title>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name="contactName"
-              label="Contact Name"
-              rules={[{ required: true, message: 'Contact name is required' }]}
+              label="联系人姓名"
+              rules={[{ required: true, message: '联系人姓名为必填项' }]}
             >
-              <Input placeholder="Enter contact person name" />
+              <Input placeholder="输入联系人姓名" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               name="contactRole"
-              label="Role / Position"
+              label="角色 / 职位"
             >
-              <Input placeholder="e.g., Owner, Manager" />
+              <Input placeholder="例如：负责人、经理" />
             </Form.Item>
           </Col>
         </Row>
@@ -323,9 +323,9 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
           <Col span={12}>
             <Form.Item
               name="contactPhone"
-              label="Phone"
+              label="电话"
               rules={[
-                { pattern: /^1[3-9]\d{9}$/, message: 'Please enter a valid phone number' },
+                { pattern: /^1[3-9]\d{9}$/, message: '请输入有效手机号' },
               ]}
             >
               <Input placeholder="13800138000" />
@@ -334,9 +334,9 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
           <Col span={12}>
             <Form.Item
               name="contactEmail"
-              label="Email"
+              label="邮箱"
               rules={[
-                { type: 'email', message: 'Please enter a valid email' },
+                { type: 'email', message: '请输入有效邮箱' },
               ]}
             >
               <Input placeholder="contact@example.com" />
@@ -344,7 +344,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
           </Col>
         </Row>
         <Text type="secondary" style={{ fontSize: 12 }}>
-          * At least phone or email is required
+          * 电话或邮箱至少填写一项
         </Text>
 
         <Divider />
@@ -352,13 +352,13 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         {/* Section C: Commercial (optional for Sprint 1) */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          C) Commercial
+          C) 商业信息
         </Title>
         <Form.Item
           name="estimatedMonthlyVolume"
-          label="Estimated Monthly Volume"
+          label="预估月成交额"
         >
-          <Select placeholder="Select estimated monthly volume">
+          <Select placeholder="选择预估月成交额">
             <Select.Option value="< ¥50,000">&lt; ¥50,000</Select.Option>
             <Select.Option value="¥50,000 - ¥100,000">¥50,000 - ¥100,000</Select.Option>
             <Select.Option value="¥100,000 - ¥500,000">¥100,000 - ¥500,000</Select.Option>
@@ -368,17 +368,17 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         </Form.Item>
         <Form.Item
           name="serviceAvailability"
-          label="Service Availability Window"
+          label="服务可用时间"
         >
-          <Input placeholder="e.g., Weekdays 10am-8pm" />
+          <Input placeholder="例如：工作日 10:00-20:00" />
         </Form.Item>
         <Form.Item
           name="notes"
-          label="Additional Notes"
+          label="补充备注"
         >
           <TextArea
             rows={4}
-            placeholder="Any additional information about the merchant..."
+            placeholder="关于商户的其他补充信息..."
             maxLength={1000}
             showCount
           />
@@ -389,11 +389,11 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         {/* Section D: Attachments (optional but must exist) - Sprint 1 §7.2 */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          D) Attachments
+          D) 附件
         </Title>
         <Form.Item
           name="attachments"
-          label="Upload Files"
+          label="上传文件"
           valuePropName="fileList"
           getValueFromEvent={(e) => e?.fileList}
         >
@@ -403,11 +403,11 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
             onChange={({ fileList }) => setFileList(fileList)}
             multiple
           >
-            <Button icon={<UploadOutlined />}>Upload Menu / Deck / Pricing Sheet</Button>
+            <Button icon={<UploadOutlined />}>上传菜单 / 介绍材料 / 报价单</Button>
           </Upload>
         </Form.Item>
         <Text type="secondary" style={{ fontSize: 12 }}>
-          Supported formats: PDF, JPG, PNG, DOCX (Max 10MB each)
+          支持格式：PDF、JPG、PNG、DOCX（每个文件最大 10MB）
         </Text>
 
         <Divider />
@@ -415,7 +415,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         {/* Section E: COI Declaration (required) - Sprint 1 §7.2 */}
         <Title level={5}>
           <InfoCircleOutlined style={{ marginRight: 8 }} />
-          E) COI Declaration *
+          E) 利益冲突声明 *
         </Title>
         <Form.Item
           name="coiDeclared"
@@ -423,18 +423,18 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
         >
           <Checkbox onChange={(e) => setCoiDeclared(e.target.checked)}>
             <Text strong>
-              I confirm I have disclosed any potential conflict of interest
+              我确认已披露任何潜在利益冲突
             </Text>
           </Checkbox>
         </Form.Item>
         {coiDeclared && (
           <Form.Item
             name="coiDetails"
-            label="COI Details (if applicable)"
+            label="利益冲突详情（如适用）"
           >
             <TextArea
               rows={3}
-              placeholder="Please describe any potential conflicts of interest..."
+              placeholder="请描述任何潜在利益冲突..."
               maxLength={500}
               showCount
             />
@@ -445,7 +445,7 @@ export const LeadFormModal: React.FC<LeadFormModalProps> = ({
       <Space style={{ marginTop: 16 }}>
         <InfoCircleOutlined style={{ color: '#1890ff' }} />
         <Text type="secondary">
-          Required fields must be filled before submission. Your input will be preserved if validation fails.
+          提交前必须填写必填字段。若校验失败，已输入内容会保留。
         </Text>
       </Space>
     </Modal>

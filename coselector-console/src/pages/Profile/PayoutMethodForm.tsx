@@ -33,13 +33,13 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
   const handleEdit = () => {
     if (hasPendingPayout) {
       Modal.confirm({
-        title: 'Pending Payout Exists',
+        title: '存在待处理提现',
         icon: <WarningOutlined />,
         content:
-          'You have a pending payout. Changing your bank account will require re-verification and may delay your payout. Do you want to continue?',
-        okText: 'Yes, Change Account',
+          '你有一笔待处理提现。更改银行账户将需要重新验证，并可能延迟提现。是否继续？',
+        okText: '确认更改账户',
         okType: 'danger',
-        cancelText: 'Cancel',
+        cancelText: '取消',
         onOk: () => {
           setIsEditing(true);
           setShowChangeWarning(true);
@@ -47,12 +47,12 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
       });
     } else if (isVerified) {
       Modal.confirm({
-        title: 'Change Verified Account',
+        title: '更改已验证账户',
         icon: <WarningOutlined />,
         content:
-          'Your current bank account is verified. Changing it will require re-verification with a test transfer. Continue?',
-        okText: 'Yes, Change',
-        cancelText: 'Cancel',
+          '你当前的银行账户已验证。更改后需要通过测试转账重新验证。是否继续？',
+        okText: '确认更改',
+        cancelText: '取消',
         onOk: () => {
           setIsEditing(true);
           setShowChangeWarning(true);
@@ -74,35 +74,35 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
       onSave(values);
       setIsEditing(false);
       setShowChangeWarning(false);
-      message.success('Bank account information saved');
+      message.success('银行账户信息已保存');
     });
   };
 
   const handleVerify = () => {
     const values = form.getFieldsValue();
     Modal.confirm({
-      title: 'Verify Bank Account',
+      title: '验证银行账户',
       icon: <BankOutlined />,
       content: (
         <Space direction="vertical">
           <p>
-            We will send a test transfer of <strong>¥0.01</strong> to the account below:
+            我们将向以下账户发送 <strong>¥0.01</strong> 测试转账：
           </p>
           <Descriptions column={1} size="small" bordered>
-            <Descriptions.Item label="Bank">{values.bankName}</Descriptions.Item>
-            <Descriptions.Item label="Account Number">{values.accountNumber}</Descriptions.Item>
-            <Descriptions.Item label="Account Holder">{values.accountHolder}</Descriptions.Item>
+            <Descriptions.Item label="银行">{values.bankName}</Descriptions.Item>
+            <Descriptions.Item label="账户号码">{values.accountNumber}</Descriptions.Item>
+            <Descriptions.Item label="账户持有人">{values.accountHolder}</Descriptions.Item>
           </Descriptions>
           <p>
-            Please confirm the test amount within 3 business days to complete verification.
+            请在 3 个工作日内确认测试金额以完成验证。
           </p>
         </Space>
       ),
-      okText: 'Send Test Transfer',
-      cancelText: 'Cancel',
+      okText: '发送测试转账',
+      cancelText: '取消',
       onOk: () => {
         onVerify(values);
-        message.success('Test transfer initiated. Please check your bank account.');
+        message.success('测试转账已发起，请查看你的银行账户。');
       },
     });
   };
@@ -112,14 +112,14 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
       title={
         <Space>
           <BankOutlined />
-          Payout Method
+          提现方式
         </Space>
       }
       extra={
         !isEditing &&
         userProfile.bankAccount && (
           <Button type="link" onClick={handleEdit}>
-            Edit
+            编辑
           </Button>
         )
       }
@@ -127,8 +127,8 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
       {showChangeWarning && (
         <Alert
           type="warning"
-          message="Account Change Detected"
-          description="Changing your bank account requires re-verification. Please ensure the new account details are correct."
+          message="检测到账户变更"
+          description="更改银行账户需要重新验证。请确保新账户信息准确。"
           closable
           onClose={() => setShowChangeWarning(false)}
           style={{ marginBottom: 16 }}
@@ -138,8 +138,8 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
       {isVerified && !isEditing && (
         <Alert
           type="success"
-          message="Bank Account Verified"
-          description="Your bank account has been verified and is ready for payouts."
+          message="银行账户已验证"
+          description="你的银行账户已验证，可用于提现。"
           icon={<CheckCircleOutlined />}
           showIcon
           style={{ marginBottom: 16 }}
@@ -149,13 +149,13 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
       {!isVerified && userProfile.bankAccount && !isEditing && (
         <Alert
           type="warning"
-          message="Verification Required"
-          description="Your bank account is not verified yet. Please verify it to enable payouts."
+          message="需要验证"
+          description="你的银行账户尚未验证。请完成验证以启用提现。"
           icon={<WarningOutlined />}
           showIcon
           action={
             <Button size="small" type="primary" onClick={handleVerify}>
-              Verify Now
+              立即验证
             </Button>
           }
           style={{ marginBottom: 16 }}
@@ -169,41 +169,41 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
         disabled={!isEditing}
       >
         <Form.Item
-          label="Bank Name"
+          label="银行名称"
           name="bankName"
-          rules={[{ required: true, message: 'Please enter bank name' }]}
+          rules={[{ required: true, message: '请输入银行名称' }]}
         >
           <Input
             prefix={<BankOutlined />}
-            placeholder="e.g., Industrial and Commercial Bank of China"
+            placeholder="例如：中国工商银行"
           />
         </Form.Item>
 
         <Form.Item
-          label="Account Number"
+          label="账户号码"
           name="accountNumber"
           rules={[
-            { required: true, message: 'Please enter account number' },
+            { required: true, message: '请输入账户号码' },
             {
               pattern: /^\d{16,19}$/,
-              message: 'Account number must be 16-19 digits',
+              message: '账户号码必须为 16-19 位数字',
             },
           ]}
         >
-          <Input placeholder="Enter 16-19 digit account number" maxLength={19} />
+          <Input placeholder="输入 16-19 位账户号码" maxLength={19} />
         </Form.Item>
 
         <Form.Item
-          label="Account Holder Name"
+          label="账户持有人姓名"
           name="accountHolder"
           rules={[
-            { required: true, message: 'Please enter account holder name' },
+            { required: true, message: '请输入账户持有人姓名' },
             {
               validator: (_, value) => {
                 if (value && value !== userProfile.displayName) {
                   return Promise.reject(
                     new Error(
-                      'Account holder name must match your registered name. If different, please contact support.'
+                      '账户持有人姓名必须与你的注册姓名一致。如不一致，请联系支持团队。'
                     )
                   );
                 }
@@ -212,33 +212,33 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
             },
           ]}
         >
-          <Input placeholder="Must match your registered name" />
+          <Input placeholder="必须与注册姓名一致" />
         </Form.Item>
 
-        <Form.Item label="Branch Name (Optional)" name="branchName">
-          <Input placeholder="Bank branch name" />
+        <Form.Item label="支行名称（可选）" name="branchName">
+          <Input placeholder="银行支行名称" />
         </Form.Item>
 
         <Form.Item
-          label="SWIFT/BIC Code (Optional)"
+          label="SWIFT/BIC 代码（可选）"
           name="swiftCode"
           rules={[
             {
               pattern: /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/,
-              message: 'Invalid SWIFT code format',
+              message: 'SWIFT 代码格式无效',
             },
           ]}
         >
-          <Input placeholder="8 or 11 characters" maxLength={11} />
+          <Input placeholder="8 或 11 个字符" maxLength={11} />
         </Form.Item>
 
         {isEditing && (
           <Space>
             <Button type="primary" onClick={handleSave}>
-              Save
+              保存
             </Button>
             {userProfile.bankAccount && (
-              <Button onClick={handleCancel}>Cancel</Button>
+              <Button onClick={handleCancel}>取消</Button>
             )}
           </Space>
         )}
@@ -247,8 +247,8 @@ export const PayoutMethodForm: React.FC<PayoutMethodFormProps> = ({
       {!isEditing && !isVerified && userProfile.bankAccount && (
         <Alert
           type="info"
-          message="Next Step: Verification"
-          description="Click 'Verify Now' to receive a ¥0.01 test transfer. Confirm the amount to complete verification."
+          message="下一步：验证"
+          description="点击“立即验证”接收 ¥0.01 测试转账，并确认金额以完成验证。"
           style={{ marginTop: 16 }}
         />
       )}

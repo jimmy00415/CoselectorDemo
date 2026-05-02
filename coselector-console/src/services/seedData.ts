@@ -291,7 +291,7 @@ export function generateTransactions(count: number = 120, assets: TrackingAsset[
     timeline.push({
       id: generateId(),
       actorType: ActorType.SYSTEM,
-      actorName: 'System',
+      actorName: '系统',
       occurredAt: createdDate.toISOString(),
       eventType: 'Created',
       description: `交易创建，订单号：ORD-${generateId().slice(0, 10)}`,
@@ -302,7 +302,7 @@ export function generateTransactions(count: number = 120, assets: TrackingAsset[
       timeline.push({
         id: generateId(),
         actorType: ActorType.SYSTEM,
-        actorName: 'System',
+        actorName: '系统',
         occurredAt: dayjs(lockEndAt).add(1, 'hour').toISOString(),
         eventType: 'Locked',
         description: '锁定期结束，交易已锁定',
@@ -313,7 +313,7 @@ export function generateTransactions(count: number = 120, assets: TrackingAsset[
       timeline.push({
         id: generateId(),
         actorType: ActorType.SYSTEM,
-        actorName: 'System',
+        actorName: '系统',
         occurredAt: dayjs(lockEndAt).add(2, 'day').toISOString(),
         eventType: 'Payable',
         description: 'KYC验证通过，可提现',
@@ -341,10 +341,10 @@ export function generateTransactions(count: number = 120, assets: TrackingAsset[
       timeline.push({
         id: generateId(),
         actorType: ActorType.SYSTEM,
-        actorName: 'System',
+        actorName: '系统',
         occurredAt: createdDate.add(Math.floor(Math.random() * 20) + 5, 'day').toISOString(),
         eventType: 'Reversed',
-        description: `交易已冲销: ${reversalReason}`,
+        description: `交易已冲销：${reversalReason}`,
         reasonCode: reversalReason,
       });
     }
@@ -428,7 +428,7 @@ export function generatePayouts(count: number = 8): Payout[] {
       timeline.push({
         id: generateId(),
         actorType: ActorType.SYSTEM,
-        actorName: 'System',
+        actorName: '系统',
         occurredAt: requestedDate.add(3, 'day').toISOString(),
         eventType: 'Paid',
         description: '款项已成功转账',
@@ -439,7 +439,7 @@ export function generatePayouts(count: number = 8): Payout[] {
       timeline.push({
         id: generateId(),
         actorType: ActorType.SYSTEM,
-        actorName: 'System',
+        actorName: '系统',
         occurredAt: requestedDate.add(3, 'day').toISOString(),
         eventType: 'Failed',
         description: '转账失败：银行账户异常',
@@ -498,7 +498,7 @@ export function generateDisputeCases(count: number = 7, transactions: Transactio
       timeline.push({
         id: generateId(),
         actorType: ActorType.SYSTEM,
-        actorName: 'System',
+        actorName: '系统',
         occurredAt: createdDate.add(1, 'hour').toISOString(),
         eventType: 'Waiting',
         description: '等待运营团队审核',

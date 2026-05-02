@@ -3,6 +3,7 @@ import { Modal, Input, List, Checkbox, Button, Space, Empty, Tag, Divider, messa
 import { SearchOutlined, PlusOutlined, LinkOutlined } from '@ant-design/icons';
 import { ContentItem, TrackingAsset } from '../../types';
 import { AssetType } from '../../types/enums';
+import { translateChannel } from '../../utils/i18n';
 
 const { Search } = Input;
 
@@ -78,7 +79,7 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
     try {
       await onSubmit(selectedAssetIds);
     } catch (error) {
-      message.error('Failed to bind assets');
+      message.error('资产绑定失败');
     } finally {
       setLoading(false);
     }
@@ -87,7 +88,7 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
   const handleCreateNew = () => {
     // TODO: Open nested asset creation wizard
     // For now, show message
-    message.info('Asset creation wizard will open here');
+    message.info('资产创建向导将在此打开');
   };
 
   const getAssetTypeIcon = (type: AssetType) => {
@@ -105,13 +106,13 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
 
   return (
     <Modal
-      title={`Bind Assets to "${content?.title || 'Content'}"`}
+      title={`绑定资产到“${content?.title || '内容'}”`}
       open={visible}
       onCancel={onClose}
       width={700}
       footer={[
         <Button key="cancel" onClick={onClose}>
-          Cancel
+          取消
         </Button>,
         <Button
           key="submit"
@@ -120,7 +121,7 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
           onClick={handleSubmit}
           disabled={selectedAssetIds.length === 0}
         >
-          Bind {selectedAssetIds.length} Asset{selectedAssetIds.length !== 1 ? 's' : ''}
+          绑定 {selectedAssetIds.length} 个资产
         </Button>,
       ]}
     >
@@ -128,7 +129,7 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
         {/* Search and Actions */}
         <Space style={{ width: '100%', justifyContent: 'space-between' }}>
           <Search
-            placeholder="Search assets by name, ID, channel, or link"
+            placeholder="按名称、ID、渠道或链接搜索资产"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             style={{ width: 400 }}
@@ -139,7 +140,7 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
               size="small"
               onClick={handleSelectAll}
             >
-              {selectedAssetIds.length === filteredAssets.length ? 'Deselect All' : 'Select All'}
+              {selectedAssetIds.length === filteredAssets.length ? '取消全选' : '全选'}
             </Button>
             <Button
               type="dashed"
@@ -147,7 +148,7 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
               icon={<PlusOutlined />}
               onClick={handleCreateNew}
             >
-              Create New Asset
+              新建资产
             </Button>
           </Space>
         </Space>
@@ -158,7 +159,7 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
         <div style={{ maxHeight: 400, overflowY: 'auto' }}>
           {filteredAssets.length === 0 ? (
             <Empty
-              description={searchText ? 'No assets found' : 'No assets available'}
+              description={searchText ? '未找到资产' : '暂无可用资产'}
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             />
           ) : (
@@ -190,19 +191,19 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
                         <Space>
                           <span>{getAssetTypeIcon(asset.type)}</span>
                           <span>{asset.name}</span>
-                          {isBound && <Tag color="green">Currently Bound</Tag>}
+                          {isBound && <Tag color="green">当前已绑定</Tag>}
                         </Space>
                       }
                       description={
                         <Space direction="vertical" size="small">
                           <div>
-                            <Tag color="blue">{asset.channelTag}</Tag>
+                            <Tag color="blue">{translateChannel(asset.channelTag)}</Tag>
                             <span style={{ fontSize: '12px', color: '#8c8c8c' }}>
                               {asset.assetValue}
                             </span>
                           </div>
                           <div style={{ fontSize: '12px', color: '#8c8c8c' }}>
-                            {asset.clickCount} clicks • {asset.conversionCount} conversions
+                            {asset.clickCount} 次点击 · {asset.conversionCount} 次转化
                           </div>
                         </Space>
                       }
@@ -217,10 +218,10 @@ const BindAssetsModal: React.FC<BindAssetsModalProps> = ({
         {/* Summary */}
         {selectedAssetIds.length > 0 && (
           <div style={{ padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-            <strong>{selectedAssetIds.length}</strong> asset{selectedAssetIds.length !== 1 ? 's' : ''} selected
+            已选择 <strong>{selectedAssetIds.length}</strong> 个资产
             {content?.boundAssetIds && (
               <span style={{ marginLeft: '16px', color: '#8c8c8c' }}>
-                (was {content.boundAssetIds.length})
+                （原有 {content.boundAssetIds.length} 个）
               </span>
             )}
           </div>

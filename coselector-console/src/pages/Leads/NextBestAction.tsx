@@ -7,6 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Lead } from '../../types';
 import { LeadStatus } from '../../types/enums';
+import { translateReasonCode, translateText } from '../../utils';
 
 /**
  * NextBestAction Component
@@ -37,8 +38,8 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
         return {
           type: 'info' as const,
           icon: <ExclamationCircleOutlined />,
-          message: 'Complete and Submit',
-          description: 'Your lead is saved as a draft. Complete all required fields and submit for review.',
+          message: '补全并提交',
+          description: '此线索已保存为草稿。请补全所有必填字段并提交审核。',
           action: null,
         };
 
@@ -46,8 +47,8 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
         return {
           type: 'info' as const,
           icon: <CheckCircleOutlined />,
-          message: 'No action needed',
-          description: 'Your lead has been submitted and is awaiting review. You will be notified when there are updates.',
+          message: '暂无需操作',
+          description: '线索已提交，正在等待审核。有更新时你会收到通知。',
           action: null,
         };
 
@@ -55,10 +56,10 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
         return {
           type: 'info' as const,
           icon: <CheckCircleOutlined />,
-          message: 'No action needed',
+          message: '暂无需操作',
           description: lead.assignedOwner 
-            ? `Your lead is under review. Assigned owner: ${lead.assignedOwner}. You will be notified of any updates.`
-            : 'Your lead is under review by the operations team. You will be notified of any updates.',
+            ? `线索正在审核中。分配负责人：${lead.assignedOwner}。有更新时你会收到通知。`
+            : '线索正在由运营团队审核。有更新时你会收到通知。',
           action: null,
         };
 
@@ -71,11 +72,11 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
         return {
           type: 'warning' as const,
           icon: <ExclamationCircleOutlined />,
-          message: 'Action Required: Upload Requested Documents',
-          description: infoRequestEvent?.description || 'Additional information has been requested. Please upload the required documents and update your lead.',
+          message: '需要操作：上传所需材料',
+          description: translateText(infoRequestEvent?.description) || '需要补充信息。请上传所需材料并更新线索。',
           action: onUploadDocs ? (
             <Button type="primary" icon={<UploadOutlined />} onClick={onUploadDocs}>
-              Upload Documents
+              上传材料
             </Button>
           ) : null,
         };
@@ -84,8 +85,8 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
         return {
           type: 'success' as const,
           icon: <CheckCircleOutlined />,
-          message: 'Lead Approved',
-          description: 'Congratulations! Your lead has been approved. The operations team will contact you with next steps.',
+          message: '线索已通过',
+          description: '恭喜！你的线索已通过审核。运营团队会与你沟通后续步骤。',
           action: null,
         };
 
@@ -95,17 +96,17 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
           .reverse()
           .find(e => e.eventType.includes('REJECTED'));
         const rejectionReason = rejectEvent?.reasonCode 
-          ? `Reason: ${rejectEvent.reasonCode.replace(/_/g, ' ')}`
+          ? `原因：${translateReasonCode(rejectEvent.reasonCode)}`
           : '';
 
         return {
           type: 'error' as const,
           icon: <CloseCircleOutlined />,
-          message: 'Lead Rejected',
-          description: `Your lead was not approved. ${rejectionReason}. You can review the feedback in the timeline and resubmit with updated information.`,
+          message: '线索已拒绝',
+          description: `你的线索未通过审核。${rejectionReason}。你可以在时间线中查看反馈，并更新信息后重新提交。`,
           action: onResubmit ? (
             <Button type="primary" danger onClick={onResubmit}>
-              Resubmit Lead
+              重新提交线索
             </Button>
           ) : null,
         };
@@ -114,8 +115,8 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
         return {
           type: 'info' as const,
           icon: <CheckCircleOutlined />,
-          message: 'Resubmitted for Review',
-          description: 'Your lead has been resubmitted and is awaiting review. You will be notified when there are updates.',
+          message: '已重新提交审核',
+          description: '你的线索已重新提交，正在等待审核。有更新时你会收到通知。',
           action: null,
         };
 
@@ -123,8 +124,8 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
         return {
           type: 'info' as const,
           icon: <CheckCircleOutlined />,
-          message: 'No action needed',
-          description: 'Your lead is being processed. You will be notified of any updates.',
+          message: '暂无需操作',
+          description: '线索正在处理中。有更新时你会收到通知。',
           action: null,
         };
     }
@@ -134,7 +135,7 @@ export const NextBestAction: React.FC<NextBestActionProps> = ({
 
   return (
     <Card 
-      title="Next Best Action" 
+      title="下一步建议" 
       style={{ marginBottom: 24 }}
       styles={{ body: { padding: 0 } }}
     >

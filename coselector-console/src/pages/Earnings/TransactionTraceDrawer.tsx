@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import { Transaction } from '../../types';
 import { EarningsState, TransactionSource, ReversalReason } from '../../types/enums';
-import { formatDate, formatCurrency } from '../../utils';
+import { formatDate, formatCurrency, translateChannel, translateReasonCode, translateStatus, translateText } from '../../utils';
 import { stateColors } from './config';
 
 /**
@@ -33,20 +33,20 @@ interface TransactionTraceDrawerProps {
 // Mock data for demonstration - in production, would fetch related entities
 const getAssetName = (assetId: string): string => {
   // In production: fetch from mockApi.assets.getById(assetId)
-  return `Asset ${assetId.substring(0, 8)}`;
+  return `资产 ${assetId.substring(0, 8)}`;
 };
 
 const getReversalReasonLabel = (reason?: ReversalReason): string => {
-  if (!reason) return 'Unknown';
+  if (!reason) return '未知';
   
   const labels: Record<ReversalReason, string> = {
-    [ReversalReason.REFUND]: 'Customer Refund',
-    [ReversalReason.DISPUTE]: 'Dispute',
-    [ReversalReason.DISPUTE_CHARGEBACK]: 'Dispute/Chargeback',
-    [ReversalReason.FRAUD]: 'Fraud',
-    [ReversalReason.FRAUD_HOLD]: 'Fraud Hold',
-    [ReversalReason.ORDER_VOID_CANCEL]: 'Order Void/Cancel',
-    [ReversalReason.SYSTEM_REATTRIBUTED]: 'System Reattributed',
+    [ReversalReason.REFUND]: '客户退款',
+    [ReversalReason.DISPUTE]: '争议',
+    [ReversalReason.DISPUTE_CHARGEBACK]: '争议/拒付',
+    [ReversalReason.FRAUD]: '欺诈',
+    [ReversalReason.FRAUD_HOLD]: '欺诈冻结',
+    [ReversalReason.ORDER_VOID_CANCEL]: '订单作废/取消',
+    [ReversalReason.SYSTEM_REATTRIBUTED]: '系统重新归因',
   };
   
   return labels[reason] || reason;
@@ -71,9 +71,9 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
     <Drawer
       title={
         <Space>
-          <Text strong>Transaction Trace</Text>
+          <Text strong>交易追踪</Text>
           <Tag color={stateColors[transaction.state]}>
-            {transaction.state}
+            {translateStatus(transaction.state)}
           </Tag>
         </Space>
       }
@@ -86,15 +86,15 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
       {/* Header Summary */}
       <div style={{ marginBottom: 24 }}>
         <Descriptions column={1} size="small">
-          <Descriptions.Item label="Transaction ID">
+          <Descriptions.Item label="交易 ID">
             <Text copyable={{ text: transaction.id }}>
               {transaction.id.substring(0, 16)}...
             </Text>
           </Descriptions.Item>
-          <Descriptions.Item label="Date">
+          <Descriptions.Item label="日期">
             {formatDate(transaction.date)}
           </Descriptions.Item>
-          <Descriptions.Item label="Amount">
+          <Descriptions.Item label="金额">
             <Text 
               strong 
               style={{ 
@@ -111,11 +111,11 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
       {/* Reversal Alert */}
       {isReversed && (
         <Alert
-          message="Transaction Reversed"
+          message="交易已冲正"
           description={
             isNegativeAmount
-              ? 'This is a reversal adjustment entry (negative amount)'
-              : 'Original transaction marked as reversed'
+              ? '这是一条冲正调整记录（负金额）'
+              : '原始交易已标记为已冲正'
           }
           type="error"
           showIcon
@@ -135,31 +135,31 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
           header={
             <Space>
               <LinkOutlined />
-              <Text strong>Attribution Evidence</Text>
+              <Text strong>归因证据</Text>
             </Space>
           } 
           key="attribution"
         >
           <Descriptions column={1} size="small" bordered>
-            <Descriptions.Item label="Source">
+            <Descriptions.Item label="来源">
               <Tag>{transaction.source}</Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="Reference ID">
+            <Descriptions.Item label="引用 ID">
               <Text copyable={{ text: transaction.referenceId }}>
                 {transaction.referenceId}
               </Text>
             </Descriptions.Item>
-            <Descriptions.Item label="Asset ID">
+            <Descriptions.Item label="资产 ID">
               <Tooltip title={transaction.assetId}>
                 {getAssetName(transaction.assetId)}
               </Tooltip>
             </Descriptions.Item>
-            <Descriptions.Item label="Channel Tag">
-              <Tag color="blue">{transaction.channelTag}</Tag>
+            <Descriptions.Item label="渠道标签">
+              <Tag color="blue">{translateChannel(transaction.channelTag)}</Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="Touchpoint">
+            <Descriptions.Item label="触点">
               <Text type="secondary">
-                Last-click: {formatDate(transaction.createdAt)}
+                最后点击：{formatDate(transaction.createdAt)}
               </Text>
             </Descriptions.Item>
           </Descriptions>
@@ -170,32 +170,32 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
           header={
             <Space>
               <DollarOutlined />
-              <Text strong>Commission Breakdown</Text>
+              <Text strong>佣金拆解</Text>
             </Space>
           } 
           key="commission"
         >
           <Descriptions column={1} size="small" bordered>
-            <Descriptions.Item label="Commissionable Base">
+            <Descriptions.Item label="计佣基数">
               {formatCurrency(commissionableBase)}
             </Descriptions.Item>
-            <Descriptions.Item label="Commission Rate">
+            <Descriptions.Item label="佣金比例">
               {transaction.commissionRate}%
             </Descriptions.Item>
-            <Descriptions.Item label="Commission Amount">
+            <Descriptions.Item label="佣金金额">
               <Text strong style={{ color: '#52c41a' }}>
                 {formatCurrency(Math.abs(commissionAmount))}
               </Text>
             </Descriptions.Item>
-            <Descriptions.Item label="Rule Version">
+            <Descriptions.Item label="规则版本">
               <Tag>v{transaction.ruleVersion}</Tag>
             </Descriptions.Item>
           </Descriptions>
 
           {transaction.source === TransactionSource.ADJUSTMENT && (
             <Alert
-              message="Adjustment Transaction"
-              description="This is a manual adjustment or correction entry"
+              message="调整交易"
+              description="这是一条手动调整或修正记录"
               type="info"
               showIcon
               style={{ marginTop: 12 }}
@@ -209,30 +209,29 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
             header={
               <Space>
                 <LockOutlined />
-                <Text strong>Locking Policy</Text>
+                <Text strong>锁定政策</Text>
               </Space>
             } 
             key="locking"
           >
             <Descriptions column={1} size="small" bordered>
-              <Descriptions.Item label="Lock End Date">
+              <Descriptions.Item label="锁定结束日期">
                 {formatDate(transaction.lockEndAt)}
               </Descriptions.Item>
-              <Descriptions.Item label="Policy">
+              <Descriptions.Item label="政策">
                 <Text type="secondary">
-                  Pending period - Modifiable/Reversible before lock date
+                  待锁定期 - 锁定日前可修改或冲正
                 </Text>
               </Descriptions.Item>
-              <Descriptions.Item label="Days Remaining">
-                {Math.ceil((new Date(transaction.lockEndAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} days
+              <Descriptions.Item label="剩余天数">
+                {Math.ceil((new Date(transaction.lockEndAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24))} 天
               </Descriptions.Item>
             </Descriptions>
 
             <Divider style={{ margin: '12px 0' }} />
 
             <Text type="secondary" style={{ fontSize: 12 }}>
-              <strong>Policy Details:</strong> This transaction is in the pending state and can be reversed 
-              or modified until the lock date. After locking, any reversal will create a separate adjustment entry.
+              <strong>政策详情：</strong>此交易处于待锁定状态，在锁定日前可冲正或修改。锁定后如需冲正，将生成一条独立调整记录。
             </Text>
           </Panel>
         )}
@@ -243,38 +242,38 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
             header={
               <Space>
                 <WarningOutlined />
-                <Text strong>Reversal Details</Text>
+                <Text strong>冲正详情</Text>
               </Space>
             } 
             key="reversal"
           >
             <Descriptions column={1} size="small" bordered>
-              <Descriptions.Item label="Reversal Reason">
+              <Descriptions.Item label="冲正原因">
                 <Tag color="red">
                   {transaction.timeline[transaction.timeline.length - 1]?.reasonCode 
                     ? getReversalReasonLabel(transaction.timeline[transaction.timeline.length - 1].reasonCode as ReversalReason)
-                    : 'Not specified'
+                    : '未指定'
                   }
                 </Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="Reversed At">
+              <Descriptions.Item label="冲正时间">
                 {transaction.timeline.length > 0 
                   ? formatDate(transaction.timeline[transaction.timeline.length - 1].occurredAt)
-                  : 'Unknown'
+                  : '未知'
                 }
               </Descriptions.Item>
-              <Descriptions.Item label="Reversed By">
+              <Descriptions.Item label="冲正人">
                 {transaction.timeline.length > 0 
                   ? transaction.timeline[transaction.timeline.length - 1].actorName
-                  : 'System'
+                  : '系统'
                 }
               </Descriptions.Item>
             </Descriptions>
 
             {isNegativeAmount && (
               <Alert
-                message="Adjustment Entry"
-                description="This is a negative adjustment entry created to reverse a previously locked/payable/paid transaction. The original transaction remains in the system for audit purposes."
+                message="调整记录"
+                description="这是一条负向调整记录，用于冲正此前已锁定、可提现或已支付的交易。原始交易会保留在系统中用于审计。"
                 type="warning"
                 showIcon
                 style={{ marginTop: 12 }}
@@ -287,8 +286,8 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
         <Panel 
           header={
             <Space>
-              <Text strong>State History</Text>
-              <Tag color="default">{transaction.timeline.length} events</Tag>
+              <Text strong>状态历史</Text>
+              <Tag color="default">{transaction.timeline.length} 个事件</Tag>
             </Space>
           } 
           key="timeline"
@@ -304,18 +303,18 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <Text strong>{event.eventType}</Text>
+                  <Text strong>{translateText(event.eventType)}</Text>
                   <Text type="secondary" style={{ fontSize: 12 }}>
                     {formatDate(event.occurredAt)}
                   </Text>
                 </div>
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  {event.description}
+                  {translateText(event.description)}
                 </Text>
                 {event.reasonCode && (
                   <div style={{ marginTop: 4 }}>
                     <Tag color="orange">
-                      {event.reasonCode}
+                      {translateReasonCode(event.reasonCode)}
                     </Tag>
                   </div>
                 )}

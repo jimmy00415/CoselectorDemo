@@ -15,6 +15,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { mockApi } from '../../services/mockApi';
 import { PayoutStateMachine } from '../../services/stateMachines';
 import { generateId } from '../../utils/helpers';
+import { translateText } from '../../utils/i18n';
 import './styles.css';
 
 export const PayoutsPage: React.FC = () => {
@@ -39,7 +40,7 @@ export const PayoutsPage: React.FC = () => {
       setPayouts(allPayouts);
       setTransactions(allTransactions);
     } catch (error) {
-      message.error('Failed to load data');
+      message.error('数据加载失败');
     } finally {
       setLoading(false);
     }
@@ -59,30 +60,30 @@ export const PayoutsPage: React.FC = () => {
     const issues: string[] = [];
 
     if (!user) {
-      issues.push('User not logged in');
+      issues.push('用户未登录');
       return { isEligible: false, issues };
     }
 
     // KYC check
     if (user.kycStatus !== 'APPROVED') {
       if (user.kycStatus === 'NOT_STARTED') {
-        issues.push('KYC verification not started');
+        issues.push('KYC 验证未开始');
       } else if (user.kycStatus === 'SUBMITTED') {
         // Non-blocking for SUBMITTED (under review)
       } else if (user.kycStatus === 'REJECTED') {
-        issues.push('KYC verification rejected');
+        issues.push('KYC 验证已被拒绝');
       }
     }
 
     // Payout method check
     if (!user.bankAccount?.bankName) {
-      issues.push('Bank account not configured');
+      issues.push('银行账户未配置');
     }
 
     // Minimum threshold check (example: $50)
     const minThreshold = 50;
     if (payableBalance < minThreshold) {
-      issues.push(`Payable balance below minimum threshold (¥${minThreshold})`);
+      issues.push(`可提现余额低于最低门槛（¥${minThreshold}）`);
     }
 
     // Account frozen check (example field)
@@ -101,20 +102,20 @@ export const PayoutsPage: React.FC = () => {
   // Handle payout request
   const handleRequestPayout = (amount: number) => {
     if (!user) {
-      message.error('User not logged in');
+      message.error('用户未登录');
       return;
     }
 
     // Re-validate payable balance
     const currentPayable = calculatePayableBalance();
     if (amount > currentPayable) {
-      message.error(`Amount exceeds available balance: ¥${currentPayable.toFixed(2)}`);
+      message.error(`金额超过可用余额：¥${currentPayable.toFixed(2)}`);
       return;
     }
 
     // Re-check payout method
     if (!user.bankAccount?.bankName) {
-      message.error('Please set up your bank account first');
+      message.error('请先设置银行账户');
       return;
     }
 
@@ -141,8 +142,8 @@ export const PayoutsPage: React.FC = () => {
           actorType: ActorType.CO_SELECTOR,
           actorName: user.displayName,
           occurredAt: new Date().toISOString(),
-          eventType: 'Payout Requested',
-          description: `Withdrawal request submitted for ¥${amount.toFixed(2)}`,
+          eventType: '提现已申请',
+          description: `已提交 ¥${amount.toFixed(2)} 的提现申请`,
           metadata: {
             amount,
             transactionCount: payableTransactionIds.length,
@@ -160,7 +161,7 @@ export const PayoutsPage: React.FC = () => {
 
     setPayouts([...payouts, newPayout]);
     setRequestModalVisible(false);
-    message.success('Payout request submitted successfully');
+    message.success('提现申请提交成功');
   };
 
   // Handle cancel payout
@@ -169,31 +170,31 @@ export const PayoutsPage: React.FC = () => {
     if (!payout) return;
 
     if (payout.status !== PayoutStatus.REQUESTED) {
-      message.error('Only requested payouts can be cancelled');
+      message.error('只有已申请状态的提现可以取消');
       return;
     }
 
     Modal.confirm({
-      title: 'Cancel Payout',
+      title: '取消提现',
       icon: <ExclamationCircleOutlined />,
-      content: 'Are you sure you want to cancel this payout request?',
-      okText: 'Yes, Cancel',
+      content: '确定要取消此提现申请吗？',
+      okText: '确认取消',
       okType: 'danger',
-      cancelText: 'No',
+      cancelText: '不取消',
       onOk: () => {
         // Transition to CANCELLED state
         const result = PayoutStateMachine.transition(
           {
             currentStatus: payout.status,
             actorType: ActorType.CO_SELECTOR,
-            actorName: user?.displayName || 'User',
+            actorName: user?.displayName || '用户',
             payoutAmount: payout.amount,
           },
           PayoutStatus.CANCELLED
         );
 
         if (!result.isValid) {
-          message.error(result.error || 'Failed to cancel payout');
+          message.error(result.error || '提现取消失败');
           return;
         }
 
@@ -206,7 +207,7 @@ export const PayoutsPage: React.FC = () => {
 
         // Note: mockApi.payouts.update doesn't exist, we'll just update local state
         setPayouts(payouts.map((p) => (p.id === payoutId ? updatedPayout : p)));
-        message.success('Payout cancelled successfully');
+        message.success('提现已取消');
       },
     });
   };
@@ -219,7 +220,7 @@ export const PayoutsPage: React.FC = () => {
 
   // Handle view transaction from drawer
   const handleViewTransaction = (transactionId: string) => {
-    message.info(`Navigate to transaction: ${transactionId}`);
+    message.info(`跳转到交易：${transactionId}`);
     // In real app, navigate to Earnings tab and highlight this transaction
     setDetailsDrawerVisible(false);
   };
@@ -231,8 +232,8 @@ export const PayoutsPage: React.FC = () => {
         {isEligible ? (
           <Alert
             type="success"
-            message="Eligible for Payout"
-            description={`You can request a withdrawal. Available balance: ¥${payableBalance.toFixed(2)}`}
+            message="符合提现条件"
+            description={`你可以发起提现申请。可用余额：¥${payableBalance.toFixed(2)}`}
             icon={<CheckCircleOutlined />}
             showIcon
             action={
@@ -243,20 +244,20 @@ export const PayoutsPage: React.FC = () => {
                 onClick={() => setRequestModalVisible(true)}
                 disabled={payableBalance <= 0}
               >
-                Request Withdrawal
+                申请提现
               </Button>
             }
           />
         ) : (
           <Alert
             type="error"
-            message="Payout Blocked"
+            message="提现受阻"
             description={
               <Space direction="vertical" size="small">
-                <span>Please resolve the following issues before requesting a payout:</span>
+                <span>申请提现前请先解决以下问题：</span>
                 <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
                   {issues.map((issue, index) => (
-                    <li key={index}>{issue}</li>
+                    <li key={index}>{translateText(issue)}</li>
                   ))}
                 </ul>
               </Space>
@@ -265,14 +266,14 @@ export const PayoutsPage: React.FC = () => {
             showIcon
             action={
               <Button type="primary" size="small" href="/profile">
-                Fix Now
+                立即处理
               </Button>
             }
           />
         )}
 
         {/* Payout History Table */}
-        <Card title="Payout History">
+        <Card title="提现历史">
           <PayoutHistoryTable
             payouts={payouts}
             loading={loading}

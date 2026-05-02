@@ -114,7 +114,7 @@ export const ActionBar: React.FC<ActionBarProps> = ({
       <div className="action-bar-bulk">
         <Space size="middle" align="center">
           <Text strong>
-            {selectedCount} item{selectedCount > 1 ? 's' : ''} selected
+            已选择 {selectedCount} 条
           </Text>
           {visibleBulkActions.length > 0 && (
             <>
@@ -145,7 +145,7 @@ export const ActionBar: React.FC<ActionBarProps> = ({
               {visibleBulkActions.length > 2 && (
                 <Dropdown menu={{ items: bulkActionMenuItems.slice(2) }} trigger={['click']}>
                   <Button>
-                    More <DownOutlined />
+                    更多 <DownOutlined />
                   </Button>
                 </Dropdown>
               )}
@@ -153,7 +153,7 @@ export const ActionBar: React.FC<ActionBarProps> = ({
           )}
           {onClearSelection && (
             <Button type="link" onClick={onClearSelection}>
-              Clear Selection
+              清除选择
             </Button>
           )}
         </Space>

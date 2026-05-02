@@ -34,9 +34,9 @@ interface EvidenceItem {
 const getEvidenceRequirements = (_disputeType?: string): EvidenceItem[] => {
   // Default requirements
   return [
-    { name: 'Transaction Screenshot', required: true, uploaded: false },
-    { name: 'Communication Log', required: true, uploaded: false },
-    { name: 'Supporting Documentation', required: false, uploaded: false },
+    { name: '交易截图', required: true, uploaded: false },
+    { name: '沟通记录', required: true, uploaded: false },
+    { name: '补充证明文件', required: false, uploaded: false },
   ];
 };
 
@@ -75,18 +75,18 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
     setTimeout(() => {
       // File size check (10MB limit)
       if (file.size && file.size > 10 * 1024 * 1024) {
-        message.error(`${file.name} exceeds 10MB size limit`);
+        message.error(`${file.name} 超过 10MB 大小限制`);
         return;
       }
 
       // Trigger upload callback
-      onUploadEvidence(file, 'Supporting Documentation');
+      onUploadEvidence(file, '补充证明文件');
       
       if (onSuccess) {
         onSuccess('ok');
       }
       
-      message.success(`${file.name} uploaded successfully`);
+      message.success(`${file.name} 上传成功`);
       setFileList([]);
     }, 500);
   };
@@ -98,13 +98,14 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
 
   const handleDelete = (evidenceUrl: string, evidenceName: string) => {
     Modal.confirm({
-      title: 'Delete Evidence',
-      content: `Are you sure you want to delete "${evidenceName}"? This action cannot be undone.`,
-      okText: 'Delete',
+      title: '删除证据',
+      content: `确定要删除“${evidenceName}”吗？此操作无法撤销。`,
+      okText: '删除',
+      cancelText: '取消',
       okType: 'danger',
       onOk: () => {
         onDeleteEvidence(evidenceUrl);
-        message.success('Evidence deleted');
+        message.success('证据已删除');
       },
     });
   };
@@ -114,9 +115,9 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
       title={
         <Space>
           <FileOutlined />
-          <span>Evidence Checklist</span>
+          <span>证据清单</span>
           <Tag color={progress === 100 ? 'green' : 'orange'}>
-            {uploadedRequired} / {requiredCount} required
+            {uploadedRequired} / {requiredCount} 必填
           </Tag>
         </Space>
       }
@@ -124,8 +125,8 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
       {canEdit && uploadedRequired < requiredCount && (
         <Alert
           type="warning"
-          message="Required Evidence Missing"
-          description={`Please upload all required evidence items to proceed. ${requiredCount - uploadedRequired} required item(s) remaining.`}
+          message="缺少必填证据"
+          description={`请上传所有必填证据后继续。还剩 ${requiredCount - uploadedRequired} 项必填证据。`}
           showIcon
           style={{ marginBottom: 16 }}
         />
@@ -150,7 +151,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
                       icon={<EyeOutlined />}
                       onClick={() => handlePreview(item.fileUrl!)}
                     >
-                      View
+                      查看
                     </Button>,
                     canEdit && (
                       <Button
@@ -160,7 +161,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
                         icon={<DeleteOutlined />}
                         onClick={() => handleDelete(item.fileUrl!, item.name)}
                       >
-                        Delete
+                        删除
                       </Button>
                     ),
                   ].filter(Boolean)
@@ -174,7 +175,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
                       accept="image/*,.pdf,.doc,.docx"
                     >
                       <Button type="link" size="small" icon={<UploadOutlined />}>
-                        Upload
+                        上传
                       </Button>
                     </Upload>,
                   ]
@@ -199,21 +200,21 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
                   <Text strong>{item.name}</Text>
                   {item.required ? (
                     <Tag color="red" style={{ fontSize: 10 }}>
-                      Required
+                      必填
                     </Tag>
                   ) : (
                     <Tag color="default" style={{ fontSize: 10 }}>
-                      Optional
+                      可选
                     </Tag>
                   )}
                 </Space>
               }
               description={
                 item.uploaded
-                  ? `Uploaded ${formatDate(item.uploadedAt!)}`
+                  ? `已上传 ${formatDate(item.uploadedAt!)}`
                   : item.required
-                  ? 'Required - Please upload'
-                  : 'Optional supporting document'
+                  ? '必填 - 请上传'
+                  : '可选补充文件'
               }
             />
           </List.Item>
@@ -224,13 +225,13 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
         <>
           <Alert
             type="info"
-            message="Upload Guidelines"
+            message="上传指引"
             description={
               <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
-                <li>Accepted formats: Images (JPG, PNG), PDF, Word documents</li>
-                <li>Maximum file size: 10MB per file</li>
-                <li>Ensure all text and details are clearly visible</li>
-                <li>Redact sensitive information if necessary</li>
+                <li>支持格式：图片（JPG、PNG）、PDF、Word 文档</li>
+                <li>单个文件最大 10MB</li>
+                <li>请确保所有文字和细节清晰可见</li>
+                <li>如有必要，请遮盖敏感信息</li>
               </ul>
             }
             style={{ marginTop: 16 }}
@@ -245,7 +246,7 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
               accept="image/*,.pdf,.doc,.docx"
             >
               <Button icon={<UploadOutlined />} block>
-                Upload Additional Evidence
+                上传补充证据
               </Button>
             </Upload>
           </div>
@@ -254,13 +255,13 @@ export const EvidenceUploader: React.FC<EvidenceUploaderProps> = ({
 
       <Modal
         open={previewVisible}
-        title="Evidence Preview"
+        title="证据预览"
         footer={null}
         onCancel={() => setPreviewVisible(false)}
         width={800}
       >
         {previewUrl && (
-          <img src={previewUrl} alt="Evidence" style={{ width: '100%' }} />
+          <img src={previewUrl} alt="证据" style={{ width: '100%' }} />
         )}
       </Modal>
     </Card>

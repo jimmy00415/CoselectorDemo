@@ -15,9 +15,9 @@ const InboxPage: React.FC = () => {
   return (
     <div>
       <PageBreadcrumb />
-      <Title level={2}>Inbox</Title>
+      <Title level={2}>收件箱</Title>
       <Paragraph type="secondary">
-        Notifications and dispute management
+        管理通知与争议事项
       </Paragraph>
 
       <Card style={{ marginTop: 24 }}>
@@ -27,13 +27,13 @@ const InboxPage: React.FC = () => {
           items={[
             {
               key: 'notifications',
-              label: 'Notifications',
-              children: <Paragraph>Notifications list will be displayed here</Paragraph>,
+              label: '通知',
+              children: <Paragraph>通知列表将在此展示</Paragraph>,
             },
             {
               key: 'disputes',
-              label: 'Disputes',
-              children: <Paragraph>Disputes management will be displayed here</Paragraph>,
+              label: '争议',
+              children: <Paragraph>争议管理将在此展示</Paragraph>,
             },
           ]}
         />

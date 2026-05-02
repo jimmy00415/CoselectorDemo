@@ -77,7 +77,7 @@ const ContentPage: React.FC = () => {
       setContentItems(contentData);
       setAssets(assetsData);
     } catch (error) {
-      message.error('Failed to load content data');
+      message.error('内容数据加载失败');
     } finally {
       setLoading(false);
     }
@@ -149,7 +149,7 @@ const ContentPage: React.FC = () => {
     try {
       const newContent = await mockApi.createContentItem({
         platform: content.platform,
-        title: `${content.title} (Copy)`,
+        title: `${content.title}（副本）`,
         url: content.url,
         publishDate: new Date().toISOString(),
         notes: content.notes,
@@ -159,9 +159,9 @@ const ContentPage: React.FC = () => {
         conversionCount: 0,
       });
       setContentItems([newContent, ...contentItems]);
-      message.success('Content duplicated successfully');
+      message.success('内容复制成功');
     } catch (error) {
-      message.error('Failed to duplicate content');
+      message.error('内容复制失败');
     }
   };
 
@@ -174,7 +174,7 @@ const ContentPage: React.FC = () => {
         if (selectedContent?.id === updated.id) {
           setSelectedContent(updated);
         }
-        message.success('Content updated successfully');
+        message.success('内容更新成功');
       } else {
         // Create new
         const newContent = await mockApi.createContentItem({
@@ -185,12 +185,12 @@ const ContentPage: React.FC = () => {
           conversionCount: 0,
         });
         setContentItems([newContent, ...contentItems]);
-        message.success('Content created successfully');
+        message.success('内容创建成功');
       }
       setFormModalVisible(false);
       setEditingContent(null);
     } catch (error) {
-      message.error(`Failed to ${editingContent ? 'update' : 'create'} content`);
+      message.error(editingContent ? '内容更新失败' : '内容创建失败');
     }
   };
 
@@ -212,15 +212,15 @@ const ContentPage: React.FC = () => {
       }
       setBindModalVisible(false);
       setBindingContent(null);
-      message.success('Assets bound successfully');
+      message.success('资产绑定成功');
     } catch (error) {
-      message.error('Failed to bind assets');
+      message.error('资产绑定失败');
     }
   };
 
   const handleBulkAction = (action: 'delete' | 'unbindAll') => {
     if (selectedRows.length === 0) {
-      message.warning('Please select content items first');
+      message.warning('请先选择内容项');
       return;
     }
     setActionType(action);
@@ -234,7 +234,7 @@ const ContentPage: React.FC = () => {
           selectedRows.map(content => mockApi.deleteContentItem(content.id))
         );
         setContentItems(contentItems.filter(c => !selectedRows.find(r => r.id === c.id)));
-        message.success(`${selectedRows.length} content item(s) deleted`);
+        message.success(`已删除 ${selectedRows.length} 个内容项`);
       } else if (actionType === 'unbindAll') {
         await Promise.all(
           selectedRows.map(content =>
@@ -247,19 +247,19 @@ const ContentPage: React.FC = () => {
           }
           return c;
         }));
-        message.success(`${selectedRows.length} content item(s) unbound`);
+        message.success(`已解绑 ${selectedRows.length} 个内容项的资产`);
       }
       setSelectedRows([]);
       setConfirmModalVisible(false);
     } catch (error) {
-      message.error(`Failed to ${actionType} content items`);
+      message.error('内容批量操作失败');
     }
   };
 
   const handleExport = () => {
     // Export to CSV
     const csv = [
-      ['ID', 'Title', 'Platform', 'URL', 'Bound Assets', 'Clicks', 'Views', 'Conversions', 'Publish Date'].join(','),
+      ['ID', '标题', '平台', 'URL', '绑定资产', '点击', '观看', '转化', '发布日期'].join(','),
       ...filteredContent.map(item => [
         item.id,
         `"${item.title}"`,
@@ -287,9 +287,9 @@ const ContentPage: React.FC = () => {
       {/* Page Header */}
       <div className="page-header">
         <div>
-          <Title level={2}>Content Performance</Title>
+          <Title level={2}>内容表现</Title>
           <Paragraph type="secondary">
-            Track content across platforms and manage asset bindings
+            追踪各平台内容表现，并管理资产绑定
           </Paragraph>
         </div>
         <Space>
@@ -298,7 +298,7 @@ const ContentPage: React.FC = () => {
             onClick={handleExport}
             disabled={filteredContent.length === 0}
           >
-            Export CSV
+            导出 CSV
           </Button>
           <Button
             type="primary"
@@ -306,7 +306,7 @@ const ContentPage: React.FC = () => {
             onClick={handleCreateContent}
             disabled={!can(Permission.CONTENT_CREATE)}
           >
-            Add Content Item
+            新增内容项
           </Button>
         </Space>
       </div>
@@ -319,13 +319,13 @@ const ContentPage: React.FC = () => {
           bulkActions={[
             {
               key: 'unbindAll',
-              label: 'Unbind All Assets',
+              label: '解绑全部资产',
               onClick: () => handleBulkAction('unbindAll'),
               disabled: !can(Permission.CONTENT_BIND_ASSET),
             },
             {
               key: 'delete',
-              label: 'Delete',
+              label: '删除',
               onClick: () => handleBulkAction('delete'),
               danger: true,
               disabled: !can(Permission.CONTENT_DELETE),
@@ -350,10 +350,10 @@ const ContentPage: React.FC = () => {
         <div className="content-main">
           {contentItems.length === 0 && !loading ? (
             <EmptyState
-              title="No content items yet"
-              description="Create your first content item to start tracking performance across platforms"
+              title="暂无内容项"
+              description="创建第一个内容项，开始追踪各平台表现"
               action={{
-                label: 'Add Content Item',
+                label: '新增内容项',
                 onClick: handleCreateContent,
               }}
             />
@@ -374,7 +374,7 @@ const ContentPage: React.FC = () => {
               selectedRowKeys={selectedRows.map(r => r.id)}
               onSelectionChange={(_keys: React.Key[], rows: ContentItem[]) => setSelectedRows(rows)}
               searchable
-              searchPlaceholder="Search by title, ID, or URL..."
+              searchPlaceholder="按标题、ID 或 URL 搜索..."
               onSearch={(value) => setSearchText(value)}
             />
           )}
@@ -408,12 +408,12 @@ const ContentPage: React.FC = () => {
       <DetailsDrawer
         visible={!!selectedContent}
         onClose={handleDrawerClose}
-        title="Content Details"
+        title="内容详情"
         width={720}
         sections={[
           {
             key: 'details',
-            title: 'Content Information',
+            title: '内容信息',
             content: selectedContent && (
               <ContentDetailView
                 content={selectedContent}
@@ -423,9 +423,9 @@ const ContentPage: React.FC = () => {
                     const updated = await mockApi.updateContentItem(selectedContent.id, updates);
                     setContentItems(contentItems.map(c => c.id === updated.id ? updated : c));
                     setSelectedContent(updated);
-                    message.success('Content updated');
+                    message.success('内容已更新');
                   } catch (error) {
-                    message.error('Failed to update content');
+                    message.error('内容更新失败');
                   }
                 }}
                 onBindAssets={() => handleBindAssets(selectedContent)}
@@ -438,9 +438,9 @@ const ContentPage: React.FC = () => {
       {/* Confirm Modal */}
       <ConfirmModal
         visible={confirmModalVisible}
-        title={`Confirm ${actionType === 'delete' ? 'Delete' : 'Unbind All'}`}
-        message={`Are you sure you want to ${actionType === 'delete' ? 'delete' : 'unbind all assets from'} ${selectedRows.length} content item(s)? ${
-          actionType === 'delete' ? 'This action cannot be undone.' : ''
+        title="确认操作"
+        message={`确定要${actionType === 'delete' ? '删除' : '解绑全部资产'} ${selectedRows.length} 个内容项吗？${
+          actionType === 'delete' ? '此操作无法撤销。' : ''
         }`}
         onConfirm={handleConfirmAction}
         onClose={() => setConfirmModalVisible(false)}

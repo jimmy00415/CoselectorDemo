@@ -63,7 +63,7 @@ const AssetsPage: React.FC = () => {
       const data = await mockApi.getAssets();
       setAssets(data);
     } catch (error) {
-      message.error('Failed to load assets');
+      message.error('资产加载失败');
     } finally {
       setLoading(false);
     }
@@ -109,15 +109,15 @@ const AssetsPage: React.FC = () => {
       });
       setAssets([newAsset, ...assets]);
       setCreateModalVisible(false);
-      message.success('Asset created successfully');
+      message.success('资产创建成功');
     } catch (error) {
-      message.error('Failed to create asset');
+      message.error('资产创建失败');
     }
   };
 
   const handleBulkAction = (action: 'disable' | 'enable' | 'delete') => {
     if (selectedRows.length === 0) {
-      message.warning('Please select assets first');
+      message.warning('请先选择资产');
       return;
     }
     setActionType(action);
@@ -132,31 +132,31 @@ const AssetsPage: React.FC = () => {
             mockApi.updateAsset(asset.id, { status: AssetStatus.DISABLED })
           )
         );
-        message.success(`${selectedRows.length} asset(s) disabled`);
+        message.success(`已停用 ${selectedRows.length} 个资产`);
       } else if (actionType === 'enable') {
         await Promise.all(
           selectedRows.map(asset =>
             mockApi.updateAsset(asset.id, { status: AssetStatus.ACTIVE })
           )
         );
-        message.success(`${selectedRows.length} asset(s) enabled`);
+        message.success(`已启用 ${selectedRows.length} 个资产`);
       } else if (actionType === 'delete') {
         await Promise.all(
           selectedRows.map(asset => mockApi.deleteAsset(asset.id))
         );
-        message.success(`${selectedRows.length} asset(s) deleted`);
+        message.success(`已删除 ${selectedRows.length} 个资产`);
       }
       await loadAssets();
       setSelectedRows([]);
       setConfirmModalVisible(false);
     } catch (error) {
-      message.error(`Failed to ${actionType} assets`);
+      message.error('资产操作失败');
     }
   };
 
   const handleExport = () => {
     const csv = [
-      ['ID', 'Name', 'Type', 'Channel', 'Status', 'Clicks', 'Conversions', 'Created'],
+      ['ID', '名称', '类型', '渠道', '状态', '点击', '转化', '创建时间'],
       ...filteredAssets.map(asset => [
         asset.id,
         asset.name,
@@ -178,7 +178,7 @@ const AssetsPage: React.FC = () => {
     a.download = `assets-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    message.success('Assets exported');
+    message.success('资产已导出');
   };
 
   return (
@@ -188,9 +188,9 @@ const AssetsPage: React.FC = () => {
       {/* Header */}
       <div className="page-header">
         <div>
-          <Title level={2}>Links Management</Title>
+          <Title level={2}>链接管理</Title>
           <Paragraph type="secondary">
-            Manage your tracking links, QR codes, and invite codes
+            管理追踪链接、二维码和邀请码
           </Paragraph>
         </div>
         <Space>
@@ -199,7 +199,7 @@ const AssetsPage: React.FC = () => {
             onClick={handleExport}
             disabled={filteredAssets.length === 0}
           >
-            Export CSV
+            导出 CSV
           </Button>
           <Button
             type="primary"
@@ -207,7 +207,7 @@ const AssetsPage: React.FC = () => {
             onClick={() => setCreateModalVisible(true)}
             disabled={!can(Permission.ASSET_CREATE)}
           >
-            Create Asset
+            创建资产
           </Button>
         </Space>
       </div>
@@ -220,20 +220,20 @@ const AssetsPage: React.FC = () => {
           bulkActions={[
             {
               key: 'disable',
-              label: 'Disable',
+              label: '停用',
               onClick: () => handleBulkAction('disable'),
               danger: true,
               disabled: !can(Permission.ASSET_UPDATE),
             },
             {
               key: 'enable',
-              label: 'Enable',
+              label: '启用',
               onClick: () => handleBulkAction('enable'),
               disabled: !can(Permission.ASSET_UPDATE),
             },
             {
               key: 'delete',
-              label: 'Delete',
+              label: '删除',
               onClick: () => handleBulkAction('delete'),
               danger: true,
               disabled: !can(Permission.ASSET_DELETE),
@@ -258,10 +258,10 @@ const AssetsPage: React.FC = () => {
         <div className="content-main">
           {assets.length === 0 && !loading ? (
             <EmptyState
-              title="No assets yet"
-              description="Create your first tracking link, QR code, or invite code to start tracking conversions"
+              title="暂无资产"
+              description="创建第一个追踪链接、二维码或邀请码，开始追踪转化"
               action={{
-                label: 'Create Asset',
+                label: '创建资产',
                 onClick: () => setCreateModalVisible(true),
               }}
             />
@@ -276,7 +276,7 @@ const AssetsPage: React.FC = () => {
               selectedRowKeys={selectedRows.map(r => r.id)}
               onSelectionChange={(_keys: React.Key[], rows: TrackingAsset[]) => setSelectedRows(rows)}
               searchable
-              searchPlaceholder="Search by name, ID, or channel tag..."
+              searchPlaceholder="按名称、ID 或渠道搜索..."
               onSearch={(value) => setFilters({ ...filters, search: value })}
             />
           )}
@@ -294,12 +294,12 @@ const AssetsPage: React.FC = () => {
       <DetailsDrawer
         visible={!!selectedAsset}
         onClose={handleDrawerClose}
-        title="Asset Details"
+        title="资产详情"
         width={720}
         sections={[
           {
             key: 'details',
-            title: 'Asset Information',
+            title: '资产信息',
             content: selectedAsset && (
               <AssetDetailView
                 asset={selectedAsset}
@@ -308,9 +308,9 @@ const AssetsPage: React.FC = () => {
                     const updated = await mockApi.updateAsset(selectedAsset.id, updates);
                     setAssets(assets.map(a => (a.id === updated.id ? updated : a)));
                     setSelectedAsset(updated);
-                    message.success('Asset updated');
+                    message.success('资产已更新');
                   } catch (error) {
-                    message.error('Failed to update asset');
+                    message.error('资产更新失败');
                   }
                 }}
               />
@@ -322,9 +322,9 @@ const AssetsPage: React.FC = () => {
       {/* Confirm Modal */}
       <ConfirmModal
         visible={confirmModalVisible}
-        title={`Confirm ${actionType}`}
-        message={`Are you sure you want to ${actionType} ${selectedRows.length} asset(s)? ${
-          actionType === 'delete' ? 'This action cannot be undone.' : ''
+        title="确认操作"
+        message={`确定要${actionType === 'disable' ? '停用' : actionType === 'enable' ? '启用' : '删除'} ${selectedRows.length} 个资产吗？${
+          actionType === 'delete' ? '此操作无法撤销。' : ''
         }`}
         onConfirm={handleConfirmAction}
         onClose={() => setConfirmModalVisible(false)}

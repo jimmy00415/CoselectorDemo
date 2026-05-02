@@ -223,66 +223,66 @@ export function getRolePermissions(role: UserRole): Permission[] {
  */
 export const PERMISSION_DENIAL_MESSAGES: Record<Permission, string> = {
   // Assets
-  [Permission.ASSET_VIEW]: 'You do not have permission to view assets',
-  [Permission.ASSET_CREATE]: 'You do not have permission to create assets',
-  [Permission.ASSET_EDIT]: 'You do not have permission to edit assets',
-  [Permission.ASSET_UPDATE]: 'You do not have permission to update assets',
-  [Permission.ASSET_DISABLE]: 'You do not have permission to disable assets',
-  [Permission.ASSET_DELETE]: 'You do not have permission to delete assets',
+  [Permission.ASSET_VIEW]: '你没有查看资产的权限',
+  [Permission.ASSET_CREATE]: '你没有创建资产的权限',
+  [Permission.ASSET_EDIT]: '你没有编辑资产的权限',
+  [Permission.ASSET_UPDATE]: '你没有更新资产的权限',
+  [Permission.ASSET_DISABLE]: '你没有停用资产的权限',
+  [Permission.ASSET_DELETE]: '你没有删除资产的权限',
   
   // Content
-  [Permission.CONTENT_VIEW]: 'You do not have permission to view content',
-  [Permission.CONTENT_CREATE]: 'You do not have permission to create content',
-  [Permission.CONTENT_EDIT]: 'You do not have permission to edit content',
-  [Permission.CONTENT_DELETE]: 'You do not have permission to delete content',
-  [Permission.CONTENT_BIND_ASSET]: 'You do not have permission to bind assets to content',
+  [Permission.CONTENT_VIEW]: '你没有查看内容的权限',
+  [Permission.CONTENT_CREATE]: '你没有创建内容的权限',
+  [Permission.CONTENT_EDIT]: '你没有编辑内容的权限',
+  [Permission.CONTENT_DELETE]: '你没有删除内容的权限',
+  [Permission.CONTENT_BIND_ASSET]: '你没有将资产绑定到内容的权限',
   
   // Leads
-  [Permission.LEAD_VIEW]: 'You do not have permission to view leads',
-  [Permission.LEAD_CREATE]: 'You do not have permission to create leads',
-  [Permission.LEAD_EDIT]: 'You do not have permission to edit leads',
-  [Permission.LEAD_SUBMIT]: 'You do not have permission to submit leads',
-  [Permission.LEAD_ASSIGN_OWNER]: 'Internal only - Owner assignment is restricted to Operations team',
-  [Permission.LEAD_CHANGE_STATUS]: 'Internal only - Status changes are restricted to Operations team',
-  [Permission.LEAD_REQUEST_INFO]: 'Internal only - Info requests are restricted to Operations team',
+  [Permission.LEAD_VIEW]: '你没有查看线索的权限',
+  [Permission.LEAD_CREATE]: '你没有创建线索的权限',
+  [Permission.LEAD_EDIT]: '你没有编辑线索的权限',
+  [Permission.LEAD_SUBMIT]: '你没有提交线索的权限',
+  [Permission.LEAD_ASSIGN_OWNER]: '仅内部用户可用：负责人分配仅限运营团队',
+  [Permission.LEAD_CHANGE_STATUS]: '仅内部用户可用：状态变更仅限运营团队',
+  [Permission.LEAD_REQUEST_INFO]: '仅内部用户可用：补充信息请求仅限运营团队',
   
   // Transactions
-  [Permission.TRANSACTION_VIEW]: 'You do not have permission to view transactions',
-  [Permission.TRANSACTION_VIEW_DETAILS]: 'You do not have permission to view transaction details',
+  [Permission.TRANSACTION_VIEW]: '你没有查看交易的权限',
+  [Permission.TRANSACTION_VIEW_DETAILS]: '你没有查看交易详情的权限',
   
   // Payouts
-  [Permission.PAYOUT_VIEW]: 'You do not have permission to view payouts',
-  [Permission.PAYOUT_REQUEST]: 'You do not have permission to request payouts',
-  [Permission.PAYOUT_APPROVE]: 'Internal only - Payout approval is restricted to Finance team',
-  [Permission.PAYOUT_EXECUTE]: 'Internal only - Payout execution is restricted to Finance team',
-  [Permission.PAYOUT_CANCEL]: 'Internal only - Payout cancellation is restricted to Finance team',
+  [Permission.PAYOUT_VIEW]: '你没有查看提现的权限',
+  [Permission.PAYOUT_REQUEST]: '你没有申请提现的权限',
+  [Permission.PAYOUT_APPROVE]: '仅内部用户可用：提现审批仅限财务团队',
+  [Permission.PAYOUT_EXECUTE]: '仅内部用户可用：提现执行仅限财务团队',
+  [Permission.PAYOUT_CANCEL]: '仅内部用户可用：提现取消仅限财务团队',
   
   // Disputes
-  [Permission.DISPUTE_VIEW]: 'You do not have permission to view disputes',
-  [Permission.DISPUTE_CREATE]: 'You do not have permission to create disputes',
-  [Permission.DISPUTE_UPLOAD_EVIDENCE]: 'You do not have permission to upload evidence',
-  [Permission.DISPUTE_RESOLVE]: 'Internal only - Dispute resolution is restricted to Operations team',
+  [Permission.DISPUTE_VIEW]: '你没有查看争议的权限',
+  [Permission.DISPUTE_CREATE]: '你没有创建争议的权限',
+  [Permission.DISPUTE_UPLOAD_EVIDENCE]: '你没有上传证据的权限',
+  [Permission.DISPUTE_RESOLVE]: '仅内部用户可用：争议处理仅限运营团队',
   
   // Statements
-  [Permission.STATEMENT_VIEW]: 'You do not have permission to view statements',
-  [Permission.STATEMENT_EXPORT]: 'You do not have permission to export statements',
+  [Permission.STATEMENT_VIEW]: '你没有查看对账单的权限',
+  [Permission.STATEMENT_EXPORT]: '你没有导出对账单的权限',
   
   // Profile
-  [Permission.PROFILE_VIEW]: 'You do not have permission to view profile',
-  [Permission.PROFILE_EDIT]: 'You do not have permission to edit profile',
-  [Permission.PROFILE_KYC_SUBMIT]: 'You do not have permission to submit KYC',
+  [Permission.PROFILE_VIEW]: '你没有查看资料的权限',
+  [Permission.PROFILE_EDIT]: '你没有编辑资料的权限',
+  [Permission.PROFILE_KYC_SUBMIT]: '你没有提交 KYC 的权限',
   
   // Notifications
-  [Permission.NOTIFICATION_VIEW]: 'You do not have permission to view notifications',
-  [Permission.NOTIFICATION_MARK_READ]: 'You do not have permission to mark notifications as read',
+  [Permission.NOTIFICATION_VIEW]: '你没有查看通知的权限',
+  [Permission.NOTIFICATION_MARK_READ]: '你没有将通知标为已读的权限',
   
   // Admin
-  [Permission.DEV_TOOLS_ACCESS]: 'Internal only - Dev tools are restricted to internal users',
+  [Permission.DEV_TOOLS_ACCESS]: '仅内部用户可用：开发工具仅限内部用户',
 };
 
 /**
  * Get user-friendly permission denial message
  */
 export function getPermissionDenialMessage(permission: Permission): string {
-  return PERMISSION_DENIAL_MESSAGES[permission] || 'You do not have permission to perform this action';
+  return PERMISSION_DENIAL_MESSAGES[permission] || '你没有执行此操作的权限';
 }

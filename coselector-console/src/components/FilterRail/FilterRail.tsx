@@ -90,7 +90,7 @@ export const FilterRail: React.FC<FilterRailProps> = ({
         return (
           <Select
             style={{ width: '100%' }}
-            placeholder={filter.placeholder || `Select ${filter.label}`}
+            placeholder={filter.placeholder || `请选择${filter.label}`}
             value={value}
             onChange={(val) => onChange(filter.key, val)}
             allowClear
@@ -104,7 +104,7 @@ export const FilterRail: React.FC<FilterRailProps> = ({
           <Select
             mode="multiple"
             style={{ width: '100%' }}
-            placeholder={filter.placeholder || `Select ${filter.label}`}
+            placeholder={filter.placeholder || `请选择${filter.label}`}
             value={value || []}
             onChange={(val) => onChange(filter.key, val)}
             allowClear
@@ -117,7 +117,7 @@ export const FilterRail: React.FC<FilterRailProps> = ({
       case 'input':
         return (
           <Input
-            placeholder={filter.placeholder || `Enter ${filter.label}`}
+            placeholder={filter.placeholder || `输入${filter.label}`}
             value={value}
             onChange={(e) => onChange(filter.key, e.target.value)}
             allowClear
@@ -164,11 +164,11 @@ export const FilterRail: React.FC<FilterRailProps> = ({
     <div className="filter-actions">
       <Space size="small" style={{ width: '100%' }}>
         <Button onClick={onClear} block disabled={activeFilterCount === 0}>
-          Clear All
+          清除全部
         </Button>
         {onApply && (
           <Button type="primary" onClick={onApply} block>
-            Apply Filters
+            应用筛选
           </Button>
         )}
       </Space>
@@ -182,7 +182,7 @@ export const FilterRail: React.FC<FilterRailProps> = ({
       {activeFilterCount > 0 && (
         <div className="filter-count-badge">
           <Badge count={activeFilterCount} style={{ backgroundColor: '#1890ff' }}>
-            <FilterOutlined /> {activeFilterCount} active filter{activeFilterCount > 1 ? 's' : ''}
+            <FilterOutlined /> 已启用 {activeFilterCount} 个筛选
           </Badge>
         </div>
       )}
@@ -190,7 +190,7 @@ export const FilterRail: React.FC<FilterRailProps> = ({
       {/* Basic filters */}
       {basicFilters.length > 0 && (
         <div className="filter-section">
-          {renderFilterGroup(basicFilters, 'Filters')}
+          {renderFilterGroup(basicFilters, '筛选')}
         </div>
       )}
 
@@ -202,9 +202,9 @@ export const FilterRail: React.FC<FilterRailProps> = ({
             onClick={onToggleAdvanced}
             style={{ padding: 0, marginBottom: 12 }}
           >
-            {showAdvanced ? 'Hide' : 'Show'} Advanced Filters
+            {showAdvanced ? '隐藏' : '显示'}高级筛选
           </Button>
-          {showAdvanced && renderFilterGroup(advancedFilters, 'Advanced')}
+          {showAdvanced && renderFilterGroup(advancedFilters, '高级')}
         </div>
       )}
 
@@ -217,12 +217,12 @@ export const FilterRail: React.FC<FilterRailProps> = ({
   if (mode === 'drawer') {
     return (
       <Drawer
-        title="Filters"
+        title="筛选"
         placement="left"
         width={320}
         open={drawerVisible}
         onClose={onDrawerClose}
-        closeIcon={<CloseOutlined aria-label="Close filters" />}
+        closeIcon={<CloseOutlined aria-label="关闭筛选" />}
       >
         {renderContent()}
       </Drawer>

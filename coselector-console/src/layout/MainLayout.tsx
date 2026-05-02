@@ -52,53 +52,53 @@ export const MainLayout: React.FC = () => {
     {
       key: '/',
       icon: <HomeOutlined />,
-      label: 'Home',
+      label: '首页',
     },
     {
       key: '/assets',
       icon: <LinkOutlined />,
-      label: 'Links',
+      label: '链接',
     },
     {
       key: '/content',
       icon: <FileTextOutlined />,
-      label: 'Content',
+      label: '内容',
     },
     {
       key: '/leads',
       icon: <TeamOutlined />,
-      label: 'Co-selection',
+      label: '协同遴选',
     },
     // Admin menu item - only visible to OPS_BD role (Sprint 1 §8.1)
     can(Permission.LEAD_CHANGE_STATUS) ? {
       key: '/admin/review-queue',
       icon: <ControlOutlined />,
-      label: 'Admin',
+      label: '管理',
     } : null,
     {
       key: '/earnings',
       icon: <DollarOutlined />,
-      label: 'Earnings',
+      label: '收益',
     },
     {
       key: '/inbox',
       icon: <InboxOutlined />,
-      label: 'Inbox',
+      label: '收件箱',
       children: [
         {
           key: '/inbox/notifications',
-          label: 'Notifications',
+          label: '通知',
         },
         {
           key: '/inbox/disputes',
-          label: 'Disputes',
+          label: '争议',
         },
       ],
     },
     {
       key: '/profile',
       icon: <UserOutlined />,
-      label: 'Profile & Compliance',
+      label: '资料与合规',
     },
   ].filter(Boolean);
 
@@ -107,13 +107,13 @@ export const MainLayout: React.FC = () => {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: 'My Profile',
+      label: '我的资料',
       onClick: () => navigate('/profile'),
     },
     {
       key: 'settings',
       icon: <SettingOutlined />,
-      label: 'Settings',
+      label: '设置',
       onClick: () => navigate('/profile/settings'),
     },
     {
@@ -122,7 +122,7 @@ export const MainLayout: React.FC = () => {
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: 'Logout',
+      label: '退出登录',
       onClick: logout,
     },
   ];
@@ -143,7 +143,7 @@ export const MainLayout: React.FC = () => {
         theme="light"
       >
         <div className="logo">
-          <span className="logo-text">{collapsed ? 'CS' : 'Co-Selector'}</span>
+          <span className="logo-text">{collapsed ? 'CS' : '协同遴选台'}</span>
         </div>
         <Menu
           mode="inline"
@@ -175,7 +175,7 @@ export const MainLayout: React.FC = () => {
           <div className="header-right">
             <Space size="middle">
               {/* Global Search */}
-              <Tooltip title="Global Search (Ctrl+K)">
+              <Tooltip title="全局搜索（Ctrl+K）">
                 <Button
                   type="text"
                   icon={<SearchOutlined />}
@@ -184,7 +184,7 @@ export const MainLayout: React.FC = () => {
               </Tooltip>
 
               {/* Help / Glossary */}
-              <Tooltip title="Help & Glossary">
+              <Tooltip title="帮助与术语表">
                 <Button
                   type="text"
                   icon={<QuestionCircleOutlined />}
@@ -193,7 +193,7 @@ export const MainLayout: React.FC = () => {
               </Tooltip>
 
               {/* Notifications Bell */}
-              <Tooltip title="Notifications">
+              <Tooltip title="通知">
                 <Badge count={5} size="small">
                   <Button
                     type="text"
@@ -214,7 +214,7 @@ export const MainLayout: React.FC = () => {
               <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
                 <div className="user-menu">
                   <Avatar icon={<UserOutlined />} size="small" />
-                  <span className="user-name">{user?.displayName || 'User'}</span>
+                  <span className="user-name">{user?.displayName || '用户'}</span>
                 </div>
               </Dropdown>
             </Space>

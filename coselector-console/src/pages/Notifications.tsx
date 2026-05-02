@@ -8,9 +8,9 @@ const NotificationsPage: React.FC = () => {
   return (
     <div>
       <PageBreadcrumb />
-      <Title level={2}>Notifications</Title>
+      <Title level={2}>通知</Title>
       <Card style={{ marginTop: 24 }}>
-        <Paragraph>Detailed notifications view will be implemented here.</Paragraph>
+        <Paragraph>通知详情视图将在此实现。</Paragraph>
       </Card>
     </div>
   );

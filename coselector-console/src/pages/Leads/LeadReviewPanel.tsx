@@ -8,7 +8,7 @@ import {
 import { Lead, TimelineEvent } from '../../types';
 import { LeadStatus, LeadReviewReason, ActorType } from '../../types/enums';
 import { LeadStateMachine } from '../../services/stateMachines';
-import { generateId } from '../../utils';
+import { generateId, translateReasonCode, translateStatus } from '../../utils';
 import { useState } from 'react';
 
 /**
@@ -59,7 +59,7 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
         actorName: currentUserName,
         occurredAt: new Date().toISOString(),
         eventType: 'OWNER_ASSIGNED',
-        description: `Owner ${lead.assignedOwner ? 'changed' : 'assigned'} to ${values.assignedOwner}: ${values.reasonCode}${values.reasonNote ? ` - ${values.reasonNote}` : ''}`,
+        description: `负责人已${lead.assignedOwner ? '变更' : '分配'}给 ${values.assignedOwner}：${translateReasonCode(values.reasonCode)}${values.reasonNote ? ` - ${values.reasonNote}` : ''}`,
         reasonCode: values.reasonCode,
         metadata: {
           previousOwner: lead.assignedOwner,
@@ -75,7 +75,7 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
         lastUpdatedAt: new Date().toISOString(),
       });
 
-      message.success('Owner assigned successfully');
+      message.success('负责人分配成功');
       form.resetFields();
       setActionType(null);
     } catch (error) {
@@ -103,7 +103,7 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
       );
 
       if (!result.isValid) {
-        message.error(result.error || 'Invalid status transition');
+        message.error(result.error || '无效状态流转');
         setLoading(false);
         return;
       }
@@ -115,7 +115,7 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
         lastUpdatedAt: new Date().toISOString(),
       });
 
-      message.success(`Lead ${targetStatus.toLowerCase()} successfully`);
+      message.success(`线索已${translateStatus(targetStatus)}`);
       form.resetFields();
       setActionType(null);
     } catch (error) {
@@ -133,41 +133,41 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
             <Form form={form} layout="vertical">
               <Form.Item
                 name="assignedOwner"
-                label="Assign to"
-                rules={[{ required: true, message: 'Please select an owner' }]}
+                label="分配给"
+                rules={[{ required: true, message: '请选择负责人' }]}
               >
-                <Select placeholder="Select owner">
-                  <Select.Option value="Alice Wang">Alice Wang</Select.Option>
-                  <Select.Option value="Bob Chen">Bob Chen</Select.Option>
-                  <Select.Option value="Carol Li">Carol Li</Select.Option>
-                  <Select.Option value="David Zhang">David Zhang</Select.Option>
+                <Select placeholder="选择负责人">
+                  <Select.Option value="Alice Wang">王艾丽</Select.Option>
+                  <Select.Option value="Bob Chen">陈博</Select.Option>
+                  <Select.Option value="Carol Li">李可柔</Select.Option>
+                  <Select.Option value="David Zhang">张大卫</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name="reasonCode"
-                label="Assignment Reason"
-                rules={[{ required: true, message: 'Please select a reason' }]}
-                tooltip="Required per Sprint 1 §9.2 - OWNER_ASSIGNED requires reason_code"
+                label="分配原因"
+                rules={[{ required: true, message: '请选择原因' }]}
+                tooltip="负责人分配需要填写原因码"
               >
-                <Select placeholder="Why assign this owner?">
-                  <Select.Option value="CLAIMED">Claimed by Ops/BD</Select.Option>
-                  <Select.Option value="EXPERTISE">Specialized Expertise</Select.Option>
-                  <Select.Option value="WORKLOAD">Workload Balancing</Select.Option>
-                  <Select.Option value="REGIONAL">Regional Coverage</Select.Option>
-                  <Select.Option value="OTHER">Other</Select.Option>
+                <Select placeholder="为什么分配此负责人？">
+                  <Select.Option value="CLAIMED">运营/BD 已认领</Select.Option>
+                  <Select.Option value="EXPERTISE">专业能力匹配</Select.Option>
+                  <Select.Option value="WORKLOAD">工作量平衡</Select.Option>
+                  <Select.Option value="REGIONAL">区域覆盖</Select.Option>
+                  <Select.Option value="OTHER">其他</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name="reasonNote"
-                label="Additional Notes"
+                label="补充备注"
               >
-                <Input.TextArea rows={2} placeholder="Optional notes..." />
+                <Input.TextArea rows={2} placeholder="可选备注..." />
               </Form.Item>
               <Space>
                 <Button type="primary" onClick={handleAssignOwner} loading={loading}>
-                  Assign
+                  分配
                 </Button>
-                <Button onClick={() => setActionType(null)}>Cancel</Button>
+                <Button onClick={() => setActionType(null)}>取消</Button>
               </Space>
             </Form>
           </Card>
@@ -179,21 +179,21 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
             <Form form={form} layout="vertical">
               <Form.Item
                 name="reasonCode"
-                label="Approval Reason"
-                rules={[{ required: true, message: 'Please select a reason' }]}
+                label="通过原因"
+                rules={[{ required: true, message: '请选择原因' }]}
               >
-                <Select placeholder="Select reason">
-                  <Select.Option value={LeadReviewReason.HIGH_VOLUME}>High Volume Potential</Select.Option>
-                  <Select.Option value={LeadReviewReason.STRATEGIC_FIT}>Strategic Fit</Select.Option>
-                  <Select.Option value={LeadReviewReason.GOOD_REPUTATION}>Good Reputation</Select.Option>
-                  <Select.Option value={LeadReviewReason.OTHER}>Other</Select.Option>
+                <Select placeholder="选择原因">
+                  <Select.Option value={LeadReviewReason.HIGH_VOLUME}>高潜力成交量</Select.Option>
+                  <Select.Option value={LeadReviewReason.STRATEGIC_FIT}>战略匹配</Select.Option>
+                  <Select.Option value={LeadReviewReason.GOOD_REPUTATION}>口碑良好</Select.Option>
+                  <Select.Option value={LeadReviewReason.OTHER}>其他</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name="reasonNote"
-                label="Additional Notes"
+                label="补充备注"
               >
-                <TextArea rows={3} placeholder="Optional notes..." />
+                <TextArea rows={3} placeholder="可选备注..." />
               </Form.Item>
               <Space>
                 <Button 
@@ -203,9 +203,9 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
                   loading={loading}
                   style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
                 >
-                  Approve Lead
+                  通过线索
                 </Button>
-                <Button onClick={() => setActionType(null)}>Cancel</Button>
+                <Button onClick={() => setActionType(null)}>取消</Button>
               </Space>
             </Form>
           </Card>
@@ -217,23 +217,23 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
             <Form form={form} layout="vertical">
               <Form.Item
                 name="reasonCode"
-                label="Rejection Reason"
-                rules={[{ required: true, message: 'Please select a reason' }]}
+                label="拒绝原因"
+                rules={[{ required: true, message: '请选择原因' }]}
               >
-                <Select placeholder="Select reason">
-                  <Select.Option value={LeadReviewReason.LOW_VOLUME}>Low Volume</Select.Option>
-                  <Select.Option value={LeadReviewReason.POOR_REPUTATION}>Poor Reputation</Select.Option>
-                  <Select.Option value={LeadReviewReason.INCOMPLETE_INFO}>Incomplete Information</Select.Option>
-                  <Select.Option value={LeadReviewReason.OUT_OF_SCOPE}>Out of Scope</Select.Option>
-                  <Select.Option value={LeadReviewReason.OTHER}>Other</Select.Option>
+                <Select placeholder="选择原因">
+                  <Select.Option value={LeadReviewReason.LOW_VOLUME}>成交量偏低</Select.Option>
+                  <Select.Option value={LeadReviewReason.POOR_REPUTATION}>口碑风险</Select.Option>
+                  <Select.Option value={LeadReviewReason.INCOMPLETE_INFO}>信息不完整</Select.Option>
+                  <Select.Option value={LeadReviewReason.OUT_OF_SCOPE}>不在合作范围内</Select.Option>
+                  <Select.Option value={LeadReviewReason.OTHER}>其他</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name="reasonNote"
-                label="Detailed Reason"
-                rules={[{ required: true, message: 'Please provide detailed reason' }]}
+                label="详细原因"
+                rules={[{ required: true, message: '请填写详细原因' }]}
               >
-                <TextArea rows={3} placeholder="Explain why this lead is being rejected..." />
+                <TextArea rows={3} placeholder="说明为什么拒绝此线索..." />
               </Form.Item>
               <Space>
                 <Button 
@@ -242,9 +242,9 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
                   onClick={() => handleStatusChange(LeadStatus.REJECTED)} 
                   loading={loading}
                 >
-                  Reject Lead
+                  拒绝线索
                 </Button>
-                <Button onClick={() => setActionType(null)}>Cancel</Button>
+                <Button onClick={() => setActionType(null)}>取消</Button>
               </Space>
             </Form>
           </Card>
@@ -256,22 +256,22 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
             <Form form={form} layout="vertical">
               <Form.Item
                 name="reasonCode"
-                label="Information Needed"
-                rules={[{ required: true, message: 'Please select what information is needed' }]}
+                label="所需信息"
+                rules={[{ required: true, message: '请选择需要补充的信息' }]}
               >
-                <Select placeholder="Select required information">
-                  <Select.Option value={LeadReviewReason.MISSING_CONTACT}>Missing Contact Information</Select.Option>
-                  <Select.Option value={LeadReviewReason.MISSING_DOCS}>Missing Documents</Select.Option>
-                  <Select.Option value={LeadReviewReason.UNCLEAR_VOLUME}>Unclear Volume Estimate</Select.Option>
-                  <Select.Option value={LeadReviewReason.OTHER}>Other</Select.Option>
+                <Select placeholder="选择所需信息">
+                  <Select.Option value={LeadReviewReason.MISSING_CONTACT}>缺少联系人信息</Select.Option>
+                  <Select.Option value={LeadReviewReason.MISSING_DOCS}>缺少证明文件</Select.Option>
+                  <Select.Option value={LeadReviewReason.UNCLEAR_VOLUME}>成交量预估不清</Select.Option>
+                  <Select.Option value={LeadReviewReason.OTHER}>其他</Select.Option>
                 </Select>
               </Form.Item>
               <Form.Item
                 name="reasonNote"
-                label="Specific Request"
-                rules={[{ required: true, message: 'Please specify what information is needed' }]}
+                label="具体要求"
+                rules={[{ required: true, message: '请说明需要哪些信息' }]}
               >
-                <TextArea rows={3} placeholder="Describe what additional information is required..." />
+                <TextArea rows={3} placeholder="说明需要补充哪些信息..." />
               </Form.Item>
               <Space>
                 <Button 
@@ -281,9 +281,9 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
                   loading={loading}
                   style={{ backgroundColor: '#faad14', borderColor: '#faad14' }}
                 >
-                  Request Information
+                  请求补充信息
                 </Button>
-                <Button onClick={() => setActionType(null)}>Cancel</Button>
+                <Button onClick={() => setActionType(null)}>取消</Button>
               </Space>
             </Form>
           </Card>
@@ -296,9 +296,9 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
 
   return (
     <Card>
-      <Title level={4}>Review Actions</Title>
+      <Title level={4}>审核操作</Title>
       <Text type="secondary" style={{ display: 'block', marginBottom: 16 }}>
-        Internal only - These actions are visible to OPS/BD team only
+        仅内部可见 - 这些操作仅对运营/BD 团队显示
       </Text>
 
       <Space direction="vertical" style={{ width: '100%' }}>
@@ -310,14 +310,14 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
             disabled={actionType !== null && actionType !== 'assign'}
             block
           >
-            {lead.assignedOwner ? 'Reassign Owner' : 'Assign Owner'}
+            {lead.assignedOwner ? '重新分配负责人' : '分配负责人'}
           </Button>
         )}
 
         <Divider style={{ margin: '12px 0' }} />
 
         {/* Status Change Actions */}
-        <Text strong>Change Status:</Text>
+        <Text strong>变更状态：</Text>
 
         {canApprove && (
           <Button
@@ -328,7 +328,7 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
             style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
             block
           >
-            Approve Lead
+            通过线索
           </Button>
         )}
 
@@ -340,7 +340,7 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
             disabled={actionType !== null && actionType !== 'reject'}
             block
           >
-            Reject Lead
+            拒绝线索
           </Button>
         )}
 
@@ -352,13 +352,13 @@ export const LeadReviewPanel: React.FC<LeadReviewPanelProps> = ({
             style={{ borderColor: '#faad14', color: '#faad14' }}
             block
           >
-            Request More Information
+            请求补充信息
           </Button>
         )}
 
         {!canApprove && !canReject && !canRequestInfo && (
           <Text type="secondary" style={{ fontSize: 12 }}>
-            No status change actions available for current lead status
+            当前线索状态没有可用的状态变更操作
           </Text>
         )}
       </Space>

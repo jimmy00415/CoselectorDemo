@@ -80,9 +80,9 @@ export class LeadStateMachine {
     if (!this.canTransition(currentStatus, targetStatus)) {
       return {
         newStatus: currentStatus,
-        event: this.createEvent(context, currentStatus, 'Invalid transition attempted'),
+        event: this.createEvent(context, currentStatus, '尝试了无效状态流转'),
         isValid: false,
-        error: `Cannot transition from ${currentStatus} to ${targetStatus}`,
+        error: `无法从 ${currentStatus} 流转到 ${targetStatus}`,
       };
     }
 
@@ -92,9 +92,9 @@ export class LeadStateMachine {
          targetStatus === LeadStatus.INFO_REQUESTED) && !reasonCode) {
       return {
         newStatus: currentStatus,
-        event: this.createEvent(context, currentStatus, 'Missing required reason code'),
+        event: this.createEvent(context, currentStatus, '缺少必填原因代码'),
         isValid: false,
-        error: 'Reason code is required for this transition',
+        error: '此状态流转需要原因代码',
       };
     }
 
@@ -122,7 +122,7 @@ export class LeadStateMachine {
       actorType: context.actorType,
       actorName: context.actorName,
       occurredAt: new Date().toISOString(),
-      eventType: `Status changed to ${newStatus}`,
+      eventType: `状态变更为 ${newStatus}`,
       description,
       reasonCode: context.reasonCode,
       metadata: {
@@ -140,17 +140,17 @@ export class LeadStateMachine {
     reasonNote?: string
   ): string {
     const descriptions: Record<string, string> = {
-      [`${LeadStatus.DRAFT}-${LeadStatus.SUBMITTED}`]: 'Lead submitted for review',
-      [`${LeadStatus.SUBMITTED}-${LeadStatus.UNDER_REVIEW}`]: 'Lead accepted for review by operations team',
-      [`${LeadStatus.UNDER_REVIEW}-${LeadStatus.INFO_REQUESTED}`]: `Additional information requested: ${reasonCode}${reasonNote ? ` - ${reasonNote}` : ''}`,
-      [`${LeadStatus.INFO_REQUESTED}-${LeadStatus.UNDER_REVIEW}`]: 'Updated information submitted, review resumed',
-      [`${LeadStatus.UNDER_REVIEW}-${LeadStatus.APPROVED}`]: `Lead approved: ${reasonCode}${reasonNote ? ` - ${reasonNote}` : ''}`,
-      [`${LeadStatus.UNDER_REVIEW}-${LeadStatus.REJECTED}`]: `Lead rejected: ${reasonCode}${reasonNote ? ` - ${reasonNote}` : ''}`,
-      [`${LeadStatus.REJECTED}-${LeadStatus.RESUBMITTED}`]: 'Lead resubmitted after addressing feedback',
-      [`${LeadStatus.RESUBMITTED}-${LeadStatus.UNDER_REVIEW}`]: 'Resubmitted lead under review',
+      [`${LeadStatus.DRAFT}-${LeadStatus.SUBMITTED}`]: '线索已提交审核',
+      [`${LeadStatus.SUBMITTED}-${LeadStatus.UNDER_REVIEW}`]: '运营团队已接收线索并开始审核',
+      [`${LeadStatus.UNDER_REVIEW}-${LeadStatus.INFO_REQUESTED}`]: `已请求补充信息：${reasonCode}${reasonNote ? ` - ${reasonNote}` : ''}`,
+      [`${LeadStatus.INFO_REQUESTED}-${LeadStatus.UNDER_REVIEW}`]: '已提交更新信息，审核继续',
+      [`${LeadStatus.UNDER_REVIEW}-${LeadStatus.APPROVED}`]: `线索已通过：${reasonCode}${reasonNote ? ` - ${reasonNote}` : ''}`,
+      [`${LeadStatus.UNDER_REVIEW}-${LeadStatus.REJECTED}`]: `线索已拒绝：${reasonCode}${reasonNote ? ` - ${reasonNote}` : ''}`,
+      [`${LeadStatus.REJECTED}-${LeadStatus.RESUBMITTED}`]: '线索已根据反馈重新提交',
+      [`${LeadStatus.RESUBMITTED}-${LeadStatus.UNDER_REVIEW}`]: '重新提交的线索正在审核中',
     };
 
-    return descriptions[`${from}-${to}`] || `Status changed from ${from} to ${to}`;
+    return descriptions[`${from}-${to}`] || `状态已从 ${from} 变更为 ${to}`;
   }
 }
 
@@ -217,9 +217,9 @@ export class EarningsStateMachine {
     if (!this.canTransition(currentState, targetState)) {
       return {
         newState: currentState,
-        event: this.createEvent(context, currentState, 'Invalid transition attempted'),
+        event: this.createEvent(context, currentState, '尝试了无效状态流转'),
         isValid: false,
-        error: `Cannot transition from ${currentState} to ${targetState}`,
+        error: `无法从 ${currentState} 流转到 ${targetState}`,
       };
     }
 
@@ -227,9 +227,9 @@ export class EarningsStateMachine {
     if (targetState === EarningsState.REVERSED && !reasonCode) {
       return {
         newState: currentState,
-        event: this.createEvent(context, currentState, 'Missing reversal reason'),
+        event: this.createEvent(context, currentState, '缺少冲正原因'),
         isValid: false,
-        error: 'Reason code is required for reversals',
+        error: '冲正需要原因代码',
       };
     }
 
@@ -237,9 +237,9 @@ export class EarningsStateMachine {
     if (targetState === EarningsState.LOCKED && !lockEndDate) {
       return {
         newState: currentState,
-        event: this.createEvent(context, currentState, 'Missing lock end date'),
+        event: this.createEvent(context, currentState, '缺少锁定结束日期'),
         isValid: false,
-        error: 'Lock end date is required for locking transition',
+        error: '锁定状态流转需要锁定结束日期',
       };
     }
 
@@ -284,7 +284,7 @@ export class EarningsStateMachine {
       actorType: context.actorType,
       actorName: context.actorName,
       occurredAt: new Date().toISOString(),
-      eventType: `State changed to ${newState}`,
+      eventType: `收益状态变更为 ${newState}`,
       description,
       reasonCode: context.reasonCode,
       metadata: {
@@ -301,16 +301,16 @@ export class EarningsStateMachine {
     reasonCode?: ReversalReason
   ): string {
     const descriptions: Record<string, string> = {
-      [`${EarningsState.PENDING}-${EarningsState.LOCKED}`]: 'Transaction locked after lock period ended',
-      [`${EarningsState.PENDING}-${EarningsState.REVERSED}`]: `Transaction reversed: ${reasonCode}`,
-      [`${EarningsState.LOCKED}-${EarningsState.PAYABLE}`]: 'Transaction marked as payable (KYC verified + threshold met)',
-      [`${EarningsState.LOCKED}-${EarningsState.REVERSED}`]: `Transaction reversed with adjustment entry: ${reasonCode}`,
-      [`${EarningsState.PAYABLE}-${EarningsState.PAID}`]: 'Payment processed successfully',
-      [`${EarningsState.PAYABLE}-${EarningsState.REVERSED}`]: `Transaction reversed with adjustment entry: ${reasonCode}`,
-      [`${EarningsState.PAID}-${EarningsState.REVERSED}`]: `Payment reversed with adjustment entry: ${reasonCode}`,
+      [`${EarningsState.PENDING}-${EarningsState.LOCKED}`]: '锁定期结束后，交易已锁定',
+      [`${EarningsState.PENDING}-${EarningsState.REVERSED}`]: `交易已冲正：${reasonCode}`,
+      [`${EarningsState.LOCKED}-${EarningsState.PAYABLE}`]: '交易已标记为可提现（KYC 已验证且达到门槛）',
+      [`${EarningsState.LOCKED}-${EarningsState.REVERSED}`]: `交易已通过调整分录冲正：${reasonCode}`,
+      [`${EarningsState.PAYABLE}-${EarningsState.PAID}`]: '付款已成功处理',
+      [`${EarningsState.PAYABLE}-${EarningsState.REVERSED}`]: `交易已通过调整分录冲正：${reasonCode}`,
+      [`${EarningsState.PAID}-${EarningsState.REVERSED}`]: `付款已通过调整分录冲正：${reasonCode}`,
     };
 
-    return descriptions[`${from}-${to}`] || `State changed from ${from} to ${to}`;
+    return descriptions[`${from}-${to}`] || `状态已从 ${from} 变更为 ${to}`;
   }
 }
 
@@ -368,9 +368,9 @@ export class PayoutStateMachine {
     if (!this.canTransition(currentStatus, targetStatus)) {
       return {
         newStatus: currentStatus,
-        event: this.createEvent(context, currentStatus, 'Invalid transition attempted'),
+        event: this.createEvent(context, currentStatus, '尝试了无效状态流转'),
         isValid: false,
-        error: `Cannot transition from ${currentStatus} to ${targetStatus}`,
+        error: `无法从 ${currentStatus} 流转到 ${targetStatus}`,
       };
     }
 
@@ -378,9 +378,9 @@ export class PayoutStateMachine {
     if (targetStatus === PayoutStatus.REJECTED && !reasonNote) {
       return {
         newStatus: currentStatus,
-        event: this.createEvent(context, currentStatus, 'Missing rejection reason'),
+        event: this.createEvent(context, currentStatus, '缺少拒绝原因'),
         isValid: false,
-        error: 'Reason is required for payout rejection',
+        error: '拒绝提现需要原因',
       };
     }
 
@@ -408,7 +408,7 @@ export class PayoutStateMachine {
       actorType: context.actorType,
       actorName: context.actorName,
       occurredAt: new Date().toISOString(),
-      eventType: `Status changed to ${newStatus}`,
+      eventType: `状态变更为 ${newStatus}`,
       description,
       metadata: {
         previousStatus: context.currentStatus,
@@ -428,15 +428,15 @@ export class PayoutStateMachine {
     const amountStr = amount ? ` (¥${amount.toFixed(2)})` : '';
     
     const descriptions: Record<string, string> = {
-      [`${PayoutStatus.REQUESTED}-${PayoutStatus.APPROVED}`]: `Payout approved by finance team${amountStr}`,
-      [`${PayoutStatus.REQUESTED}-${PayoutStatus.REJECTED}`]: `Payout rejected: ${reasonNote}`,
-      [`${PayoutStatus.REQUESTED}-${PayoutStatus.CANCELLED}`]: `Payout cancelled by user${amountStr}`,
-      [`${PayoutStatus.APPROVED}-${PayoutStatus.PAID}`]: `Payment successfully transferred to bank account${amountStr}`,
-      [`${PayoutStatus.APPROVED}-${PayoutStatus.FAILED}`]: `Payment failed: ${reasonNote}`,
-      [`${PayoutStatus.FAILED}-${PayoutStatus.APPROVED}`]: `Retry approved after fixing issues${amountStr}`,
+      [`${PayoutStatus.REQUESTED}-${PayoutStatus.APPROVED}`]: `财务团队已批准提现${amountStr}`,
+      [`${PayoutStatus.REQUESTED}-${PayoutStatus.REJECTED}`]: `提现已拒绝：${reasonNote}`,
+      [`${PayoutStatus.REQUESTED}-${PayoutStatus.CANCELLED}`]: `用户已取消提现${amountStr}`,
+      [`${PayoutStatus.APPROVED}-${PayoutStatus.PAID}`]: `款项已成功转账至银行账户${amountStr}`,
+      [`${PayoutStatus.APPROVED}-${PayoutStatus.FAILED}`]: `付款失败：${reasonNote}`,
+      [`${PayoutStatus.FAILED}-${PayoutStatus.APPROVED}`]: `问题修复后已批准重试${amountStr}`,
     };
 
-    return descriptions[`${from}-${to}`] || `Status changed from ${from} to ${to}`;
+    return descriptions[`${from}-${to}`] || `状态已从 ${from} 变更为 ${to}`;
   }
 }
 
@@ -490,9 +490,9 @@ export class DisputeStateMachine {
     if (!this.canTransition(currentStatus, targetStatus)) {
       return {
         newStatus: currentStatus,
-        event: this.createEvent(context, currentStatus, 'Invalid transition attempted'),
+        event: this.createEvent(context, currentStatus, '尝试了无效状态流转'),
         isValid: false,
-        error: `Cannot transition from ${currentStatus} to ${targetStatus}`,
+        error: `无法从 ${currentStatus} 流转到 ${targetStatus}`,
       };
     }
 
@@ -500,9 +500,9 @@ export class DisputeStateMachine {
     if (targetStatus === DisputeStatus.RESOLVED && (!resolutionType || !resolutionNote)) {
       return {
         newStatus: currentStatus,
-        event: this.createEvent(context, currentStatus, 'Missing resolution details'),
+        event: this.createEvent(context, currentStatus, '缺少处理结果详情'),
         isValid: false,
-        error: 'Resolution type and note are required for dispute resolution',
+        error: '解决争议需要处理类型和备注',
       };
     }
 
@@ -530,7 +530,7 @@ export class DisputeStateMachine {
       actorType: context.actorType,
       actorName: context.actorName,
       occurredAt: new Date().toISOString(),
-      eventType: `Status changed to ${newStatus}`,
+      eventType: `状态变更为 ${newStatus}`,
       description,
       metadata: {
         previousStatus: context.currentStatus,
@@ -549,14 +549,14 @@ export class DisputeStateMachine {
     resolutionNote?: string
   ): string {
     const descriptions: Record<string, string> = {
-      [`${DisputeStatus.OPEN}-${DisputeStatus.WAITING}`]: 'Dispute submitted, waiting for operations review',
-      [`${DisputeStatus.WAITING}-${DisputeStatus.OPEN}`]: 'Additional evidence requested by operations team',
+      [`${DisputeStatus.OPEN}-${DisputeStatus.WAITING}`]: '争议已提交，等待运营审核',
+      [`${DisputeStatus.WAITING}-${DisputeStatus.OPEN}`]: '运营团队已请求补充证据',
       [`${DisputeStatus.WAITING}-${DisputeStatus.RESOLVED}`]: resolutionType 
-        ? `Dispute resolved: ${resolutionType} - ${resolutionNote}` 
-        : 'Dispute resolved',
+        ? `争议已解决：${resolutionType} - ${resolutionNote}`
+        : '争议已解决',
     };
 
-    return descriptions[`${from}-${to}`] || `Status changed from ${from} to ${to}`;
+    return descriptions[`${from}-${to}`] || `状态已从 ${from} 变更为 ${to}`;
   }
 }
 

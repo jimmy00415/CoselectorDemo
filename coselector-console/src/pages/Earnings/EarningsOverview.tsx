@@ -58,10 +58,10 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
       {/* Eligibility Banner */}
       {!isEligible && eligibilityIssues.length > 0 && (
         <Alert
-          message="Payout Blocked - Action Required"
+          message="提现受阻 - 需要操作"
           description={
             <div>
-              <Text>Complete the following items to enable payouts:</Text>
+              <Text>完成以下项目后即可启用提现：</Text>
               <ul style={{ marginTop: 8, marginBottom: 0 }}>
                 {eligibilityIssues.map((issue, index) => (
                   <li key={index}>
@@ -86,8 +86,8 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
 
       {isEligible && (
         <Alert
-          message="Eligible for Payout"
-          description="Your account is verified and ready to request withdrawals"
+          message="符合提现条件"
+          description="你的账户已验证，可发起提现申请"
           type="success"
           showIcon
           icon={<CheckCircleOutlined />}
@@ -97,7 +97,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
       )}
 
       {/* Balance by State */}
-      <Title level={4}>Balance by State</Title>
+      <Title level={4}>按状态汇总余额</Title>
       <Row gutter={[16, 16]} style={{ marginBottom: 32 }}>
         <Col xs={24} sm={12} md={8} lg={4}>
           <Card 
@@ -109,7 +109,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               title={
                 <Space>
                   <ClockCircleOutlined style={{ color: '#faad14' }} />
-                  <span>Pending</span>
+                  <span>待锁定</span>
                 </Space>
               }
               value={summary.pending}
@@ -118,7 +118,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               valueStyle={{ color: '#faad14' }}
             />
             <Tag color={stateColors[EarningsState.PENDING]} style={{ marginTop: 8 }}>
-              Modifiable
+              可调整
             </Tag>
           </Card>
         </Col>
@@ -133,7 +133,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               title={
                 <Space>
                   <LockOutlined style={{ color: '#1890ff' }} />
-                  <span>Locked</span>
+                  <span>已锁定</span>
                 </Space>
               }
               value={summary.locked}
@@ -142,7 +142,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               valueStyle={{ color: '#1890ff' }}
             />
             <Tag color={stateColors[EarningsState.LOCKED]} style={{ marginTop: 8 }}>
-              Approved
+              已确认
             </Tag>
           </Card>
         </Col>
@@ -157,7 +157,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               title={
                 <Space>
                   <DollarOutlined style={{ color: '#52c41a' }} />
-                  <span>Payable</span>
+                  <span>可提现</span>
                 </Space>
               }
               value={summary.payable}
@@ -166,7 +166,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               valueStyle={{ color: '#52c41a', fontSize: 24, fontWeight: 600 }}
             />
             <Tag color={stateColors[EarningsState.PAYABLE]} style={{ marginTop: 8 }}>
-              Ready to withdraw
+              可申请提现
             </Tag>
           </Card>
         </Col>
@@ -181,7 +181,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               title={
                 <Space>
                   <CheckCircleOutlined style={{ color: '#8c8c8c' }} />
-                  <span>Paid</span>
+                  <span>已支付</span>
                 </Space>
               }
               value={summary.paid}
@@ -190,7 +190,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               valueStyle={{ color: '#8c8c8c' }}
             />
             <Tag color={stateColors[EarningsState.PAID]} style={{ marginTop: 8 }}>
-              Completed
+              已完成
             </Tag>
           </Card>
         </Col>
@@ -205,7 +205,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               title={
                 <Space>
                   <WarningOutlined style={{ color: '#f5222d' }} />
-                  <span>Reversed</span>
+                  <span>已冲正</span>
                 </Space>
               }
               value={Math.abs(summary.reversed)}
@@ -214,7 +214,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               valueStyle={{ color: '#f5222d' }}
             />
             <Tag color={stateColors[EarningsState.REVERSED]} style={{ marginTop: 8 }}>
-              Refunded/Disputed
+              退款/争议
             </Tag>
           </Card>
         </Col>
@@ -222,14 +222,14 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
         <Col xs={24} sm={12} md={8} lg={4}>
           <Card style={{ backgroundColor: '#f5f5f5' }}>
             <Statistic
-              title="Total Earnings"
+              title="累计收益"
               value={summary.total}
               precision={2}
               prefix="¥"
               valueStyle={{ color: '#262626', fontWeight: 600 }}
             />
             <Text type="secondary" style={{ fontSize: 12 }}>
-              Lifetime
+              全周期
             </Text>
           </Card>
         </Col>
@@ -239,7 +239,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
       <Title level={4}>
         <Space>
           <LockOutlined />
-          Next Locking Dates
+          下一批锁定日期
         </Space>
       </Title>
       <Card style={{ marginBottom: 24 }}>
@@ -254,7 +254,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                       <Space>
                         <Text strong>{bucket.bucket}</Text>
-                        <Tag>{bucket.count} transaction{bucket.count !== 1 ? 's' : ''}</Tag>
+                        <Tag>{bucket.count} 笔交易</Tag>
                       </Space>
                       <Text strong style={{ color: '#1890ff' }}>
                         {formatCurrency(bucket.amount)}
@@ -278,8 +278,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
             <div style={{ marginTop: 16, padding: 12, backgroundColor: '#f0f9ff', borderRadius: 4 }}>
               <Text type="secondary" style={{ fontSize: 12 }}>
                 <LockOutlined style={{ marginRight: 8 }} />
-                Pending transactions lock automatically on their scheduled dates. 
-                Click a bucket to filter transactions by lock date range.
+                待锁定交易会在计划日期自动锁定。点击区间可按锁定日期范围筛选交易。
               </Text>
             </div>
           </div>
@@ -287,7 +286,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
           <div style={{ textAlign: 'center', padding: 32 }}>
             <ClockCircleOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
             <div>
-              <Text type="secondary">No pending transactions</Text>
+              <Text type="secondary">暂无待锁定交易</Text>
             </div>
           </div>
         )}
@@ -297,7 +296,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
       <Title level={4}>
         <Space>
           <WarningOutlined />
-          Reversal Rate (Last 30 Days)
+          冲正率（近 30 天）
         </Space>
       </Title>
       <Card>
@@ -315,7 +314,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
               color={reversalRate > 10 ? 'red' : reversalRate > 5 ? 'orange' : 'green'}
               style={{ margin: 0 }}
             >
-              {reversalRate > 10 ? 'High' : reversalRate > 5 ? 'Moderate' : 'Low'}
+              {reversalRate > 10 ? '高' : reversalRate > 5 ? '中' : '低'}
             </Tag>
           </Col>
         </Row>
@@ -325,18 +324,18 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
             {reversalRate > 10 && (
               <>
                 <WarningOutlined style={{ color: '#faad14', marginRight: 8 }} />
-                High reversal rate may indicate quality issues. Review recent transactions and lead quality.
+                冲正率较高可能说明质量存在问题。请复盘近期交易和线索质量。
               </>
             )}
             {reversalRate > 5 && reversalRate <= 10 && (
               <>
-                Monitor your reversal rate. Most common causes: refunds, disputes, or invalid conversions.
+                请持续关注冲正率。常见原因包括退款、争议或无效转化。
               </>
             )}
             {reversalRate <= 5 && (
               <>
                 <CheckCircleOutlined style={{ color: '#52c41a', marginRight: 8 }} />
-                Good performance! Low reversal rate indicates high-quality leads and conversions.
+                表现良好！较低冲正率说明线索和转化质量较高。
               </>
             )}
           </Text>

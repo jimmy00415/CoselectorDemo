@@ -3,6 +3,7 @@ import { Modal, Form, Input, Select, DatePicker, Button } from 'antd';
 import { ContentPlatform } from '../../types/enums';
 import { ContentItem } from '../../types';
 import dayjs from 'dayjs';
+import { translatePlatform } from '../../utils/i18n';
 
 const { TextArea } = Input;
 
@@ -74,12 +75,12 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({
 
   return (
     <Modal
-      title={content ? 'Edit Content Item' : 'Add Content Item'}
+      title={content ? '编辑内容项' : '新增内容项'}
       open={visible}
       onCancel={onClose}
       footer={[
         <Button key="cancel" onClick={onClose}>
-          Cancel
+          取消
         </Button>,
         <Button
           key="submit"
@@ -87,7 +88,7 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({
           loading={loading}
           onClick={handleSubmit}
         >
-          {content ? 'Update' : 'Create'}
+          {content ? '更新' : '创建'}
         </Button>,
       ]}
       width={600}
@@ -100,32 +101,32 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({
       >
         <Form.Item
           name="platform"
-          label="Platform"
-          rules={[{ required: true, message: 'Please select a platform' }]}
+          label="平台"
+          rules={[{ required: true, message: '请选择平台' }]}
         >
           <Select
-            placeholder="Select platform"
+            placeholder="选择平台"
             options={[
-              { label: 'Douyin', value: ContentPlatform.DOUYIN },
-              { label: 'Xiaohongshu', value: ContentPlatform.XIAOHONGSHU },
-              { label: 'WeChat', value: ContentPlatform.WECHAT },
-              { label: 'Weibo', value: ContentPlatform.WEIBO },
-              { label: 'Bilibili', value: ContentPlatform.BILIBILI },
-              { label: 'Kuaishou', value: ContentPlatform.KUAISHOU },
-              { label: 'Other', value: ContentPlatform.OTHER },
+              { label: translatePlatform(ContentPlatform.DOUYIN), value: ContentPlatform.DOUYIN },
+              { label: translatePlatform(ContentPlatform.XIAOHONGSHU), value: ContentPlatform.XIAOHONGSHU },
+              { label: translatePlatform(ContentPlatform.WECHAT), value: ContentPlatform.WECHAT },
+              { label: translatePlatform(ContentPlatform.WEIBO), value: ContentPlatform.WEIBO },
+              { label: translatePlatform(ContentPlatform.BILIBILI), value: ContentPlatform.BILIBILI },
+              { label: translatePlatform(ContentPlatform.KUAISHOU), value: ContentPlatform.KUAISHOU },
+              { label: translatePlatform(ContentPlatform.OTHER), value: ContentPlatform.OTHER },
             ]}
           />
         </Form.Item>
 
         <Form.Item
           name="title"
-          label="Title"
+          label="标题"
           rules={[
-            { required: true, message: 'Please enter a title' },
-            { max: 200, message: 'Title must be less than 200 characters' },
+            { required: true, message: '请输入标题' },
+            { max: 200, message: '标题不能超过 200 个字符' },
           ]}
         >
-          <Input placeholder="Enter content title" />
+          <Input placeholder="输入内容标题" />
         </Form.Item>
 
         <Form.Item
@@ -134,7 +135,7 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({
           rules={[
             {
               type: 'url',
-              message: 'Please enter a valid URL',
+              message: '请输入有效 URL',
             },
           ]}
         >
@@ -143,22 +144,22 @@ const ContentFormModal: React.FC<ContentFormModalProps> = ({
 
         <Form.Item
           name="publishDate"
-          label="Publish Date"
+          label="发布日期"
         >
           <DatePicker
             style={{ width: '100%' }}
             format="YYYY-MM-DD"
-            placeholder="Select publish date"
+            placeholder="选择发布日期"
           />
         </Form.Item>
 
         <Form.Item
           name="notes"
-          label="Notes"
+          label="备注"
         >
           <TextArea
             rows={4}
-            placeholder="Optional notes about this content"
+            placeholder="关于此内容的可选备注"
             maxLength={1000}
             showCount
           />

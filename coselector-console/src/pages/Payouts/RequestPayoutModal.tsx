@@ -67,23 +67,23 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
       title={
         <Space>
           <DollarOutlined />
-          Request Withdrawal
+          申请提现
         </Space>
       }
       open={visible}
       onOk={handleSubmit}
       onCancel={handleCancel}
-      okText="Submit Request"
+      okText="提交申请"
       okButtonProps={{ disabled: !confirmed || !hasBankAccount }}
       width={600}
     >
       {!hasBankAccount && (
         <Alert
           type="error"
-          message="Payout Method Missing"
+          message="缺少提现方式"
           description={
             <span>
-              Please <a href="/profile">set up your bank account</a> before requesting a payout.
+              请先<a href="/profile">设置银行账户</a>，再申请提现。
             </span>
           }
           style={{ marginBottom: 16 }}
@@ -94,10 +94,10 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
       {amountChanged && (
         <Alert
           type="warning"
-          message="Payable Balance Changed"
-          description={`Your payable balance decreased from ${formatCurrency(
+          message="可提现余额已变化"
+          description={`你的可提现余额已从 ${formatCurrency(
             currentPayable
-          )} to ${formatCurrency(maxPayable)}. Please adjust your request amount.`}
+          )} 变为 ${formatCurrency(maxPayable)}。请调整申请金额。`}
           style={{ marginBottom: 16 }}
           showIcon
           closable
@@ -106,19 +106,19 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
 
       <Form form={form} layout="vertical" disabled={!hasBankAccount}>
         <Form.Item
-          label="Withdrawal Amount"
+          label="提现金额"
           name="amount"
           rules={[
-            { required: true, message: 'Please enter withdrawal amount' },
+            { required: true, message: '请输入提现金额' },
             {
               type: 'number',
               min: 0.01,
-              message: 'Amount must be greater than 0',
+              message: '金额必须大于 0',
             },
             {
               type: 'number',
               max: maxPayable,
-              message: `Amount cannot exceed ${formatCurrency(maxPayable)}`,
+              message: `金额不能超过 ${formatCurrency(maxPayable)}`,
             },
           ]}
         >
@@ -126,7 +126,7 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
             style={{ width: '100%' }}
             prefix="¥"
             precision={2}
-            placeholder="Enter amount"
+            placeholder="输入金额"
             max={maxPayable}
             addonAfter={
               <Button
@@ -134,7 +134,7 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
                 size="small"
                 onClick={() => form.setFieldsValue({ amount: maxPayable })}
               >
-                Max
+                全部
               </Button>
             }
           />
@@ -142,7 +142,7 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
 
         <Alert
           type="info"
-          message={`Maximum available: ${formatCurrency(maxPayable)}`}
+          message={`最高可提现：${formatCurrency(maxPayable)}`}
           style={{ marginBottom: 16 }}
         />
 
@@ -150,20 +150,20 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
           title={
             <Space>
               <BankOutlined />
-              Destination Account
+              收款账户
             </Space>
           }
           bordered
           column={1}
           size="small"
         >
-          <Descriptions.Item label="Bank Name">
+          <Descriptions.Item label="银行名称">
             {userProfile?.bankAccount?.bankName || '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="Account Holder">
+          <Descriptions.Item label="账户名">
             {userProfile?.bankAccount?.accountHolder || '-'}
           </Descriptions.Item>
-          <Descriptions.Item label="Account Number">
+          <Descriptions.Item label="账号">
             {userProfile?.bankAccount?.accountNumber || '-'}
           </Descriptions.Item>
         </Descriptions>
@@ -171,7 +171,7 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
         {hasBankAccount && (
           <Form.Item style={{ marginTop: 16, marginBottom: 0 }}>
             <Checkbox checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)}>
-              I confirm that the payout details above are correct and the amount is accurate.
+              我确认以上提现信息正确，金额准确无误。
             </Checkbox>
           </Form.Item>
         )}
@@ -179,8 +179,8 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
 
       <Alert
         type="info"
-        message="Processing Time"
-        description="Payouts are typically approved within 1-2 business days and transferred within 3-5 business days after approval."
+        message="处理时效"
+        description="提现通常会在 1-2 个工作日内审批，通过后 3-5 个工作日内转账。"
         style={{ marginTop: 16 }}
       />
     </Modal>

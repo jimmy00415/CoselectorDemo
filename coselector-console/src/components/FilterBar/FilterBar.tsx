@@ -99,7 +99,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onToggleAdvanced,
   className = '',
   compact = false,
-  ariaLabel = 'Filter controls',
+  ariaLabel = '筛选控件',
 }) => {
   // Debounce timers for input fields
   const debounceTimers = useRef<Record<string, NodeJS.Timeout>>({});
@@ -174,7 +174,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         // Date range
         const [start, end] = value;
         if (start && end) {
-          displayValue = `${start.format('MMM D')} - ${end.format('MMM D')}`;
+          displayValue = `${start.format('M月D日')} - ${end.format('M月D日')}`;
         }
       } else {
         // Single value: find label or use value
@@ -221,7 +221,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         return (
           <Select
             style={{ width: '100%', minWidth: 150 }}
-            placeholder={filter.placeholder || `Select ${filter.label}`}
+            placeholder={filter.placeholder || `请选择${filter.label}`}
             value={value}
             onChange={(val) => handleFilterChange(filter.key, val)}
             allowClear={filter.allowClear ?? true}
@@ -235,7 +235,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           <Select
             mode="multiple"
             style={{ width: '100%', minWidth: 200 }}
-            placeholder={filter.placeholder || `Select ${filter.label}`}
+            placeholder={filter.placeholder || `请选择${filter.label}`}
             value={value || []}
             onChange={(val) => handleFilterChange(filter.key, val)}
             allowClear={filter.allowClear ?? true}
@@ -275,7 +275,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         return (
           <Input
             style={{ width: '100%', minWidth: 200 }}
-            placeholder={filter.placeholder || `Search ${filter.label}`}
+            placeholder={filter.placeholder || `搜索${filter.label}`}
             value={localValue !== undefined ? localValue : value}
             onChange={(e) => handleFilterChange(filter.key, e.target.value, filter.debounce ?? 300)}
             allowClear
@@ -334,7 +334,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 icon={<CloseOutlined />}
                 className="filter-clear-all"
               >
-                Clear All
+                清除全部
               </Button>
             </Space>
           </div>
@@ -370,7 +370,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 header={
                   <Space>
                     <FilterOutlined />
-                    <span>Advanced Filters</span>
+                    <span>高级筛选</span>
                     {advancedFilters.some((f) => {
                       const v = values[f.key];
                       return v !== undefined && v !== null && v !== '' && (!Array.isArray(v) || v.length > 0);
@@ -405,7 +405,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               disabled
               icon={<CloseOutlined />}
             >
-              Clear Filters
+              清除筛选
             </Button>
           </div>
         )}

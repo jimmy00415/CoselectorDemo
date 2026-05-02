@@ -15,23 +15,23 @@ const { Text } = Typography;
 const ROLE_OPTIONS = [
   {
     value: UserRole.CO_SELECTOR,
-    label: 'Co-Selector',
+    label: '协同遴选者',
     icon: <UserOutlined />,
-    description: 'Default role with full access to co-selector features',
+    description: '默认角色，可使用协同遴选者功能',
     color: '#1890ff',
   },
   {
     value: UserRole.OPS_BD,
-    label: 'Operations BD',
+    label: '运营/BD',
     icon: <TeamOutlined />,
-    description: 'Internal role for lead review and operational management',
+    description: '内部角色，用于线索审核和运营管理',
     color: '#52c41a',
   },
   {
     value: UserRole.FINANCE,
-    label: 'Finance',
+    label: '财务',
     icon: <DollarOutlined />,
-    description: 'Internal role for payout approval and financial operations',
+    description: '内部角色，用于提现审批和财务操作',
     color: '#faad14',
   },
 ];
@@ -53,21 +53,21 @@ export const RoleSwitcher: React.FC = () => {
 
   const handleRoleChange = (newRole: UserRole) => {
     Modal.confirm({
-      title: 'Switch Role?',
+      title: '切换角色？',
       content: (
         <Space direction="vertical" size="middle">
-          <Text>You are about to switch to a different role. This will change your permissions and available features.</Text>
+          <Text>你将切换到另一个角色，权限和可用功能会随之变化。</Text>
           <Alert
-            message="Prototype Feature"
-            description="This role switcher is for development and testing purposes only. In production, roles are assigned by the system."
+            message="原型功能"
+            description="此角色切换器仅用于开发和测试。生产环境中的角色由系统分配。"
             type="info"
             showIcon
           />
         </Space>
       ),
       icon: <ExperimentOutlined />,
-      okText: 'Switch Role',
-      cancelText: 'Cancel',
+      okText: '切换角色',
+      cancelText: '取消',
       onOk: () => {
         switchRole(newRole);
       },

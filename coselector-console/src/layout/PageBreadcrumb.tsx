@@ -20,18 +20,20 @@ const PageBreadcrumb: React.FC = () => {
 
   // Route label mapping
   const routeLabels: Record<string, string> = {
-    '/': 'Home',
-    '/assets': 'Links',
-    '/content': 'Content',
-    '/leads': 'Co-selection',
-    '/earnings': 'Earnings',
-    '/payouts': 'Payouts',
-    '/inbox': 'Inbox',
-    '/inbox/notifications': 'Notifications',
-    '/inbox/disputes': 'Disputes',
-    '/profile': 'Profile & Compliance',
-    '/profile/settings': 'Settings',
-    '/help': 'Help & Glossary',
+    '/': '首页',
+    '/assets': '链接',
+    '/content': '内容',
+    '/leads': '协同遴选',
+    '/admin': '管理',
+    '/admin/review-queue': '审核队列',
+    '/earnings': '收益',
+    '/payouts': '提现',
+    '/inbox': '收件箱',
+    '/inbox/notifications': '通知',
+    '/inbox/disputes': '争议',
+    '/profile': '资料与合规',
+    '/profile/settings': '设置',
+    '/help': '帮助与术语表',
   };
 
   const generateBreadcrumbs = (): BreadcrumbItem[] => {
@@ -39,7 +41,7 @@ const PageBreadcrumb: React.FC = () => {
     const breadcrumbs: BreadcrumbItem[] = [];
 
     // Add home
-    breadcrumbs.push({ path: '/', label: 'Home' });
+    breadcrumbs.push({ path: '/', label: '首页' });
 
     // Build cumulative path
     let currentPath = '';

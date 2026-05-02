@@ -10,6 +10,7 @@ import {
 import { TrackingAsset } from '../../types';
 import { AssetType, AssetStatus } from '../../types/enums';
 import { FilterConfig } from '../../components/FilterRail/FilterRail';
+import { translateAssetType, translateChannel, translateStatus } from '../../utils/i18n';
 
 const { Text } = Typography;
 
@@ -18,7 +19,7 @@ const { Text } = Typography;
  */
 export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
   {
-    title: 'Asset',
+    title: '资产',
     dataIndex: 'name',
     key: 'name',
     width: 250,
@@ -38,30 +39,30 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
     ),
   },
   {
-    title: 'Channel',
+    title: '渠道',
     dataIndex: 'channelTag',
     key: 'channelTag',
     width: 120,
-    render: (tag: string) => <Tag color="blue">{tag}</Tag>,
+    render: (tag: string) => <Tag color="blue">{translateChannel(tag)}</Tag>,
   },
   {
-    title: 'Status',
+    title: '状态',
     dataIndex: 'status',
     key: 'status',
     width: 100,
     render: (status: AssetStatus) => {
       const config: Record<AssetStatus, { color: string; text: string }> = {
-        [AssetStatus.ACTIVE]: { color: 'success', text: 'Active' },
-        [AssetStatus.DISABLED]: { color: 'default', text: 'Disabled' },
-        [AssetStatus.EXPIRED]: { color: 'warning', text: 'Expired' },
-        [AssetStatus.REVOKED]: { color: 'error', text: 'Revoked' },
+        [AssetStatus.ACTIVE]: { color: 'success', text: '启用' },
+        [AssetStatus.DISABLED]: { color: 'default', text: '已停用' },
+        [AssetStatus.EXPIRED]: { color: 'warning', text: '已过期' },
+        [AssetStatus.REVOKED]: { color: 'error', text: '已撤销' },
       };
       const { color, text } = config[status];
       return <Tag color={color}>{text}</Tag>;
     },
   },
   {
-    title: 'Clicks',
+    title: '点击',
     dataIndex: 'clickCount',
     key: 'clickCount',
     width: 100,
@@ -70,7 +71,7 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
     render: (count: number) => <Text>{count.toLocaleString()}</Text>,
   },
   {
-    title: 'Conversions',
+    title: '转化',
     dataIndex: 'conversionCount',
     key: 'conversionCount',
     width: 120,
@@ -82,26 +83,26 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
         <Space direction="vertical" size={0}>
           <Text>{count.toLocaleString()}</Text>
           <Text type="secondary" style={{ fontSize: 12 }}>
-            {rate.toFixed(1)}% CVR
+            转化率 {rate.toFixed(1)}%
           </Text>
         </Space>
       );
     },
   },
   {
-    title: 'Content Items',
+    title: '绑定内容',
     dataIndex: 'boundContentIds',
     key: 'boundContentIds',
     width: 120,
     align: 'center',
     render: (ids: string[]) => (
-      <Tooltip title={ids.length > 0 ? `${ids.length} content items bound` : 'No content bound'}>
+      <Tooltip title={ids.length > 0 ? `已绑定 ${ids.length} 个内容项` : '未绑定内容'}>
         <Tag>{ids.length}</Tag>
       </Tooltip>
     ),
   },
   {
-    title: 'Last Used',
+    title: '最近使用',
     dataIndex: 'lastUsedAt',
     key: 'lastUsedAt',
     width: 150,
@@ -109,11 +110,11 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
       date ? (
         <Text type="secondary">{new Date(date).toLocaleString()}</Text>
       ) : (
-        <Text type="secondary">Never</Text>
+        <Text type="secondary">从未使用</Text>
       ),
   },
   {
-    title: 'Created',
+    title: '创建时间',
     dataIndex: 'createdAt',
     key: 'createdAt',
     width: 150,
@@ -123,13 +124,13 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
     ),
   },
   {
-    title: 'Actions',
+    title: '操作',
     key: 'actions',
     width: 120,
     fixed: 'right',
     render: (_, record: TrackingAsset) => (
       <Space size="small">
-        <Tooltip title="Copy link">
+        <Tooltip title="复制链接">
           <Button
             type="text"
             size="small"
@@ -140,7 +141,7 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
             }}
           />
         </Tooltip>
-        <Tooltip title="View details">
+        <Tooltip title="查看详情">
           <Button type="text" size="small" icon={<EyeOutlined />} />
         </Tooltip>
       </Space>
@@ -154,34 +155,34 @@ export const getAssetColumns = (): ColumnsType<TrackingAsset> => [
 export const getAssetFilters = (): FilterConfig[] => [
   {
     key: 'type',
-    label: 'Type',
+    label: '类型',
     type: 'select',
     options: [
-      { label: 'Short Link', value: AssetType.SHORT_LINK },
-      { label: 'QR Code', value: AssetType.QR_CODE },
-      { label: 'Invite Code', value: AssetType.INVITE_CODE },
+      { label: translateAssetType(AssetType.SHORT_LINK), value: AssetType.SHORT_LINK },
+      { label: translateAssetType(AssetType.QR_CODE), value: AssetType.QR_CODE },
+      { label: translateAssetType(AssetType.INVITE_CODE), value: AssetType.INVITE_CODE },
     ],
   },
   {
     key: 'status',
-    label: 'Status',
+    label: '状态',
     type: 'select',
     options: [
-      { label: 'Active', value: AssetStatus.ACTIVE },
-      { label: 'Disabled', value: AssetStatus.DISABLED },
-      { label: 'Expired', value: AssetStatus.EXPIRED },
+      { label: translateStatus(AssetStatus.ACTIVE), value: AssetStatus.ACTIVE },
+      { label: translateStatus(AssetStatus.DISABLED), value: AssetStatus.DISABLED },
+      { label: translateStatus(AssetStatus.EXPIRED), value: AssetStatus.EXPIRED },
     ],
   },
   {
     key: 'channelTag',
-    label: 'Channel',
+    label: '渠道',
     type: 'select',
     options: [
-      { label: 'WeChat', value: 'wechat' },
-      { label: 'Douyin', value: 'douyin' },
-      { label: 'Xiaohongshu', value: 'xiaohongshu' },
-      { label: 'Weibo', value: 'weibo' },
-      { label: 'Other', value: 'other' },
+      { label: '微信', value: 'wechat' },
+      { label: '抖音', value: 'douyin' },
+      { label: '小红书', value: 'xiaohongshu' },
+      { label: '微博', value: 'weibo' },
+      { label: '其他', value: 'other' },
     ],
   },
 ];

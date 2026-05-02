@@ -2,7 +2,7 @@ import { ColumnType } from 'antd/es/table';
 import { Tag, Button, Tooltip } from 'antd';
 import { Transaction } from '../../types';
 import { EarningsState, TransactionSource } from '../../types/enums';
-import { formatDate, formatCurrency } from '../../utils';
+import { formatDate, formatCurrency, translateStatus } from '../../utils';
 
 /**
  * Earnings Module Configuration
@@ -20,9 +20,9 @@ export const stateColors: Record<EarningsState, string> = {
 
 // Source type icons and labels
 export const sourceLabels: Record<TransactionSource, string> = {
-  [TransactionSource.ORDER]: 'Order',
-  [TransactionSource.MILESTONE]: 'Milestone',
-  [TransactionSource.ADJUSTMENT]: 'Adjustment',
+  [TransactionSource.ORDER]: '订单',
+  [TransactionSource.MILESTONE]: '里程碑',
+  [TransactionSource.ADJUSTMENT]: '调整',
 };
 
 /**
@@ -40,10 +40,10 @@ export const getDaysUntilLock = (lockEndAt: string): number => {
  * Get lock date bucket (0-7, 8-14, 15-30, 30+)
  */
 export const getLockDateBucket = (daysUntil: number): string => {
-  if (daysUntil <= 7) return '0-7 days';
-  if (daysUntil <= 14) return '8-14 days';
-  if (daysUntil <= 30) return '15-30 days';
-  return '30+ days';
+  if (daysUntil <= 7) return '0-7 天';
+  if (daysUntil <= 14) return '8-14 天';
+  if (daysUntil <= 30) return '15-30 天';
+  return '30 天以上';
 };
 
 /**
@@ -59,7 +59,7 @@ export const canLockNow = (lockEndAt: string): boolean => {
  */
 export const getTransactionColumns = (onViewTrace: (transaction: Transaction) => void): ColumnType<Transaction>[] => [
   {
-    title: 'Date',
+    title: '日期',
     dataIndex: 'date',
     key: 'date',
     width: 180,
@@ -68,7 +68,7 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
     defaultSortOrder: 'descend',
   },
   {
-    title: 'Source',
+    title: '来源',
     dataIndex: 'source',
     key: 'source',
     width: 120,
@@ -76,14 +76,14 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
       <Tag>{sourceLabels[source]}</Tag>
     ),
     filters: [
-      { text: 'Order', value: TransactionSource.ORDER },
-      { text: 'Milestone', value: TransactionSource.MILESTONE },
-      { text: 'Adjustment', value: TransactionSource.ADJUSTMENT },
+      { text: '订单', value: TransactionSource.ORDER },
+      { text: '里程碑', value: TransactionSource.MILESTONE },
+      { text: '调整', value: TransactionSource.ADJUSTMENT },
     ],
     onFilter: (value, record) => record.source === value,
   },
   {
-    title: 'Reference',
+    title: '引用',
     dataIndex: 'referenceId',
     key: 'referenceId',
     width: 150,
@@ -96,7 +96,7 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
     ),
   },
   {
-    title: 'Amount',
+    title: '金额',
     dataIndex: 'amount',
     key: 'amount',
     width: 120,
@@ -112,26 +112,26 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
     sorter: (a, b) => a.amount - b.amount,
   },
   {
-    title: 'State',
+    title: '状态',
     dataIndex: 'state',
     key: 'state',
     width: 120,
     render: (state: EarningsState) => (
       <Tag color={stateColors[state]}>
-        {state}
+        {translateStatus(state)}
       </Tag>
     ),
     filters: [
-      { text: 'Pending', value: EarningsState.PENDING },
-      { text: 'Locked', value: EarningsState.LOCKED },
-      { text: 'Payable', value: EarningsState.PAYABLE },
-      { text: 'Paid', value: EarningsState.PAID },
-      { text: 'Reversed', value: EarningsState.REVERSED },
+      { text: '待锁定', value: EarningsState.PENDING },
+      { text: '已锁定', value: EarningsState.LOCKED },
+      { text: '可提现', value: EarningsState.PAYABLE },
+      { text: '已支付', value: EarningsState.PAID },
+      { text: '已冲正', value: EarningsState.REVERSED },
     ],
     onFilter: (value, record) => record.state === value,
   },
   {
-    title: 'Locking Date',
+    title: '锁定日期',
     dataIndex: 'lockEndAt',
     key: 'lockEndAt',
     width: 180,
@@ -145,7 +145,7 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
       if (daysUntil === 0) {
         return (
           <Tag color="warning">
-            Locks today
+            今日锁定
           </Tag>
         );
       }
@@ -153,14 +153,14 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
       return (
         <Tooltip title={formatDate(lockEndAt)}>
           <span style={{ color: '#1890ff' }}>
-            {daysUntil} day{daysUntil !== 1 ? 's' : ''}
+            {daysUntil} 天
           </span>
         </Tooltip>
       );
     },
   },
   {
-    title: 'Rule',
+    title: '规则',
     dataIndex: 'ruleVersion',
     key: 'ruleVersion',
     width: 100,
@@ -171,7 +171,7 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
     ),
   },
   {
-    title: 'Action',
+    title: '操作',
     key: 'action',
     width: 120,
     fixed: 'right',
@@ -181,7 +181,7 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
         size="small"
         onClick={() => onViewTrace(record)}
       >
-        View Trace
+        查看追踪
       </Button>
     ),
   },
@@ -251,10 +251,10 @@ export const calculateLockDistribution = (transactions: Transaction[]): LockDist
   const buckets = new Map<string, { count: number; amount: number; minDays: number; maxDays: number }>();
   
   // Initialize buckets
-  buckets.set('0-7 days', { count: 0, amount: 0, minDays: 0, maxDays: 7 });
-  buckets.set('8-14 days', { count: 0, amount: 0, minDays: 8, maxDays: 14 });
-  buckets.set('15-30 days', { count: 0, amount: 0, minDays: 15, maxDays: 30 });
-  buckets.set('30+ days', { count: 0, amount: 0, minDays: 31, maxDays: 999 });
+  buckets.set('0-7 天', { count: 0, amount: 0, minDays: 0, maxDays: 7 });
+  buckets.set('8-14 天', { count: 0, amount: 0, minDays: 8, maxDays: 14 });
+  buckets.set('15-30 天', { count: 0, amount: 0, minDays: 15, maxDays: 30 });
+  buckets.set('30 天以上', { count: 0, amount: 0, minDays: 31, maxDays: 999 });
 
   // Aggregate pending transactions
   transactions

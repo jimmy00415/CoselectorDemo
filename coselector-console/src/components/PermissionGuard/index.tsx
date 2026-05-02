@@ -65,7 +65,7 @@ export const PermissionGuard: React.FC<PermissionGuardProps> = ({
     case 'alert':
       return showMessage ? (
         <Alert
-          message="Access Restricted"
+          message="访问受限"
           description={message}
           type="warning"
           icon={<LockOutlined />}
@@ -182,7 +182,7 @@ export const InternalOnlyBadge: React.FC<InternalOnlyBadgeProps> = ({
 
   if (placement === 'tooltip') {
     return (
-      <Tooltip title="This feature is restricted to internal users only">
+      <Tooltip title="此功能仅限内部用户使用">
         <InfoCircleOutlined className="internal-only-icon" />
       </Tooltip>
     );
@@ -191,7 +191,7 @@ export const InternalOnlyBadge: React.FC<InternalOnlyBadgeProps> = ({
   return (
     <span className="internal-only-badge">
       <LockOutlined />
-      <span>Internal Only</span>
+      <span>仅内部</span>
     </span>
   );
 };

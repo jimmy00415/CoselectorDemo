@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { Notification } from '../types';
 import { NotificationType } from '../types/enums';
 import * as mockApi from '../services/mockApi';
+import { translateText } from '../utils/i18n';
 import './NotificationPanel.css';
 
 const { Text, Title } = Typography;
@@ -97,7 +98,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           <Badge count={unreadCount}>
             <BellOutlined style={{ fontSize: 20 }} />
           </Badge>
-          <Title level={5} style={{ margin: 0 }}>Notifications</Title>
+          <Title level={5} style={{ margin: 0 }}>通知</Title>
         </Space>
       }
       placement="right"
@@ -112,7 +113,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
             icon={<CheckOutlined />}
             onClick={handleMarkAllAsRead}
           >
-            Mark all as read
+            全部标为已读
           </Button>
         )
       }
@@ -124,11 +125,11 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         items={[
           {
             key: 'all',
-            label: `All (${notifications.length})`,
+            label: `全部（${notifications.length}）`,
           },
           {
             key: 'unread',
-            label: `Unread (${unreadCount})`,
+            label: `未读（${unreadCount}）`,
           },
         ]}
       />
@@ -139,7 +140,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         locale={{
           emptyText: (
             <Empty
-              description="No notifications"
+              description="暂无通知"
               image={Empty.PRESENTED_IMAGE_SIMPLE}
             />
           ),
@@ -166,13 +167,13 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
               avatar={getNotificationIcon(item.type)}
               title={
                 <Space>
-                  <Text strong={!item.read}>{item.title}</Text>
+                  <Text strong={!item.read}>{translateText(item.title)}</Text>
                   {!item.read && <Badge status="processing" />}
                 </Space>
               }
               description={
                 <Space direction="vertical" size={0}>
-                  <Text type="secondary">{item.message}</Text>
+                  <Text type="secondary">{translateText(item.message)}</Text>
                   <Text type="secondary" style={{ fontSize: 12 }}>
                     <ClockCircleOutlined /> {new Date(item.createdAt).toLocaleString()}
                   </Text>

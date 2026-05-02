@@ -8,9 +8,9 @@ const SettingsPage: React.FC = () => {
   return (
     <div>
       <PageBreadcrumb />
-      <Title level={2}>Settings</Title>
+      <Title level={2}>设置</Title>
       <Card style={{ marginTop: 24 }}>
-        <Paragraph>User settings and preferences will be implemented here.</Paragraph>
+        <Paragraph>用户设置和偏好将在此处实现。</Paragraph>
       </Card>
     </div>
   );

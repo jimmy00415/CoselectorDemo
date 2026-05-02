@@ -13,27 +13,27 @@ import './styles.css';
 const VIEW_PRESET_OPTIONS = [
   {
     value: ViewPreset.OWNER,
-    label: 'Owner',
+    label: '所有者',
     icon: <DashboardOutlined />,
-    description: 'Asset ownership & performance',
+    description: '资产归属与表现',
   },
   {
     value: ViewPreset.OPERATOR,
-    label: 'Operator',
+    label: '运营',
     icon: <ToolOutlined />,
-    description: 'Operations & conversions',
+    description: '运营与转化',
   },
   {
     value: ViewPreset.ANALYST,
-    label: 'Analyst',
+    label: '分析',
     icon: <LineChartOutlined />,
-    description: 'Analytics & trends',
+    description: '分析与趋势',
   },
   {
     value: ViewPreset.FINANCE,
-    label: 'Finance',
+    label: '财务',
     icon: <DollarOutlined />,
-    description: 'Financial flows & payouts',
+    description: '财务流与提现',
   },
 ];
 

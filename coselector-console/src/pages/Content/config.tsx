@@ -6,6 +6,7 @@ import { ContentItem } from '../../types';
 import { ContentPlatform } from '../../types/enums';
 import type { FilterConfig } from '../../components/FilterRail/FilterRail';
 import dayjs from 'dayjs';
+import { translatePlatform } from '../../utils/i18n';
 
 const { Text } = Typography;
 
@@ -22,13 +23,13 @@ interface ColumnConfig {
  */
 const getPlatformConfig = (platform: ContentPlatform) => {
   const configs = {
-    [ContentPlatform.DOUYIN]: { color: 'black', text: 'Douyin' },
-    [ContentPlatform.XIAOHONGSHU]: { color: 'red', text: 'Xiaohongshu' },
-    [ContentPlatform.WECHAT]: { color: 'green', text: 'WeChat' },
-    [ContentPlatform.WEIBO]: { color: 'orange', text: 'Weibo' },
-    [ContentPlatform.BILIBILI]: { color: 'cyan', text: 'Bilibili' },
-    [ContentPlatform.KUAISHOU]: { color: 'orange', text: 'Kuaishou' },
-    [ContentPlatform.OTHER]: { color: 'default', text: 'Other' },
+    [ContentPlatform.DOUYIN]: { color: 'black', text: '抖音' },
+    [ContentPlatform.XIAOHONGSHU]: { color: 'red', text: '小红书' },
+    [ContentPlatform.WECHAT]: { color: 'green', text: '微信' },
+    [ContentPlatform.WEIBO]: { color: 'orange', text: '微博' },
+    [ContentPlatform.BILIBILI]: { color: 'cyan', text: '哔哩哔哩' },
+    [ContentPlatform.KUAISHOU]: { color: 'orange', text: '快手' },
+    [ContentPlatform.OTHER]: { color: 'default', text: '其他' },
   };
   return configs[platform];
 };
@@ -44,7 +45,7 @@ export const getContentColumns = ({
   canBind,
 }: ColumnConfig): ColumnsType<ContentItem> => [
   {
-    title: 'Title',
+    title: '标题',
     dataIndex: 'title',
     key: 'title',
     width: 250,
@@ -59,7 +60,7 @@ export const getContentColumns = ({
     ),
   },
   {
-    title: 'Platform',
+    title: '平台',
     dataIndex: 'platform',
     key: 'platform',
     width: 120,
@@ -69,7 +70,7 @@ export const getContentColumns = ({
     },
   },
   {
-    title: 'Bound Assets',
+    title: '绑定资产',
     dataIndex: 'boundAssetIds',
     key: 'boundAssets',
     width: 140,
@@ -81,15 +82,15 @@ export const getContentColumns = ({
       return (
         <Space>
           {hasAssets ? (
-            <Tooltip title="Click to manage bindings">
+            <Tooltip title="点击管理绑定">
               <Tag color="blue" style={{ cursor: 'pointer' }}>
-                {count} asset{count !== 1 ? 's' : ''}
+                {count} 个资产
               </Tag>
             </Tooltip>
           ) : (
-            <Tooltip title="Not trackable until assets are bound">
+            <Tooltip title="绑定资产后才能追踪">
               <Tag icon={<ExclamationCircleOutlined />} color="warning">
-                No assets
+                未绑定资产
               </Tag>
             </Tooltip>
           )}
@@ -98,7 +99,7 @@ export const getContentColumns = ({
     },
   },
   {
-    title: 'Views',
+    title: '观看',
     dataIndex: 'viewCount',
     key: 'viewCount',
     width: 100,
@@ -107,7 +108,7 @@ export const getContentColumns = ({
     render: (count: number | undefined) => <Text>{(count || 0).toLocaleString()}</Text>,
   },
   {
-    title: 'Clicks',
+    title: '点击',
     dataIndex: 'clickCount',
     key: 'clickCount',
     width: 100,
@@ -116,7 +117,7 @@ export const getContentColumns = ({
     render: (count: number) => <Text>{count.toLocaleString()}</Text>,
   },
   {
-    title: 'Conversions',
+    title: '转化',
     dataIndex: 'conversionCount',
     key: 'conversionCount',
     width: 120,
@@ -130,14 +131,14 @@ export const getContentColumns = ({
         <div>
           <div><Text strong>{count.toLocaleString()}</Text></div>
           <Text type="secondary" style={{ fontSize: '12px' }}>
-            CVR: {rate}%
+            转化率：{rate}%
           </Text>
         </div>
       );
     },
   },
   {
-    title: 'Est. Earnings',
+    title: '预估收益',
     dataIndex: 'estimatedEarnings',
     key: 'estimatedEarnings',
     width: 120,
@@ -148,7 +149,7 @@ export const getContentColumns = ({
     ),
   },
   {
-    title: 'Publish Date',
+    title: '发布日期',
     dataIndex: 'publishDate',
     key: 'publishDate',
     width: 120,
@@ -163,13 +164,13 @@ export const getContentColumns = ({
     },
   },
   {
-    title: 'Actions',
+    title: '操作',
     key: 'actions',
     width: 180,
     fixed: 'right',
     render: (_, record: ContentItem) => (
       <Space size="small">
-        <Tooltip title="Edit content">
+        <Tooltip title="编辑内容">
           <Button
             type="text"
             size="small"
@@ -181,7 +182,7 @@ export const getContentColumns = ({
             disabled={!canEdit}
           />
         </Tooltip>
-        <Tooltip title="Bind assets">
+        <Tooltip title="绑定资产">
           <Button
             type="text"
             size="small"
@@ -193,7 +194,7 @@ export const getContentColumns = ({
             disabled={!canBind}
           />
         </Tooltip>
-        <Tooltip title="Duplicate">
+        <Tooltip title="复制内容">
           <Button
             type="text"
             size="small"
@@ -216,30 +217,30 @@ export const getContentColumns = ({
 export const getContentFilters = (): FilterConfig[] => [
   {
     key: 'platform',
-    label: 'Platform',
+    label: '平台',
     type: 'multiSelect',
     options: [
-      { label: 'Douyin', value: ContentPlatform.DOUYIN },
-      { label: 'Xiaohongshu', value: ContentPlatform.XIAOHONGSHU },
-      { label: 'WeChat', value: ContentPlatform.WECHAT },
-      { label: 'Weibo', value: ContentPlatform.WEIBO },
-      { label: 'Bilibili', value: ContentPlatform.BILIBILI },
-      { label: 'Kuaishou', value: ContentPlatform.KUAISHOU },
-      { label: 'Other', value: ContentPlatform.OTHER },
+      { label: translatePlatform(ContentPlatform.DOUYIN), value: ContentPlatform.DOUYIN },
+      { label: translatePlatform(ContentPlatform.XIAOHONGSHU), value: ContentPlatform.XIAOHONGSHU },
+      { label: translatePlatform(ContentPlatform.WECHAT), value: ContentPlatform.WECHAT },
+      { label: translatePlatform(ContentPlatform.WEIBO), value: ContentPlatform.WEIBO },
+      { label: translatePlatform(ContentPlatform.BILIBILI), value: ContentPlatform.BILIBILI },
+      { label: translatePlatform(ContentPlatform.KUAISHOU), value: ContentPlatform.KUAISHOU },
+      { label: translatePlatform(ContentPlatform.OTHER), value: ContentPlatform.OTHER },
     ],
   },
   {
     key: 'hasBoundAssets',
-    label: 'Has Bound Assets',
+    label: '是否绑定资产',
     type: 'select',
     options: [
-      { label: 'Yes', value: true },
-      { label: 'No', value: false },
+      { label: '是', value: true },
+      { label: '否', value: false },
     ],
   },
   {
     key: 'publishDateRange',
-    label: 'Publish Date Range',
+    label: '发布日期范围',
     type: 'dateRange',
   },
 ];

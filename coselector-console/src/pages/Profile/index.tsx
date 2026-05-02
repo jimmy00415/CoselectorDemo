@@ -85,7 +85,7 @@ export const ProfilePage: React.FC = () => {
     };
 
     updateUser(updatedUser);
-    message.success('KYC submitted successfully. Review typically takes 1-2 business days.');
+    message.success('KYC 已提交成功。审核通常需要 1-2 个工作日。');
   };
 
   // Handle KYC resubmission
@@ -110,7 +110,7 @@ export const ProfilePage: React.FC = () => {
     };
 
     updateUser(updatedUser);
-    message.success('KYC resubmitted successfully. Review typically takes 1-2 business days.');
+    message.success('KYC 已重新提交成功。审核通常需要 1-2 个工作日。');
   };
 
   // Handle bank account save
@@ -126,7 +126,7 @@ export const ProfilePage: React.FC = () => {
     };
 
     updateUser(updatedUser);
-    message.success('Bank account saved. Please verify to enable payouts.');
+    message.success('银行账户已保存。请完成验证以启用提现。');
   };
 
   // Handle bank account verification
@@ -145,7 +145,7 @@ export const ProfilePage: React.FC = () => {
 
     updateUser(updatedUser);
     message.success(
-      'Test transfer initiated. In a real system, you would confirm the amount received.'
+      '测试转账已发起。真实系统中你需要确认收到的金额。'
     );
   };
 
@@ -159,7 +159,7 @@ export const ProfilePage: React.FC = () => {
     };
 
     updateUser(updatedUser);
-    message.success('Notification preferences saved');
+    message.success('通知偏好已保存');
   };
 
   // Handle COI disclosure
@@ -176,15 +176,15 @@ export const ProfilePage: React.FC = () => {
 
     if (disclosure.hasConflict) {
       message.warning(
-        'Conflict declared. Your account is under review. Payouts are blocked until review is complete.'
+        '已声明利益冲突。你的账户正在审核中，审核完成前将无法提现。'
       );
     } else {
-      message.success('No conflicts declared. Thank you for your good faith disclosure.');
+      message.success('未声明利益冲突。感谢你的诚信披露。');
     }
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return <div>加载中...</div>;
   }
 
   const minThreshold = 50;
@@ -195,7 +195,7 @@ export const ProfilePage: React.FC = () => {
       label: (
         <span>
           <UserOutlined />
-          Profile
+          资料
         </span>
       ),
       children: (
@@ -208,9 +208,9 @@ export const ProfilePage: React.FC = () => {
           {/* Personal info would go here */}
           <div style={{ textAlign: 'center', padding: 64, color: '#8c8c8c' }}>
             <UserOutlined style={{ fontSize: 64, marginBottom: 16 }} />
-            <h3>Personal Information</h3>
-            <p>Name, email, phone, timezone settings</p>
-            <p style={{ fontSize: 12 }}>(Can be implemented with basic form)</p>
+            <h3>个人信息</h3>
+            <p>姓名、邮箱、电话、时区设置</p>
+            <p style={{ fontSize: 12 }}>（可通过基础表单实现）</p>
           </div>
         </div>
       ),
@@ -220,7 +220,7 @@ export const ProfilePage: React.FC = () => {
       label: (
         <span>
           <SafetyOutlined />
-          KYC Status
+          KYC 状态
         </span>
       ),
       children: (
@@ -243,7 +243,7 @@ export const ProfilePage: React.FC = () => {
       label: (
         <span>
           <BankOutlined />
-          Payout Method
+          提现方式
         </span>
       ),
       children: (
@@ -267,15 +267,15 @@ export const ProfilePage: React.FC = () => {
       label: (
         <span>
           <FileTextOutlined />
-          Tax Info
+          税务信息
         </span>
       ),
       children: (
         <div style={{ textAlign: 'center', padding: 64, color: '#8c8c8c' }}>
           <FileTextOutlined style={{ fontSize: 64, marginBottom: 16 }} />
-          <h3>Tax Information</h3>
-          <p>Tax ID, withholding preferences, tax forms</p>
-          <p style={{ fontSize: 12 }}>(Placeholder for future implementation)</p>
+          <h3>税务信息</h3>
+          <p>税号、预扣偏好、税务表单</p>
+          <p style={{ fontSize: 12 }}>（后续实现占位）</p>
         </div>
       ),
     },
@@ -284,7 +284,7 @@ export const ProfilePage: React.FC = () => {
       label: (
         <span>
           <SafetyOutlined />
-          Compliance
+          合规
         </span>
       ),
       children: (
@@ -292,9 +292,9 @@ export const ProfilePage: React.FC = () => {
           <COIDisclosureForm userProfile={user} onSubmit={handleCOIDisclosure} />
           <div style={{ textAlign: 'center', padding: 64, color: '#8c8c8c' }}>
             <SafetyOutlined style={{ fontSize: 64, marginBottom: 16 }} />
-            <h3>Compliance Training</h3>
-            <p>Required training modules, certifications, acknowledgments</p>
-            <p style={{ fontSize: 12 }}>(Placeholder for future implementation)</p>
+            <h3>合规培训</h3>
+            <p>必修培训模块、认证和确认记录</p>
+            <p style={{ fontSize: 12 }}>（后续实现占位）</p>
           </div>
         </Space>
       ),
@@ -304,7 +304,7 @@ export const ProfilePage: React.FC = () => {
       label: (
         <span>
           <BellOutlined />
-          Notifications
+          通知
         </span>
       ),
       children: (
@@ -319,15 +319,15 @@ export const ProfilePage: React.FC = () => {
       label: (
         <span>
           <BookOutlined />
-          Rulebook
+          规则手册
         </span>
       ),
       children: (
         <div style={{ textAlign: 'center', padding: 64, color: '#8c8c8c' }}>
           <BookOutlined style={{ fontSize: 64, marginBottom: 16 }} />
-          <h3>Commission Rulebook</h3>
-          <p>Versioned rules, rate tables, policy documents</p>
-          <p style={{ fontSize: 12 }}>(Placeholder for future implementation)</p>
+          <h3>佣金规则手册</h3>
+          <p>版本化规则、费率表和政策文件</p>
+          <p style={{ fontSize: 12 }}>（后续实现占位）</p>
         </div>
       ),
     },

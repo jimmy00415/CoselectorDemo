@@ -48,21 +48,21 @@ export const DisputeDetailsDrawer: React.FC<DisputeDetailsDrawerProps> = ({
       label: (
         <Space>
           <InfoCircleOutlined />
-          Overview
+          概览
         </Space>
       ),
       children: (
         <div style={{ padding: '16px 0' }}>
           <DisputeCaseHeader disputeCase={disputeCase} />
           <div style={{ marginTop: 16 }}>
-            <h3>Dispute Description</h3>
+            <h3>争议描述</h3>
             <p style={{ backgroundColor: '#fafafa', padding: 16, borderRadius: 8 }}>
-              {disputeCase.description || 'No description provided.'}
+              {disputeCase.description || '未提供描述。'}
             </p>
           </div>
           {disputeCase.reason && (
             <div style={{ marginTop: 16 }}>
-              <h3>Reason</h3>
+              <h3>原因</h3>
               <p style={{ backgroundColor: '#fafafa', padding: 16, borderRadius: 8 }}>
                 {disputeCase.reason}
               </p>
@@ -76,7 +76,7 @@ export const DisputeDetailsDrawer: React.FC<DisputeDetailsDrawerProps> = ({
       label: (
         <Space>
           <FileTextOutlined />
-          Evidence
+          证据
         </Space>
       ),
       children: (
@@ -95,7 +95,7 @@ export const DisputeDetailsDrawer: React.FC<DisputeDetailsDrawerProps> = ({
       label: (
         <Space>
           <MessageOutlined />
-          Messages
+          消息
         </Space>
       ),
       children: (
@@ -113,7 +113,7 @@ export const DisputeDetailsDrawer: React.FC<DisputeDetailsDrawerProps> = ({
       label: (
         <Space>
           <ClockCircleOutlined />
-          Timeline
+          时间线
         </Space>
       ),
       children: (
@@ -131,7 +131,7 @@ export const DisputeDetailsDrawer: React.FC<DisputeDetailsDrawerProps> = ({
       label: (
         <Space>
           <CheckCircleOutlined />
-          Resolution
+          处理结果
         </Space>
       ),
       children: (
@@ -148,13 +148,13 @@ export const DisputeDetailsDrawer: React.FC<DisputeDetailsDrawerProps> = ({
 
   return (
     <Drawer
-      title={`Dispute Case #${disputeCase.id.substring(0, 8)}`}
+      title={`争议案件 #${disputeCase.id.substring(0, 8)}`}
       placement="right"
       onClose={onClose}
       open={open}
       width={800}
       extra={
-        <Button onClick={onClose}>Close</Button>
+        <Button onClick={onClose}>关闭</Button>
       }
     >
       <Tabs items={tabs} defaultActiveKey="overview" />

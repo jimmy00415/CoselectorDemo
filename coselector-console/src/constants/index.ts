@@ -29,49 +29,49 @@ export const ROUTES = {
 export const NAV_ITEMS = [
   {
     key: 'home',
-    label: 'Home',
+    label: '首页',
     path: ROUTES.HOME,
     icon: 'HomeOutlined',
   },
   {
     key: 'links',
-    label: 'Links',
+    label: '链接',
     path: ROUTES.LINKS,
     icon: 'LinkOutlined',
   },
   {
     key: 'content',
-    label: 'Content',
+    label: '内容',
     path: ROUTES.CONTENT,
     icon: 'FileTextOutlined',
   },
   {
     key: 'leads',
-    label: 'Co-selection',
+    label: '协同遴选',
     path: ROUTES.LEADS,
     icon: 'TeamOutlined',
   },
   {
     key: 'admin',
-    label: 'Admin',
+    label: '管理',
     path: ROUTES.ADMIN_REVIEW_QUEUE,
     icon: 'ControlOutlined',
   },
   {
     key: 'earnings',
-    label: 'Earnings',
+    label: '收益',
     path: ROUTES.EARNINGS,
     icon: 'DollarOutlined',
   },
   {
     key: 'inbox',
-    label: 'Inbox',
+    label: '收件箱',
     path: ROUTES.INBOX,
     icon: 'InboxOutlined',
   },
   {
     key: 'profile',
-    label: 'Profile & Compliance',
+    label: '资料与合规',
     path: ROUTES.PROFILE,
     icon: 'UserOutlined',
   },
@@ -123,91 +123,91 @@ export const DATA_FRESHNESS_THRESHOLD = 15;
 
 // Channel tags (predefined)
 export const CHANNEL_TAGS = [
-  'WeChat',
-  'XHS',
+  '微信',
+  '小红书',
   'Instagram',
   'TikTok',
-  'Weibo',
-  'Douyin',
-  'Email',
-  'Custom',
+  '微博',
+  '抖音',
+  '电子邮件',
+  '自定义',
 ];
 
 // Lead categories
 export const LEAD_CATEGORIES = [
-  'Food & Beverage',
-  'Fashion & Apparel',
-  'Beauty & Cosmetics',
-  'Electronics',
-  'Home & Living',
-  'Health & Wellness',
-  'Travel & Tourism',
-  'Entertainment',
-  'Education',
-  'Professional Services',
-  'Other',
+  '餐饮',
+  '服饰',
+  '美妆',
+  '电子产品',
+  '家居生活',
+  '健康养生',
+  '旅游',
+  '娱乐',
+  '教育',
+  '专业服务',
+  '其他',
 ];
 
 // Chinese regions
 export const REGIONS = [
-  'Beijing',
-  'Shanghai',
-  'Guangzhou',
-  'Shenzhen',
-  'Hangzhou',
-  'Chengdu',
-  'Chongqing',
-  'Wuhan',
-  'Nanjing',
-  'Suzhou',
-  'Xiamen',
-  'Other',
+  '北京',
+  '上海',
+  '广州',
+  '深圳',
+  '杭州',
+  '成都',
+  '重庆',
+  '武汉',
+  '南京',
+  '苏州',
+  '厦门',
+  '其他',
 ];
 
 // Glossary terms
 export const GLOSSARY_TERMS = [
   {
-    term: 'Tracking Asset',
-    definition: 'Shareable tracking entity (Short link / QR / Invite code).',
+    term: '追踪资产',
+    definition: '可分享的追踪实体（短链接/二维码/邀请码）。',
   },
   {
-    term: 'Content Item',
+    term: '内容项',
     definition:
-      'A managed record of a piece of content (platform, title, URL, publish date), optionally bound to assets.',
+      '一条内容的管理记录（平台、标题、链接、发布日期），可选绑定追踪资产。',
   },
   {
-    term: 'Lead',
+    term: '线索',
     definition:
-      'A structured merchant/service provider opportunity submitted by co-selector for platform review/onboarding.',
+      '协同遴选者提交的结构化商户/服务商机会，用于平台审核和入驻。',
   },
   {
-    term: 'Lead Owner',
+    term: '线索负责人',
     definition:
-      'The internal Ops/BD handler responsible for reviewing/advancing the lead (visible as "Assigned Owner" to co-selector).',
+      '负责审核和推进线索的内部运营/BD 处理人（对协同遴选者显示为“已分配负责人”）。',
   },
   {
-    term: 'COI (Conflict of Interest)',
+    term: '利益冲突声明（COI）',
     definition:
-      'A declaration that the submitter has no disqualifying conflict (or has disclosed it).',
+      '提交人声明不存在影响资格的利益冲突，或已完成披露。',
   },
   {
-    term: 'Locking Period / Locking Date',
+    term: '锁定期/锁定日期',
     definition:
-      'Window where a pending commission can be reversed/modified; after lock date it becomes locked.',
+      '待结佣金可被冲正或修改的窗口期；到达锁定日期后变为已锁定。',
   },
   {
-    term: 'Reversal / Reversed',
+    term: '冲正/已冲正',
     definition:
-      'Negative adjustment due to refund/dispute/fraud/void, etc. For "pending" earnings, reversal can happen before lock date.',
+      '由于退款、争议、欺诈、作废等原因产生的负向调整。待锁定收益可在锁定日前被冲正。',
   },
   {
-    term: 'Dispute',
+    term: '争议',
     definition:
-      'A case requiring evidence and response deadlines; dispute lifecycles often take weeks.',
+      '需要提交证据并遵守响应期限的案件；争议生命周期通常持续数周。',
   },
   {
     term: 'RBAC',
-    definition: 'Role-Based Access Control (permissions granted by role).',
+    definition: '基于角色的访问控制（权限按角色授予）。',
   },
 ];
 
@@ -215,23 +215,23 @@ export const GLOSSARY_TERMS = [
 export const KYC_STEPS = [
   {
     key: 'identity',
-    title: 'Identity Basics',
-    description: 'Provide your basic identity information',
+    title: '身份基础信息',
+    description: '填写你的基础身份信息',
   },
   {
     key: 'documents',
-    title: 'Document Upload',
-    description: 'Upload required identity documents',
+    title: '证件上传',
+    description: '上传所需身份文件',
   },
   {
     key: 'review',
-    title: 'Review Submitted',
-    description: 'Your submission is under review',
+    title: '已提交审核',
+    description: '你的提交正在审核中',
   },
   {
     key: 'complete',
-    title: 'Approved',
-    description: 'Your KYC verification is complete',
+    title: '已通过',
+    description: '你的 KYC 验证已完成',
   },
 ];
 
@@ -239,7 +239,7 @@ export const KYC_STEPS = [
 export const DISPUTE_RESPONSE_DEADLINE_DAYS = 14;
 
 // Payout method types
-export const PAYOUT_METHOD_TYPES = ['Bank Account', 'Alipay', 'WeChat Pay'];
+export const PAYOUT_METHOD_TYPES = ['银行账户', '支付宝', '微信支付'];
 
 // Rule version (for commission calculation)
 export const CURRENT_RULE_VERSION = 'v1.0';

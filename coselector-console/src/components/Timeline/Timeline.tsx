@@ -12,6 +12,14 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { TimelineEvent } from '../../types';
 import { ActorType } from '../../types/enums';
+import {
+  translateActorName,
+  translateEventType,
+  translateMetadataKey,
+  translateMetadataValue,
+  translateReasonCode,
+  translateText,
+} from '../../utils/i18n';
 
 dayjs.extend(relativeTime);
 
@@ -48,7 +56,7 @@ export const Timeline: React.FC<TimelineComponentProps> = ({
   pending,
   reverse = false,
   showRelativeTime = true,
-  emptyText = 'No timeline events',
+  emptyText = '暂无时间线事件',
 }) => {
   // Get icon based on actor type
   const getActorIcon = (actorType: ActorType) => {
@@ -129,7 +137,7 @@ export const Timeline: React.FC<TimelineComponentProps> = ({
 
     return (
       <Tag color={colors[actorType]} icon={getActorIcon(actorType)}>
-        {actorName}
+        {translateActorName(actorName)}
       </Tag>
     );
   };
@@ -140,7 +148,7 @@ export const Timeline: React.FC<TimelineComponentProps> = ({
     
     return (
       <Tag color="default" style={{ marginLeft: 8 }}>
-        {reasonCode}
+        {translateReasonCode(reasonCode)}
       </Tag>
     );
   };
@@ -161,15 +169,15 @@ export const Timeline: React.FC<TimelineComponentProps> = ({
           </Space>
         </div>
         <div className="timeline-item-body">
-          <Text strong>{event.eventType}</Text>
-          <Text className="timeline-item-description">{event.description}</Text>
+          <Text strong>{translateEventType(event.eventType)}</Text>
+          <Text className="timeline-item-description">{translateText(event.description)}</Text>
           {renderReasonCode(event.reasonCode)}
         </div>
         {event.metadata && Object.keys(event.metadata).length > 0 && (
           <div className="timeline-item-metadata">
             {Object.entries(event.metadata).map(([key, value]) => (
               <Text key={key} type="secondary" style={{ fontSize: 12 }}>
-                {key}: {String(value)}
+                {translateMetadataKey(key)}: {translateMetadataValue(value)}
               </Text>
             ))}
           </div>

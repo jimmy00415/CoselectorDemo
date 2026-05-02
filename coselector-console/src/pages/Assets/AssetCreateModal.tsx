@@ -55,7 +55,7 @@ const AssetCreateModal: React.FC<AssetCreateModalProps> = ({
       form.resetFields();
       setCurrentStep(0);
     } catch (error) {
-      message.error('Please fill in all required fields');
+      message.error('请填写所有必填字段');
     } finally {
       setLoading(false);
     }
@@ -72,26 +72,26 @@ const AssetCreateModal: React.FC<AssetCreateModalProps> = ({
     if (currentStep === 1) {
       return [
         <button key="back" onClick={handleBack}>
-          Back
+          上一步
         </button>,
         <button key="next" onClick={handleNext}>
-          Next
+          下一步
         </button>,
       ];
     }
     return [
       <button key="back" onClick={handleBack}>
-        Back
+        上一步
       </button>,
       <button key="submit" onClick={handleSubmit} disabled={loading}>
-        {loading ? 'Creating...' : 'Create Asset'}
+        {loading ? '创建中...' : '创建资产'}
       </button>,
     ];
   };
 
   return (
     <Modal
-      title="Create Asset"
+      title="创建资产"
       open={visible}
       onCancel={handleCancel}
       footer={getModalFooter()}
@@ -102,9 +102,9 @@ const AssetCreateModal: React.FC<AssetCreateModalProps> = ({
         current={currentStep} 
         style={{ marginBottom: 24 }}
         items={[
-          { title: 'Type' },
-          { title: 'Labeling' },
-          { title: 'Target' },
+          { title: '类型' },
+          { title: '标记' },
+          { title: '目标' },
         ]}
       />
 
@@ -123,7 +123,7 @@ const AssetCreateModal: React.FC<AssetCreateModalProps> = ({
               >
                 <div>
                   <LinkOutlined style={{ fontSize: 24 }} />
-                  <div>Short Link</div>
+                  <div>短链接</div>
                 </div>
               </Radio.Button>
               <Radio.Button
@@ -132,7 +132,7 @@ const AssetCreateModal: React.FC<AssetCreateModalProps> = ({
               >
                 <div>
                   <QrcodeOutlined style={{ fontSize: 24 }} />
-                  <div>QR Code</div>
+                  <div>二维码</div>
                 </div>
               </Radio.Button>
               <Radio.Button
@@ -141,7 +141,7 @@ const AssetCreateModal: React.FC<AssetCreateModalProps> = ({
               >
                 <div>
                   <MailOutlined style={{ fontSize: 24 }} />
-                  <div>Invite Code</div>
+                  <div>邀请码</div>
                 </div>
               </Radio.Button>
             </Radio.Group>
@@ -153,31 +153,31 @@ const AssetCreateModal: React.FC<AssetCreateModalProps> = ({
           <>
             <Form.Item
               name="name"
-              label="Asset Name"
+              label="资产名称"
               rules={[
-                { required: true, message: 'Please enter asset name' },
-                { max: 60, message: 'Name must be 60 characters or less' },
+                { required: true, message: '请输入资产名称' },
+                { max: 60, message: '名称不能超过 60 个字符' },
               ]}
             >
-              <Input placeholder="e.g., Spring Campaign - WeChat" maxLength={60} />
+              <Input placeholder="例如：春季活动 - 微信" maxLength={60} />
             </Form.Item>
 
             <Form.Item
               name="channelTag"
-              label="Channel Tag"
-              rules={[{ required: true, message: 'Please select channel tag' }]}
+              label="渠道标签"
+              rules={[{ required: true, message: '请选择渠道标签' }]}
             >
-              <Select placeholder="Select channel">
-                <Select.Option value="wechat">WeChat</Select.Option>
-                <Select.Option value="douyin">Douyin</Select.Option>
-                <Select.Option value="xiaohongshu">Xiaohongshu</Select.Option>
-                <Select.Option value="weibo">Weibo</Select.Option>
-                <Select.Option value="other">Other</Select.Option>
+              <Select placeholder="选择渠道">
+                <Select.Option value="wechat">微信</Select.Option>
+                <Select.Option value="douyin">抖音</Select.Option>
+                <Select.Option value="xiaohongshu">小红书</Select.Option>
+                <Select.Option value="weibo">微博</Select.Option>
+                <Select.Option value="other">其他</Select.Option>
               </Select>
             </Form.Item>
 
-            <Form.Item name="campaign" label="Campaign (Optional)">
-              <Input placeholder="e.g., Spring Sale 2026" />
+            <Form.Item name="campaign" label="活动（可选）">
+              <Input placeholder="例如：2026 春季促销" />
             </Form.Item>
           </>
         )}
@@ -187,16 +187,16 @@ const AssetCreateModal: React.FC<AssetCreateModalProps> = ({
           <>
             <Form.Item
               name="landingTarget"
-              label="Landing URL or Deeplink"
+              label="落地页 URL 或深链"
               rules={[
-                { required: true, message: 'Please enter landing target' },
-                { type: 'url', message: 'Please enter a valid URL' },
+                { required: true, message: '请输入落地目标' },
+                { type: 'url', message: '请输入有效 URL' },
               ]}
             >
               <Input placeholder="https://example.com/landing" />
             </Form.Item>
 
-            <Form.Item name="customParams" label="Custom Parameters (Optional)">
+            <Form.Item name="customParams" label="自定义参数（可选）">
               <Input.TextArea
                 placeholder="utm_source=kol&utm_medium=social"
                 rows={3}

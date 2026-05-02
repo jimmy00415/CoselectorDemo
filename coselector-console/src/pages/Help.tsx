@@ -17,45 +17,40 @@ const HelpPage: React.FC = () => {
       <PageBreadcrumb />
       <div>
         <Title level={2}>
-          <QuestionCircleOutlined /> Help & Glossary
+          <QuestionCircleOutlined /> 帮助与术语表
         </Title>
         <Paragraph type="secondary">
-          Find answers to common questions and understand key terms
+          查看常见问题答案，并了解关键术语
         </Paragraph>
       </div>
 
       <Card style={{ marginTop: 24 }}>
         <Input
-          placeholder="Search help topics..."
+          placeholder="搜索帮助主题..."
           prefix={<SearchOutlined />}
           size="large"
           style={{ marginBottom: 24 }}
         />
 
         <Collapse defaultActiveKey={['1']}>
-          <Panel header="What is Co-Selection?" key="1">
+          <Panel header="什么是协同遴选？" key="1">
             <Paragraph>
-              Co-Selection is a partnership model where KOLs (Key Opinion Leaders) collaborate
-              with brands to promote products and earn commissions based on performance.
+              协同遴选是一种合作模式，KOL 或合作伙伴与品牌协作推广产品，并根据实际表现获得佣金。
             </Paragraph>
           </Panel>
-          <Panel header="How do I track my earnings?" key="2">
+          <Panel header="如何追踪我的收益？" key="2">
             <Paragraph>
-              Navigate to the Earnings section to view all transactions, including pending,
-              payable, and paid amounts. You can filter by date range and view detailed
-              transaction history.
+              进入收益页面即可查看全部交易，包括待锁定、可提现和已支付金额。你也可以按日期范围筛选并查看详细交易历史。
             </Paragraph>
           </Panel>
-          <Panel header="What is a Lead?" key="3">
+          <Panel header="什么是线索？" key="3">
             <Paragraph>
-              A Lead represents a potential partnership opportunity. Leads go through various
-              states: New → Under Review → Approved → Active → Completed.
+              线索代表一个潜在合作机会。线索会经历草稿、审核中、已通过、已拒绝等状态。
             </Paragraph>
           </Panel>
-          <Panel header="How do payouts work?" key="4">
+          <Panel header="提现如何运作？" key="4">
             <Paragraph>
-              Once your earnings reach the minimum threshold, you can request a payout. Payouts
-              are processed according to the schedule and sent to your registered bank account.
+              当收益达到最低提现门槛后，你可以发起提现申请。提现会按处理节奏审核并打款到已登记账户。
             </Paragraph>
           </Panel>
         </Collapse>

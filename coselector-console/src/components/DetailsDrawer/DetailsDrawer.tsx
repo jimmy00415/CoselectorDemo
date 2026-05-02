@@ -213,7 +213,7 @@ export const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
       width={width}
       placement={placement}
       footer={renderFooter()}
-      closeIcon={<CloseOutlined aria-label="Close drawer" />}
+      closeIcon={<CloseOutlined aria-label="关闭抽屉" />}
       destroyOnClose
       keyboard={true} // Enable Escape key
       maskClosable={true}

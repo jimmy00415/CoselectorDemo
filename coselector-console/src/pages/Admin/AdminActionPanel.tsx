@@ -11,6 +11,7 @@ import { LeadStatus, ActorType } from '../../types/enums';
 import { useAuth } from '../../contexts/AuthContext';
 import { mockApi } from '../../services/mockApi';
 import { generateId } from '../../utils/helpers';
+import { translateReasonCode, translateStatus } from '../../utils/i18n';
 
 /**
  * Admin Action Panel Component
@@ -44,21 +45,22 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
   // §8.4.1 Set Under Review
   const handleSetUnderReview = async () => {
     Modal.confirm({
-      title: 'Set Lead Under Review',
+      title: '将线索设为审核中',
       icon: <EyeOutlined />,
       content: (
         <div>
-          <p>Are you sure you want to set this lead to "Under Review"?</p>
-          <Form.Item label="Optional Note" style={{ marginBottom: 0, marginTop: 16 }}>
+          <p>确定要将此线索设为“审核中”吗？</p>
+          <Form.Item label="可选备注" style={{ marginBottom: 0, marginTop: 16 }}>
             <Input.TextArea 
               id="under-review-note"
               rows={3} 
-              placeholder="Add any notes about why this lead is being reviewed..."
+              placeholder="补充说明此线索进入审核的原因..."
             />
           </Form.Item>
         </div>
       ),
-      okText: 'Set Under Review',
+      okText: '设为审核中',
+      cancelText: '取消',
       onOk: async () => {
         try {
           setLoading(true);
@@ -70,7 +72,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
             actorName: user.displayName,
             occurredAt: new Date().toISOString(),
             eventType: 'STATUS_CHANGED',
-            description: `Status changed to Under Review${note ? `: ${note}` : ''}`,
+            description: `状态已变更为审核中${note ? `：${note}` : ''}`,
             reasonCode: 'UNDER_REVIEW',
             metadata: {
               previousStatus: lead.status,
@@ -85,10 +87,10 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
             lastUpdatedAt: new Date().toISOString(),
           });
 
-          message.success('Lead set to Under Review');
+          message.success('线索已设为审核中');
           onUpdate();
         } catch (error) {
-          message.error('Failed to update lead status');
+          message.error('线索状态更新失败');
         } finally {
           setLoading(false);
         }
@@ -107,10 +109,10 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
 
       // Build requested items list from checkboxes
       const requestedItems = [];
-      if (values.merchantInfo) requestedItems.push('Additional merchant information');
-      if (values.documents) requestedItems.push('Supporting documents');
-      if (values.financials) requestedItems.push('Financial statements');
-      if (values.references) requestedItems.push('Business references');
+      if (values.merchantInfo) requestedItems.push('补充商户信息');
+      if (values.documents) requestedItems.push('证明文件');
+      if (values.financials) requestedItems.push('财务资料');
+      if (values.references) requestedItems.push('业务推荐/证明');
 
       const event: TimelineEvent = {
         id: generateId(),
@@ -118,7 +120,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
         actorName: user.displayName,
         occurredAt: new Date().toISOString(),
         eventType: 'INFO_REQUESTED',
-        description: `Information requested: ${requestedItems.join(', ')}`,
+        description: `已请求补充信息：${requestedItems.join('、')}`,
         reasonCode: 'INFO_REQUESTED',
         metadata: {
           previousStatus: lead.status,
@@ -134,12 +136,12 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
         lastUpdatedAt: new Date().toISOString(),
       });
 
-      message.success('Information request sent');
+      message.success('补充信息请求已发送');
       setCurrentAction(null);
       form.resetFields();
       onUpdate();
     } catch (error) {
-      message.error('Failed to request information');
+      message.error('补充信息请求发送失败');
     } finally {
       setLoading(false);
     }
@@ -160,7 +162,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
         actorName: user.displayName,
         occurredAt: new Date().toISOString(),
         eventType: 'APPROVED',
-        description: `Lead approved: ${values.reasonCode}${values.note ? ` - ${values.note}` : ''}`,
+        description: `线索已通过：${translateReasonCode(values.reasonCode)}${values.note ? ` - ${values.note}` : ''}`,
         reasonCode: values.reasonCode,
         metadata: {
           previousStatus: lead.status,
@@ -175,12 +177,12 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
         lastUpdatedAt: new Date().toISOString(),
       });
 
-      message.success('Lead approved successfully');
+      message.success('线索通过成功');
       setCurrentAction(null);
       form.resetFields();
       onUpdate();
     } catch (error) {
-      message.error('Failed to approve lead');
+      message.error('线索通过失败');
     } finally {
       setLoading(false);
     }
@@ -201,7 +203,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
         actorName: user.displayName,
         occurredAt: new Date().toISOString(),
         eventType: 'REJECTED',
-        description: `Lead rejected: ${values.reasonCode}${values.note ? ` - ${values.note}` : ''}`,
+        description: `线索已拒绝：${translateReasonCode(values.reasonCode)}${values.note ? ` - ${values.note}` : ''}`,
         reasonCode: values.reasonCode,
         metadata: {
           previousStatus: lead.status,
@@ -217,12 +219,12 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
         lastUpdatedAt: new Date().toISOString(),
       });
 
-      message.success('Lead rejected');
+      message.success('线索已拒绝');
       setCurrentAction(null);
       form.resetFields();
       onUpdate();
     } catch (error) {
-      message.error('Failed to reject lead');
+      message.error('线索拒绝失败');
     } finally {
       setLoading(false);
     }
@@ -238,7 +240,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
   return (
     <>
       <Card 
-        title="Admin Actions" 
+        title="管理操作" 
         className="admin-action-panel"
         style={{ marginBottom: 24 }}
       >
@@ -250,8 +252,8 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
             disabled={!canSetUnderReview || loading}
             block
           >
-            Set Under Review
-            {!canSetUnderReview && ` (Only available for Submitted leads)`}
+            设为审核中
+            {!canSetUnderReview && `（仅适用于已提交线索）`}
           </Button>
 
           {/* Request Info */}
@@ -261,8 +263,8 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
             disabled={!canRequestInfo || loading}
             block
           >
-            Request Info
-            {!canRequestInfo && ` (Not available for ${lead.status})`}
+            请求补充信息
+            {!canRequestInfo && `（${translateStatus(lead.status)}不可用）`}
           </Button>
 
           <div style={{ 
@@ -279,7 +281,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
                 disabled={!canApproveOrReject || loading}
                 style={{ flex: 1 }}
               >
-                Approve
+                通过
               </Button>
 
               {/* Reject */}
@@ -290,7 +292,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
                 disabled={!canApproveOrReject || loading}
                 style={{ flex: 1 }}
               >
-                Reject
+                拒绝
               </Button>
             </Space>
             {!canApproveOrReject && (
@@ -301,8 +303,8 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
                 textAlign: 'center'
               }}>
                 {!lead.assignedOwner 
-                  ? 'Owner must be assigned before approval/rejection' 
-                  : `Not available for ${lead.status} status`}
+                  ? '通过或拒绝前必须先分配负责人' 
+                  : `${translateStatus(lead.status)}状态不可用`}
               </div>
             )}
           </div>
@@ -311,7 +313,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
 
       {/* Request Info Drawer */}
       <Drawer
-        title="Request Additional Information"
+        title="请求补充信息"
         open={currentAction === 'request-info'}
         onClose={() => {
           setCurrentAction(null);
@@ -324,10 +326,10 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
               setCurrentAction(null);
               form.resetFields();
             }}>
-              Cancel
+              取消
             </Button>
             <Button type="primary" onClick={() => form.submit()} loading={loading}>
-              Send Request
+              发送请求
             </Button>
           </Space>
         }
@@ -337,31 +339,31 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
           layout="vertical"
           onFinish={handleRequestInfoSubmit}
         >
-          <Form.Item label="Select requested items:">
+          <Form.Item label="选择所需项目：">
             <Space direction="vertical">
               <Form.Item name="merchantInfo" valuePropName="checked" noStyle>
-                <Checkbox>Additional merchant information</Checkbox>
+                <Checkbox>补充商户信息</Checkbox>
               </Form.Item>
               <Form.Item name="documents" valuePropName="checked" noStyle>
-                <Checkbox>Supporting documents</Checkbox>
+                <Checkbox>证明文件</Checkbox>
               </Form.Item>
               <Form.Item name="financials" valuePropName="checked" noStyle>
-                <Checkbox>Financial statements</Checkbox>
+                <Checkbox>财务资料</Checkbox>
               </Form.Item>
               <Form.Item name="references" valuePropName="checked" noStyle>
-                <Checkbox>Business references</Checkbox>
+                <Checkbox>业务推荐/证明</Checkbox>
               </Form.Item>
             </Space>
           </Form.Item>
 
           <Form.Item
             name="note"
-            label="Additional Notes"
-            rules={[{ required: true, message: 'Please provide details about what is needed' }]}
+            label="补充备注"
+            rules={[{ required: true, message: '请说明需要补充哪些信息' }]}
           >
             <Input.TextArea 
               rows={4} 
-              placeholder="Specify exactly what information is needed and why..."
+              placeholder="请明确说明需要哪些信息以及原因..."
             />
           </Form.Item>
         </Form>
@@ -369,7 +371,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
 
       {/* Approve Modal */}
       <Modal
-        title="Approve Lead"
+        title="通过线索"
         open={currentAction === 'approve'}
         onCancel={() => {
           setCurrentAction(null);
@@ -384,26 +386,26 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
         >
           <Form.Item
             name="reasonCode"
-            label="Reason for Approval"
-            rules={[{ required: true, message: 'Please select a reason' }]}
+            label="通过原因"
+            rules={[{ required: true, message: '请选择原因' }]}
           >
             <Radio.Group>
               <Space direction="vertical">
-                <Radio value="MEETS_CRITERIA">Meets all criteria</Radio>
-                <Radio value="STRONG_PROFILE">Strong merchant profile</Radio>
-                <Radio value="STRATEGIC_FIT">Strategic fit</Radio>
-                <Radio value="CONDITIONAL">Conditional approval</Radio>
+                <Radio value="MEETS_CRITERIA">符合全部标准</Radio>
+                <Radio value="STRONG_PROFILE">商户画像优秀</Radio>
+                <Radio value="STRATEGIC_FIT">战略匹配</Radio>
+                <Radio value="CONDITIONAL">有条件通过</Radio>
               </Space>
             </Radio.Group>
           </Form.Item>
 
           <Form.Item
             name="note"
-            label="Notes (Optional)"
+            label="备注（可选）"
           >
             <Input.TextArea 
               rows={3} 
-              placeholder="Add any additional notes about this decision..."
+              placeholder="补充说明此决策..."
             />
           </Form.Item>
 
@@ -413,10 +415,10 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
                 setCurrentAction(null);
                 form.resetFields();
               }}>
-                Cancel
+                取消
               </Button>
               <Button type="primary" htmlType="submit" loading={loading}>
-                Approve Lead
+                通过线索
               </Button>
             </Space>
           </Form.Item>
@@ -425,7 +427,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
 
       {/* Reject Modal */}
       <Modal
-        title="Reject Lead"
+        title="拒绝线索"
         open={currentAction === 'reject'}
         onCancel={() => {
           setCurrentAction(null);
@@ -441,28 +443,28 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
         >
           <Form.Item
             name="reasonCode"
-            label="Reason for Rejection"
-            rules={[{ required: true, message: 'Please select a reason' }]}
+            label="拒绝原因"
+            rules={[{ required: true, message: '请选择原因' }]}
           >
             <Radio.Group>
               <Space direction="vertical">
-                <Radio value="INCOMPLETE_INFO">Incomplete information</Radio>
-                <Radio value="DOES_NOT_MEET_CRITERIA">Does not meet criteria</Radio>
-                <Radio value="HIGH_RISK">High risk profile</Radio>
-                <Radio value="DUPLICATE">Duplicate submission</Radio>
-                <Radio value="OTHER">Other</Radio>
+                <Radio value="INCOMPLETE_INFO">信息不完整</Radio>
+                <Radio value="DOES_NOT_MEET_CRITERIA">不符合标准</Radio>
+                <Radio value="HIGH_RISK">高风险画像</Radio>
+                <Radio value="DUPLICATE">重复提交</Radio>
+                <Radio value="OTHER">其他</Radio>
               </Space>
             </Radio.Group>
           </Form.Item>
 
           <Form.Item
             name="note"
-            label="Rejection Details"
-            rules={[{ required: true, message: 'Please provide details about the rejection' }]}
+            label="拒绝详情"
+            rules={[{ required: true, message: '请填写拒绝详情' }]}
           >
             <Input.TextArea 
               rows={4} 
-              placeholder="Explain why this lead is being rejected..."
+              placeholder="说明为什么拒绝此线索..."
             />
           </Form.Item>
 
@@ -470,7 +472,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
             name="resubmissionAllowed"
             valuePropName="checked"
           >
-            <Checkbox>Allow resubmission after addressing issues</Checkbox>
+            <Checkbox>允许修正问题后重新提交</Checkbox>
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
@@ -479,10 +481,10 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
                 setCurrentAction(null);
                 form.resetFields();
               }}>
-                Cancel
+                取消
               </Button>
               <Button danger type="primary" htmlType="submit" loading={loading}>
-                Reject Lead
+                拒绝线索
               </Button>
             </Space>
           </Form.Item>

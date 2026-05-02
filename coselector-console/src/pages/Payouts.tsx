@@ -12,14 +12,14 @@ const PayoutsPage: React.FC = () => {
   return (
     <div>
       <PageBreadcrumb />
-      <Title level={2}>Payout Management</Title>
+      <Title level={2}>提现管理</Title>
       <Paragraph type="secondary">
-        Request and track your payouts
+        申请并追踪你的提现
       </Paragraph>
 
       <Card style={{ marginTop: 24 }}>
         <Paragraph>
-          Payouts module with request workflow will be implemented here.
+          带申请流程的提现模块将在此实现。
         </Paragraph>
       </Card>
     </div>

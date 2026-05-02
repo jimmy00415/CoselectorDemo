@@ -1,6 +1,9 @@
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
 import { AuthProvider } from './contexts/AuthContext';
 import { DevToolsProvider } from './contexts/DevToolsContext';
 import { DevToolsPanel } from './components/DevTools';
@@ -26,6 +29,8 @@ import { AdminReviewQueue } from './pages/Admin';
 
 import './styles/global.css';
 
+dayjs.locale('zh-cn');
+
 /**
  * Application Router Configuration
  * 
@@ -43,6 +48,7 @@ import './styles/global.css';
 const App: React.FC = () => {
   return (
     <ConfigProvider
+      locale={zhCN}
       theme={{
         token: {
           colorPrimary: '#1890ff',

@@ -18,6 +18,7 @@ import {
 import { Permission } from '../services/permissions';
 import { usePermission } from '../hooks/usePermission';
 import { useAuth } from '../contexts/AuthContext';
+import { translateText } from '../utils';
 
 /**
  * Example 1: Using PermissionGuard to conditionally render components
@@ -25,21 +26,21 @@ import { useAuth } from '../contexts/AuthContext';
 export const Example1_PermissionGuard: React.FC = () => {
   return (
     <div>
-      <h3>Permission Guard Examples</h3>
+      <h3>权限守卫示例</h3>
       
       {/* Hide mode: Component is completely hidden if permission denied */}
       <PermissionGuard permission={Permission.LEAD_ASSIGN_OWNER} mode="hide">
-        <Button type="primary">Assign Owner (OPS only)</Button>
+        <Button type="primary">分配负责人（仅运营）</Button>
       </PermissionGuard>
 
       {/* Disable mode: Component is shown but disabled with tooltip */}
       <PermissionGuard permission={Permission.PAYOUT_APPROVE} mode="disable">
-        <Button type="primary">Approve Payout</Button>
+        <Button type="primary">批准提现</Button>
       </PermissionGuard>
 
       {/* Alert mode: Shows alert message instead of component */}
       <PermissionGuard permission={Permission.DISPUTE_RESOLVE} mode="alert">
-        <Button type="primary">Resolve Dispute</Button>
+        <Button type="primary">解决争议</Button>
       </PermissionGuard>
     </div>
   );
@@ -61,7 +62,7 @@ export const Example2_RestrictedButton: React.FC = () => {
         type="primary"
         onClick={handleApprove}
       >
-        Approve Payout
+        批准提现
       </RestrictedButton>
 
       <RestrictedButton
@@ -69,7 +70,7 @@ export const Example2_RestrictedButton: React.FC = () => {
         type="default"
         onClick={() => console.log('Status changed')}
       >
-        Change Status
+        变更状态
       </RestrictedButton>
     </Space>
   );
@@ -84,15 +85,15 @@ export const Example3_RestrictedAction: React.FC = () => {
       {/* Wrap any interactive element */}
       <RestrictedAction permission={Permission.LEAD_ASSIGN_OWNER}>
         <a href="#" onClick={(e) => { e.preventDefault(); console.log('Clicked'); }}>
-          Assign to BD Team
+          分配给 BD 团队
         </a>
       </RestrictedAction>
 
       <RestrictedAction
         permission={Permission.PAYOUT_EXECUTE}
-        tooltip="Only Finance team can execute payouts"
+        tooltip="只有财务团队可以执行提现"
       >
-        <Button type="link">Execute Payment</Button>
+        <Button type="link">执行付款</Button>
       </RestrictedAction>
     </Space>
   );
@@ -106,21 +107,21 @@ export const Example4_UsePermissionHook: React.FC = () => {
 
   return (
     <div>
-      <h3>Permission Hook Examples</h3>
+      <h3>权限 Hook 示例</h3>
       
       {/* Check single permission */}
       {can(Permission.LEAD_ASSIGN_OWNER) && (
-        <Button>Assign Owner</Button>
+        <Button>分配负责人</Button>
       )}
 
       {/* Check if user cannot perform action */}
       {cannot(Permission.PAYOUT_APPROVE) && (
-        <p>You cannot approve payouts. Please contact Finance team.</p>
+        <p>你不能批准提现。请联系财务团队。</p>
       )}
 
       {/* Check multiple permissions (any) */}
       {canAny([Permission.PAYOUT_APPROVE, Permission.PAYOUT_EXECUTE]) && (
-        <Button type="primary">Manage Payouts</Button>
+        <Button type="primary">管理提现</Button>
       )}
 
       {/* Get denial message for display */}
@@ -143,13 +144,13 @@ export const Example5_InternalOnlyBadge: React.FC = () => {
     <Space direction="vertical">
       {/* Show badge inline */}
       <div>
-        <span>Owner Assignment</span>
+        <span>负责人分配</span>
         <InternalOnlyBadge show={!can(Permission.LEAD_ASSIGN_OWNER)} />
       </div>
 
       {/* Show badge as tooltip icon */}
       <div>
-        <span>Payout Approval</span>
+        <span>提现批准</span>
         <InternalOnlyBadge 
           show={!can(Permission.PAYOUT_APPROVE)} 
           placement="tooltip" 
@@ -167,13 +168,13 @@ export const Example6_ViewPresetSwitcher: React.FC = () => {
 
   return (
     <div>
-      <h3>View Preset Switcher</h3>
+      <h3>视图预设切换器</h3>
       <ViewPresetSwitcher />
       
       <Divider />
       
-      <p>Current view preset: <strong>{viewPreset}</strong></p>
-      <p>Note: View presets are UI filters only and do not affect permissions.</p>
+      <p>当前视图预设：<strong>{translateText(viewPreset)}</strong></p>
+      <p>提示：视图预设仅是界面筛选，不影响权限。</p>
     </div>
   );
 };
@@ -186,14 +187,14 @@ export const Example7_RoleSwitcher: React.FC = () => {
 
   return (
     <div>
-      <h3>Role Switcher (Dev Only)</h3>
+      <h3>角色切换器（仅开发）</h3>
       <RoleSwitcher />
       
       <Divider />
       
-      <p>Current role: <strong>{role}</strong></p>
+      <p>当前角色：<strong>{translateText(role)}</strong></p>
       <p style={{ color: 'orange' }}>
-        ⚠️ This component should be gated behind a "Dev Tools" toggle in production.
+        此组件在生产环境中应由“开发工具”开关控制。
       </p>
     </div>
   );
@@ -207,29 +208,29 @@ export const Example8_CompleteForm: React.FC = () => {
 
   return (
     <div style={{ padding: 24, maxWidth: 600 }}>
-      <h2>Lead Review Form</h2>
+      <h2>线索审核表单</h2>
       
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Regular fields - all users can see */}
         <div>
-          <label>Merchant Name:</label>
-          <input type="text" disabled value="Example Merchant" style={{ marginLeft: 8 }} />
+          <label>商家名称：</label>
+          <input type="text" disabled value="示例商家" style={{ marginLeft: 8 }} />
         </div>
 
         <div>
-          <label>Status:</label>
-          <input type="text" disabled value="Under Review" style={{ marginLeft: 8 }} />
+          <label>状态：</label>
+          <input type="text" disabled value="审核中" style={{ marginLeft: 8 }} />
         </div>
 
         {/* Internal-only field with permission guard */}
         <PermissionGuard permission={Permission.LEAD_ASSIGN_OWNER} mode="disable">
           <div>
-            <label>Assigned Owner:</label>
+            <label>分配负责人：</label>
             <InternalOnlyBadge show={!can(Permission.LEAD_ASSIGN_OWNER)} />
             <select style={{ marginLeft: 8 }} disabled={!can(Permission.LEAD_ASSIGN_OWNER)}>
-              <option>Select BD Owner</option>
-              <option>BD Team A</option>
-              <option>BD Team B</option>
+              <option>选择 BD 负责人</option>
+              <option>BD 团队 A</option>
+              <option>BD 团队 B</option>
             </select>
           </div>
         </PermissionGuard>
@@ -239,21 +240,21 @@ export const Example8_CompleteForm: React.FC = () => {
         {/* Action buttons with different permission requirements */}
         <Space>
           {/* Available to all users */}
-          <Button type="default">View Details</Button>
+          <Button type="default">查看详情</Button>
 
           {/* Internal only - restricted buttons */}
           <RestrictedButton
             permission={Permission.LEAD_REQUEST_INFO}
             type="default"
           >
-            Request More Info
+            请求补充信息
           </RestrictedButton>
 
           <RestrictedButton
             permission={Permission.LEAD_CHANGE_STATUS}
             type="primary"
           >
-            Approve Lead
+            通过线索
           </RestrictedButton>
 
           <RestrictedButton
@@ -261,7 +262,7 @@ export const Example8_CompleteForm: React.FC = () => {
             type="primary"
             danger
           >
-            Reject Lead
+            拒绝线索
           </RestrictedButton>
         </Space>
       </Space>
@@ -280,8 +281,8 @@ export const Example9_ModuleLevelGuard: React.FC = () => {
       showMessage={true}
     >
       <div>
-        <h2>Payout Approval Module</h2>
-        <p>This entire module is only accessible to Finance team.</p>
+        <h2>提现批准模块</h2>
+        <p>整个模块仅财务团队可访问。</p>
         {/* Rest of module content */}
       </div>
     </PermissionGuard>
@@ -313,7 +314,7 @@ export const Example10_ProgrammaticChecks: React.FC = () => {
   const handleApprovePayout = async () => {
     // Check permission before executing sensitive operation
     if (!can(Permission.PAYOUT_APPROVE)) {
-      alert('Internal only - Payout approval is restricted to Finance team');
+      alert('仅限内部 - 提现批准仅限财务团队');
       return;
     }
 
@@ -327,8 +328,8 @@ export const Example10_ProgrammaticChecks: React.FC = () => {
 
   return (
     <Space>
-      <Button onClick={handleSubmitPayout}>Request Payout</Button>
-      <Button onClick={handleApprovePayout} type="primary">Approve Payout</Button>
+      <Button onClick={handleSubmitPayout}>申请提现</Button>
+      <Button onClick={handleApprovePayout} type="primary">批准提现</Button>
     </Space>
   );
 };

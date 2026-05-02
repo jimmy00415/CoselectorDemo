@@ -8,7 +8,7 @@ import { mockApi } from '../../services/mockApi';
 import { useAuth } from '../../contexts/AuthContext';
 import { PermissionGuard } from '../../components/PermissionGuard';
 import { Permission } from '../../services/permissions';
-import { formatDate, generateId } from '../../utils';
+import { formatDate, generateId, translateCategory, translateRegion, translateStatus } from '../../utils';
 import './styles.css';
 
 /**
@@ -87,7 +87,7 @@ export const AdminReviewQueue: React.FC = () => {
       setLeads(filtered);
     } catch (error) {
       console.error('Failed to load leads:', error);
-      message.error('Failed to load leads');
+      message.error('线索加载失败');
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ export const AdminReviewQueue: React.FC = () => {
     e.stopPropagation(); // Prevent row click
     
     if (!user?.displayName) {
-      message.error('User information not available');
+      message.error('用户信息不可用');
       return;
     }
 
@@ -116,7 +116,7 @@ export const AdminReviewQueue: React.FC = () => {
         actorName: user.displayName,
         occurredAt: new Date().toISOString(),
         eventType: 'OWNER_ASSIGNED',
-        description: `Lead claimed by ${user.displayName}`,
+        description: `线索已由 ${user.displayName} 认领`,
         reasonCode: 'CLAIMED',
         metadata: {
           previousOwner: lead.assignedOwner,
@@ -131,11 +131,11 @@ export const AdminReviewQueue: React.FC = () => {
         lastUpdatedAt: new Date().toISOString(),
       });
 
-      message.success('Lead claimed successfully');
+      message.success('线索认领成功');
       loadLeads();
     } catch (error) {
       console.error('Failed to claim lead:', error);
-      message.error('Failed to claim lead');
+      message.error('线索认领失败');
     } finally {
       setClaimingLeadId(null);
     }
@@ -160,9 +160,9 @@ export const AdminReviewQueue: React.FC = () => {
     <PermissionGuard permission={Permission.LEAD_CHANGE_STATUS} mode="hide">
       <div className="admin-review-queue">
         <div className="page-header">
-          <Title level={2}>Admin Review Queue</Title>
+          <Title level={2}>管理审核队列</Title>
           <Text type="secondary">
-            Internal only - OPS/BD lead review and assignment
+            仅内部使用 - 运营/BD 线索审核与分配
           </Text>
         </div>
 
@@ -170,7 +170,7 @@ export const AdminReviewQueue: React.FC = () => {
         <div className="filter-section" style={{ marginBottom: 24 }}>
           <Space size="large" wrap>
             <Space direction="vertical" size={4}>
-              <Text strong>Status Filter</Text>
+              <Text strong>状态筛选</Text>
               <Space wrap>
                 {[LeadStatus.SUBMITTED, LeadStatus.UNDER_REVIEW, LeadStatus.INFO_REQUESTED].map(status => (
                   <Tag.CheckableTag
@@ -184,32 +184,32 @@ export const AdminReviewQueue: React.FC = () => {
                       }
                     }}
                   >
-                    {status.replace(/_/g, ' ')}
+                    {translateStatus(status)}
                   </Tag.CheckableTag>
                 ))}
               </Space>
             </Space>
 
             <Space direction="vertical" size={4}>
-              <Text strong>Owner Filter</Text>
+              <Text strong>负责人筛选</Text>
               <Space>
                 <Tag.CheckableTag
                   checked={ownerFilter === 'all'}
                   onChange={() => setOwnerFilter('all')}
                 >
-                  All
+                  全部
                 </Tag.CheckableTag>
                 <Tag.CheckableTag
                   checked={ownerFilter === 'unassigned'}
                   onChange={() => setOwnerFilter('unassigned')}
                 >
-                  Unassigned (Pinned)
+                  未分配（置顶）
                 </Tag.CheckableTag>
                 <Tag.CheckableTag
                   checked={ownerFilter === 'me'}
                   onChange={() => setOwnerFilter('me')}
                 >
-                  My Leads
+                  我的线索
                 </Tag.CheckableTag>
               </Space>
             </Space>
@@ -218,27 +218,27 @@ export const AdminReviewQueue: React.FC = () => {
 
         {/* Results count */}
         <div style={{ marginBottom: 16 }}>
-          <Text type="secondary">{leads.length} leads</Text>
+          <Text type="secondary">共 {leads.length} 条线索</Text>
         </div>
 
         {/* Table */}
         <div className="leads-table">
           {loading ? (
-            <div style={{ textAlign: 'center', padding: 48 }}>Loading...</div>
+            <div style={{ textAlign: 'center', padding: 48 }}>加载中...</div>
           ) : leads.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 48 }}>
-              <Text type="secondary">No leads match the current filters</Text>
+              <Text type="secondary">没有符合当前筛选条件的线索</Text>
             </div>
           ) : (
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid #f0f0f0' }}>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>Merchant</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>Submitted At</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>Status</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>Owner</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>Last Activity</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 600 }}>Actions</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>商户</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>提交时间</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>状态</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>负责人</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'left', fontWeight: 600 }}>最近活动</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'right', fontWeight: 600 }}>操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -262,23 +262,23 @@ export const AdminReviewQueue: React.FC = () => {
                         <Space direction="vertical" size={0}>
                           <Text strong>{lead.merchantName}</Text>
                           <Text type="secondary" style={{ fontSize: 12 }}>
-                            {lead.category} • {lead.city}, {lead.region}
+                            {translateCategory(lead.category)} · {translateRegion(lead.city)}, {translateRegion(lead.region)}
                           </Text>
                         </Space>
                       </td>
                       <td style={{ padding: '12px 8px' }}>
-                        <Text>{lead.submittedAt ? formatDate(lead.submittedAt) : 'N/A'}</Text>
+                        <Text>{lead.submittedAt ? formatDate(lead.submittedAt) : '不适用'}</Text>
                       </td>
                       <td style={{ padding: '12px 8px' }}>
                         <Tag color={statusColors[lead.status]}>
-                          {lead.status.replace(/_/g, ' ')}
+                          {translateStatus(lead.status)}
                         </Tag>
                       </td>
                       <td style={{ padding: '12px 8px' }}>
                         {lead.assignedOwner ? (
                           <Text>{lead.assignedOwner}</Text>
                         ) : (
-                          <Text type="secondary">Unassigned</Text>
+                          <Text type="secondary">未分配</Text>
                         )}
                       </td>
                       <td style={{ padding: '12px 8px' }}>
@@ -297,7 +297,7 @@ export const AdminReviewQueue: React.FC = () => {
                               onClick={(e) => handleClaim(lead, e)}
                               loading={isClaiming}
                             >
-                              Claim
+                              认领
                             </Button>
                           )}
                           
@@ -311,7 +311,7 @@ export const AdminReviewQueue: React.FC = () => {
                               handleRowClick(lead);
                             }}
                           >
-                            View
+                            查看
                           </Button>
                         </Space>
                       </td>

@@ -22,6 +22,7 @@ import {
 import type { Payout } from '../../types';
 import { PayoutStatus } from '../../types/enums';
 import { formatDate, formatCurrency } from '../../utils/format';
+import { translateActorName, translateEventType, translateStatus, translateText } from '../../utils/i18n';
 
 const { Title, Text } = Typography;
 
@@ -48,32 +49,32 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       [PayoutStatus.REQUESTED]: {
         color: 'orange',
         icon: <ClockCircleOutlined />,
-        label: 'Requested',
+        label: '已申请',
       },
       [PayoutStatus.APPROVED]: {
         color: 'blue',
         icon: <CheckCircleOutlined />,
-        label: 'Approved',
+        label: '已通过',
       },
       [PayoutStatus.PAID]: {
         color: 'green',
         icon: <CheckCircleOutlined />,
-        label: 'Paid',
+        label: '已支付',
       },
       [PayoutStatus.FAILED]: {
         color: 'red',
         icon: <CloseCircleOutlined />,
-        label: 'Failed',
+        label: '失败',
       },
       [PayoutStatus.REJECTED]: {
         color: 'red',
         icon: <CloseCircleOutlined />,
-        label: 'Rejected',
+        label: '已拒绝',
       },
       [PayoutStatus.CANCELLED]: {
         color: 'default',
         icon: <StopOutlined />,
-        label: 'Cancelled',
+        label: '已取消',
       },
     };
     return configs[status];
@@ -85,14 +86,14 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
   const failureEvent = payout.timeline.find(
     (event) => event.eventType === 'Status changed to FAILED'
   );
-  const failureReason = failureEvent?.description || 'Unknown reason';
+  const failureReason = failureEvent?.description || '未知原因';
 
   return (
     <Drawer
       title={
         <Space>
           <DollarOutlined />
-          Payout Details
+          提现详情
         </Space>
       }
       placement="right"
@@ -104,8 +105,8 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       {payout.status === PayoutStatus.FAILED && (
         <Alert
           type="error"
-          message="Payment Failed"
-          description={failureReason}
+          message="付款失败"
+          description={translateText(failureReason)}
           showIcon
           style={{ marginBottom: 16 }}
         />
@@ -114,8 +115,8 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       {payout.status === PayoutStatus.REJECTED && (
         <Alert
           type="warning"
-          message="Payout Rejected"
-          description={failureEvent?.description || 'See timeline for details'}
+          message="提现已拒绝"
+          description={translateText(failureEvent?.description) || '请查看时间线了解详情'}
           showIcon
           style={{ marginBottom: 16 }}
         />
@@ -124,31 +125,31 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       {payout.status === PayoutStatus.CANCELLED && (
         <Alert
           type="info"
-          message="Payout Cancelled"
-          description="This payout request was cancelled by the user."
+          message="提现已取消"
+          description="此提现申请已由用户取消。"
           showIcon
           style={{ marginBottom: 16 }}
         />
       )}
 
       {/* Basic Info */}
-      <Descriptions title="Payout Information" column={1} bordered size="small">
-        <Descriptions.Item label="Payout ID">{payout.id}</Descriptions.Item>
-        <Descriptions.Item label="Amount">
+      <Descriptions title="提现信息" column={1} bordered size="small">
+        <Descriptions.Item label="提现 ID">{payout.id}</Descriptions.Item>
+        <Descriptions.Item label="金额">
           <Text strong style={{ fontSize: '18px', color: '#52c41a' }}>
             {formatCurrency(payout.amount)}
           </Text>
         </Descriptions.Item>
-        <Descriptions.Item label="Status">
+        <Descriptions.Item label="状态">
           <Tag color={statusConfig.color} icon={statusConfig.icon}>
             {statusConfig.label}
           </Tag>
         </Descriptions.Item>
-        <Descriptions.Item label="Requested At">{formatDate(payout.requestedAt)}</Descriptions.Item>
-        <Descriptions.Item label="Approved At">
+        <Descriptions.Item label="申请时间">{formatDate(payout.requestedAt)}</Descriptions.Item>
+        <Descriptions.Item label="通过时间">
           {payout.approvedAt ? formatDate(payout.approvedAt) : '-'}
         </Descriptions.Item>
-        <Descriptions.Item label="Paid At">
+        <Descriptions.Item label="支付时间">
           {payout.paidAt ? formatDate(payout.paidAt) : '-'}
         </Descriptions.Item>
       </Descriptions>
@@ -156,13 +157,13 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       <Divider />
 
       {/* Bank Account Details */}
-      <Title level={5}>Destination Account</Title>
+      <Title level={5}>收款账户</Title>
       <Descriptions column={1} bordered size="small">
-        <Descriptions.Item label="Bank Name">{payout.bankAccount.bankName}</Descriptions.Item>
-        <Descriptions.Item label="Account Holder">
+        <Descriptions.Item label="银行名称">{payout.bankAccount.bankName}</Descriptions.Item>
+        <Descriptions.Item label="账户名">
           {payout.bankAccount.accountHolder}
         </Descriptions.Item>
-        <Descriptions.Item label="Account Number">
+        <Descriptions.Item label="账号">
           {payout.bankAccount.accountNumber}
         </Descriptions.Item>
       </Descriptions>
@@ -173,7 +174,7 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       <Title level={5}>
         <Space>
           <FileTextOutlined />
-          Included Transactions ({payout.transactionIds.length})
+          包含交易（{payout.transactionIds.length}）
         </Space>
       </Title>
       <List
@@ -189,7 +190,7 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
                 onClick={() => onViewTransaction(transactionId)}
                 key="view"
               >
-                View
+                查看
               </Button>,
             ]}
           >
@@ -202,7 +203,7 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       <Divider />
 
       {/* Timeline */}
-      <Title level={5}>Status History</Title>
+      <Title level={5}>状态历史</Title>
       <Timeline
         items={payout.timeline.map((event) => ({
           color:
@@ -213,13 +214,13 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
               : 'blue',
           children: (
             <Space direction="vertical" size={0}>
-              <Text strong>{event.eventType}</Text>
+              <Text strong>{translateEventType(event.eventType)}</Text>
               <Text type="secondary" style={{ fontSize: '12px' }}>
                 {formatDate(event.occurredAt)}
               </Text>
-              <Text>{event.description}</Text>
+              <Text>{translateText(event.description)}</Text>
               <Text type="secondary" style={{ fontSize: '12px' }}>
-                by {event.actorName} ({event.actorType})
+                由 {translateActorName(event.actorName)}（{translateActorName(event.actorType)}）操作
               </Text>
             </Space>
           ),

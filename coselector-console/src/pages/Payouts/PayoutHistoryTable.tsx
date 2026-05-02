@@ -11,6 +11,7 @@ import {
 import type { Payout } from '../../types';
 import { PayoutStatus } from '../../types/enums';
 import { formatDate, formatCurrency } from '../../utils/format';
+import { translateStatus } from '../../utils/i18n';
 
 interface PayoutHistoryTableProps {
   payouts: Payout[];
@@ -35,32 +36,32 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       [PayoutStatus.REQUESTED]: {
         color: 'orange',
         icon: <ClockCircleOutlined />,
-        label: 'Requested',
+        label: '已申请',
       },
       [PayoutStatus.APPROVED]: {
         color: 'blue',
         icon: <CheckCircleOutlined />,
-        label: 'Approved',
+        label: '已通过',
       },
       [PayoutStatus.PAID]: {
         color: 'green',
         icon: <CheckCircleOutlined />,
-        label: 'Paid',
+        label: '已支付',
       },
       [PayoutStatus.FAILED]: {
         color: 'red',
         icon: <CloseCircleOutlined />,
-        label: 'Failed',
+        label: '失败',
       },
       [PayoutStatus.REJECTED]: {
         color: 'red',
         icon: <CloseCircleOutlined />,
-        label: 'Rejected',
+        label: '已拒绝',
       },
       [PayoutStatus.CANCELLED]: {
         color: 'default',
         icon: <StopOutlined />,
-        label: 'Cancelled',
+        label: '已取消',
       },
     };
     return configs[status];
@@ -68,7 +69,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
 
   const columns: ColumnsType<Payout> = [
     {
-      title: 'Request Date',
+      title: '申请日期',
       dataIndex: 'requestedAt',
       key: 'requestedAt',
       width: 180,
@@ -77,7 +78,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       defaultSortOrder: 'descend',
     },
     {
-      title: 'Amount',
+      title: '金额',
       dataIndex: 'amount',
       key: 'amount',
       width: 150,
@@ -88,7 +89,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       sorter: (a, b) => a.amount - b.amount,
     },
     {
-      title: 'Bank Account',
+      title: '银行账户',
       dataIndex: ['bankAccount', 'bankName'],
       key: 'bankAccount',
       width: 200,
@@ -102,7 +103,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       ),
     },
     {
-      title: 'Status',
+      title: '状态',
       dataIndex: 'status',
       key: 'status',
       width: 140,
@@ -121,7 +122,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       onFilter: (value, record) => record.status === value,
     },
     {
-      title: 'Approved Date',
+      title: '通过日期',
       dataIndex: 'approvedAt',
       key: 'approvedAt',
       width: 180,
@@ -134,7 +135,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       },
     },
     {
-      title: 'Paid Date',
+      title: '支付日期',
       dataIndex: 'paidAt',
       key: 'paidAt',
       width: 180,
@@ -147,19 +148,19 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       },
     },
     {
-      title: 'Transactions',
+      title: '交易',
       dataIndex: 'transactionIds',
       key: 'transactionIds',
       width: 120,
       align: 'center',
       render: (ids: string[]) => (
-        <Tooltip title={`${ids.length} transactions included`}>
+        <Tooltip title={`包含 ${ids.length} 笔交易`}>
           <Tag>{ids.length}</Tag>
         </Tooltip>
       ),
     },
     {
-      title: 'Action',
+      title: '操作',
       key: 'action',
       width: 180,
       fixed: 'right',
@@ -171,7 +172,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
             icon={<EyeOutlined />}
             onClick={() => onViewDetails(record)}
           >
-            View Details
+            查看详情
           </Button>
           {record.status === PayoutStatus.REQUESTED &&
             currentUserRole === 'AFFILIATE' && (
@@ -182,7 +183,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
                 icon={<StopOutlined />}
                 onClick={() => onCancelPayout(record.id)}
               >
-                Cancel
+                取消
               </Button>
             )}
         </Space>
@@ -199,7 +200,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       pagination={{
         pageSize: 10,
         showSizeChanger: true,
-        showTotal: (total) => `Total ${total} payouts`,
+        showTotal: (total) => `共 ${total} 笔提现`,
       }}
       scroll={{ x: 1400 }}
     />

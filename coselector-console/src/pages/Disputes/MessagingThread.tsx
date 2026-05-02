@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 import { formatDate } from '../../utils/format';
 import type { DisputeCase } from '../../types';
+import { translateText } from '../../utils/i18n';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -47,9 +48,9 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
       // Initial message from system
       const initialMessage: Message = {
         id: '1',
-        author: 'Brand Support Team',
+        author: '品牌支持团队',
         role: 'support',
-        content: 'Thank you for opening this dispute case. We have received your submission and will review the details. Please provide all required evidence to help us investigate.',
+        content: '感谢你提交争议案件。我们已收到你的提交并会审核详情。请提供所有必填证据，以帮助我们调查。',
         timestamp: disputeCase.openedAt,
       };
       setMessages([initialMessage]);
@@ -64,12 +65,12 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
 
   const handleSendMessage = async () => {
     if (!messageContent.trim()) {
-      message.warning('Please enter a message');
+      message.warning('请输入消息');
       return;
     }
 
     if (messageContent.length > 1000) {
-      message.error('Message too long. Please keep it under 1000 characters.');
+      message.error('消息过长，请控制在 1000 个字符以内。');
       return;
     }
 
@@ -78,7 +79,7 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
     try {
       const userMessage: Message = {
         id: Date.now().toString(),
-        author: 'You',
+        author: '你',
         role: 'user',
         content: messageContent,
         timestamp: new Date().toISOString(),
@@ -92,13 +93,13 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
       onSendMessage(messageContent);
 
       setMessageContent('');
-      message.success('Message sent');
+      message.success('消息已发送');
 
       // Simulate support response after 5 seconds
       setTimeout(() => {
         const supportMessage: Message = {
           id: (Date.now() + 1).toString(),
-          author: 'Brand Support Team',
+          author: '品牌支持团队',
           role: 'support',
           content: generateAutoResponse(messageContent),
           timestamp: new Date().toISOString(),
@@ -109,7 +110,7 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
         localStorage.setItem(`dispute_messages_${disputeCase.id}`, JSON.stringify(updatedMessages));
       }, 5000);
     } catch (error) {
-      message.error('Failed to send message. Please try again.');
+      message.error('消息发送失败，请重试。');
     } finally {
       setIsSubmitting(false);
     }
@@ -119,19 +120,19 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
     const lowerMessage = userMessage.toLowerCase();
     
     if (lowerMessage.includes('evidence') || lowerMessage.includes('upload')) {
-      return "Thank you for your message. We've noted your evidence submission. Our team is reviewing all provided documentation. We'll update you within 2-3 business days.";
+      return '感谢你的消息。我们已记录你的证据提交，团队正在审核所有文件。我们会在 2-3 个工作日内更新进展。';
     } else if (lowerMessage.includes('urgent') || lowerMessage.includes('deadline')) {
-      return "We understand the urgency of your case. Our team is prioritizing your dispute and will respond as soon as possible. Please ensure all required evidence is uploaded.";
+      return '我们理解此案件的紧急程度。团队会优先处理你的争议并尽快回复。请确保所有必填证据已上传。';
     } else if (lowerMessage.includes('status') || lowerMessage.includes('update')) {
-      return "Your case is currently under review by our operations team. We're investigating the details and will provide an update shortly. You can check the timeline tab for the latest status.";
+      return '你的案件目前正在由运营团队审核。我们正在调查详情并会尽快提供更新。你可以在时间线标签页查看最新状态。';
     } else {
-      return "Thank you for your message. We've received your inquiry and will respond soon. If you have additional evidence or information, please upload it using the Evidence tab.";
+      return '感谢你的消息。我们已收到咨询并会尽快回复。如有补充证据或信息，请通过证据标签页上传。';
     }
   };
 
   const handleRefresh = () => {
     setLastRefreshedAt(new Date().toISOString());
-    message.success('Messages refreshed');
+    message.success('消息已刷新');
   };
 
   return (
@@ -139,8 +140,8 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
       title={
         <Space>
           <MessageOutlined />
-          <span>Messaging Thread</span>
-          <Tag color="blue">{messages.length} message{messages.length !== 1 ? 's' : ''}</Tag>
+          <span>消息线程</span>
+          <Tag color="blue">{messages.length} 条消息</Tag>
         </Space>
       }
       extra={
@@ -150,12 +151,12 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
           icon={<ReloadOutlined />}
           onClick={handleRefresh}
         >
-          Refresh
+          刷新
         </Button>
       }
     >
       <Text type="secondary" style={{ fontSize: 12, display: 'block', marginBottom: 16 }}>
-        Last refreshed: {formatDate(lastRefreshedAt)} • Messages are saved automatically
+        最近刷新：{formatDate(lastRefreshedAt)} · 消息会自动保存
       </Text>
 
       <div
@@ -169,7 +170,7 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
         }}
       >
         {messages.length === 0 ? (
-          <Empty description="No messages yet" />
+          <Empty description="暂无消息" />
         ) : (
           <List
             dataSource={messages}
@@ -207,7 +208,7 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
                         marginTop: 8,
                       }}
                     >
-                      <Text>{msg.content}</Text>
+                      <Text>{translateText(msg.content)}</Text>
                     </div>
                   }
                 />
@@ -225,7 +226,7 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
           <TextArea
             value={messageContent}
             onChange={(e) => setMessageContent(e.target.value)}
-            placeholder="Type your message here... (max 1000 characters)"
+            placeholder="在此输入消息...（最多 1000 个字符）"
             maxLength={1000}
             rows={3}
             disabled={isSubmitting}
@@ -243,18 +244,18 @@ export const MessagingThread: React.FC<MessagingThreadProps> = ({
             disabled={!messageContent.trim()}
             style={{ height: 'auto' }}
           >
-            Send
+            发送
           </Button>
         </Space.Compact>
       ) : (
         <Text type="secondary" style={{ display: 'block', textAlign: 'center' }}>
-          This dispute case is resolved. Messaging is disabled.
+          此争议案件已解决，消息功能已停用。
         </Text>
       )}
 
       {canSendMessage && (
         <Text type="secondary" style={{ fontSize: 11, display: 'block', marginTop: 8 }}>
-          Press Ctrl+Enter (Cmd+Enter on Mac) to send
+          按 Ctrl+Enter（Mac 为 Cmd+Enter）发送
         </Text>
       )}
     </Card>

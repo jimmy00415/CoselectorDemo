@@ -1,5 +1,6 @@
 import { Card, Space, Tag, Typography } from 'antd';
 import { LeadStatus } from '../../types/enums';
+import { translateStatus } from '../../utils';
 
 /**
  * StatusExplanation Component
@@ -36,23 +37,23 @@ export const StatusExplanation: React.FC<StatusExplanationProps> = ({
   const getExplanation = (): string => {
     switch (status) {
       case LeadStatus.DRAFT:
-        return 'This lead is saved as a draft and has not been submitted yet.';
+        return '此线索已保存为草稿，尚未提交。';
       case LeadStatus.SUBMITTED:
-        return 'Waiting for review by the operations team.';
+        return '正在等待运营团队审核。';
       case LeadStatus.UNDER_REVIEW:
         return assignedOwner 
-          ? `Assigned to Ops/BD (${assignedOwner}) for detailed review.`
-          : 'Assigned to Ops/BD for detailed review.';
+          ? `已分配给运营/BD（${assignedOwner}）进行详细审核。`
+          : '已分配给运营/BD 进行详细审核。';
       case LeadStatus.INFO_REQUESTED:
-        return 'More information needed. Please upload requested documents.';
+        return '需要补充更多信息。请上传所需材料。';
       case LeadStatus.APPROVED:
-        return 'Decision made: Lead has been approved. Onboarding process will begin.';
+        return '已做出决定：线索已通过，入驻流程将开始。';
       case LeadStatus.REJECTED:
-        return 'Decision made: Lead was not approved. Review timeline for details.';
+        return '已做出决定：线索未通过。请查看时间线了解详情。';
       case LeadStatus.RESUBMITTED:
-        return 'Lead has been resubmitted for review after addressing previous feedback.';
+        return '线索已根据此前反馈补充后重新提交审核。';
       default:
-        return 'Status information not available.';
+        return '暂无状态信息。';
     }
   };
 
@@ -60,9 +61,9 @@ export const StatusExplanation: React.FC<StatusExplanationProps> = ({
     <Card size="small" style={{ marginBottom: 16 }}>
       <Space direction="vertical" size={8} style={{ width: '100%' }}>
         <Space>
-          <Text strong>Current Status:</Text>
+          <Text strong>当前状态：</Text>
           <Tag color={statusColors[status]} style={{ fontSize: 14 }}>
-            {status.replace(/_/g, ' ')}
+            {translateStatus(status)}
           </Tag>
         </Space>
         <Text type="secondary">{getExplanation()}</Text>

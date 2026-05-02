@@ -50,8 +50,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   message,
   consequenceText,
   onConfirm,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = '确认',
+  cancelText = '取消',
   danger = false,
   icon,
   returnFocusRef,
@@ -116,7 +116,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           <span>{title}</span>
         </Space>
       }
-      closeIcon={<CloseOutlined aria-label="Close modal" />}
+      closeIcon={<CloseOutlined aria-label="关闭弹窗" />}
       footer={
         <Space size="middle">
           <Button onClick={handleClose} disabled={confirmLoading}>
@@ -127,7 +127,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             danger={danger}
             onClick={handleConfirm}
             loading={confirmLoading}
-            aria-label={`${confirmText} action`}
+            aria-label={`${confirmText}操作`}
           >
             {confirmText}
           </Button>
@@ -144,7 +144,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           {message}
         </div>
         {consequenceText && (
-          <div className="modal-consequence" role="note" aria-label="Consequence information">
+          <div className="modal-consequence" role="note" aria-label="后果说明">
             {consequenceText}
           </div>
         )}

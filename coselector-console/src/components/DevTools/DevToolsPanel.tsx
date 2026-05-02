@@ -34,6 +34,7 @@ import {
   createCustomTimelineEvent,
   generateUserProfile 
 } from '../../utils/devTools';
+import { translateStatus, translateText } from '../../utils/i18n';
 import './devTools.css';
 
 const { Text, Paragraph } = Typography;
@@ -65,9 +66,9 @@ export const DevToolsPanel: React.FC = () => {
     try {
       generateUserProfile(newRole); // Validate role exists
       switchRole(newRole);
-      message.success(`Switched to ${newRole} role`);
+      message.success(`已切换到 ${translateText(newRole)} 角色`);
     } catch (error) {
-      message.error('Failed to switch role');
+      message.error('角色切换失败');
     }
   };
 
@@ -82,9 +83,9 @@ export const DevToolsPanel: React.FC = () => {
       });
       
       await mockApi.leads.create(lead);
-      message.success(`Generated ${status} lead: ${lead.merchantName}`);
+      message.success(`已生成${translateStatus(status)}线索：${lead.merchantName}`);
     } catch (error) {
-      message.error('Failed to generate lead');
+      message.error('线索生成失败');
     } finally {
       setLoading(false);
     }
@@ -99,9 +100,9 @@ export const DevToolsPanel: React.FC = () => {
         await mockApi.leads.create(lead);
       }
       
-      message.success(`Generated ${leads.length} diverse leads`);
+      message.success(`已生成 ${leads.length} 条多样化线索`);
     } catch (error) {
-      message.error('Failed to generate lead batch');
+      message.error('批量生成线索失败');
     } finally {
       setLoading(false);
     }
@@ -115,7 +116,7 @@ export const DevToolsPanel: React.FC = () => {
       const lead = await mockApi.leads.getById(leadId);
       
       if (!lead) {
-        message.error('Lead not found');
+        message.error('未找到线索');
         return;
       }
       
@@ -132,10 +133,10 @@ export const DevToolsPanel: React.FC = () => {
         lastUpdatedAt: new Date().toISOString()
       });
 
-      message.success('Timeline event injected successfully');
+      message.success('时间线事件已注入');
       form.resetFields();
     } catch (error) {
-      message.error('Failed to inject timeline event');
+      message.error('注入时间线事件失败');
       console.error(error);
     } finally {
       setLoading(false);
@@ -181,12 +182,12 @@ export const DevToolsPanel: React.FC = () => {
 
   // Data Reset
   const handleResetData = () => {
-    if (window.confirm('⚠️ This will delete ALL leads and reset to default state. Continue?')) {
+    if (window.confirm('这将删除所有线索并重置为默认状态。是否继续？')) {
       try {
         localStorage.removeItem('coselector_leads');
-        message.success('All data cleared. Refresh page to see default state.');
+        message.success('所有数据已清除。刷新页面可查看默认状态。');
       } catch (error) {
-        message.error('Failed to reset data');
+        message.error('重置数据失败');
       }
     }
   };
@@ -195,9 +196,9 @@ export const DevToolsPanel: React.FC = () => {
   const handleRefreshFromStorage = () => {
     try {
       window.location.reload();
-      message.info('Refreshing...');
+      message.info('正在刷新...');
     } catch (error) {
-      message.error('Failed to refresh');
+      message.error('刷新失败');
     }
   };
 
@@ -206,7 +207,7 @@ export const DevToolsPanel: React.FC = () => {
       title={
         <Space>
           <BugOutlined style={{ color: '#1890ff' }} />
-          <span>Developer Tools</span>
+          <span>开发工具</span>
         </Space>
       }
       placement="right"
@@ -221,8 +222,8 @@ export const DevToolsPanel: React.FC = () => {
       }
     >
       <Alert
-        message="Prototype Mode"
-        description="These tools are for demo and testing purposes only. Changes affect localStorage only."
+        message="原型模式"
+        description="这些工具仅用于演示和测试，变更只会影响 localStorage。"
         type="info"
         showIcon
         closable
@@ -235,17 +236,17 @@ export const DevToolsPanel: React.FC = () => {
           tab={
             <span>
               <UserSwitchOutlined />
-              Role
+              角色
             </span>
           }
           key="role"
         >
-          <Card title="Switch User Role" size="small">
+          <Card title="切换用户角色" size="small">
             <Paragraph type="secondary">
-              Current Role: <Text strong>{role}</Text>
+              当前角色：<Text strong>{translateText(role)}</Text>
             </Paragraph>
             <Paragraph type="secondary" style={{ fontSize: 12 }}>
-              Switch between roles to test different permission scenarios. UI will update immediately.
+              在不同角色间切换，以测试不同权限场景。界面会立即更新。
             </Paragraph>
             
             <Space direction="vertical" style={{ width: '100%' }}>
@@ -255,7 +256,7 @@ export const DevToolsPanel: React.FC = () => {
                 onClick={() => handleRoleSwitch(UserRole.CO_SELECTOR)}
                 icon={<UserSwitchOutlined />}
               >
-                Co-Selector (CO_SELECTOR)
+                协同遴选者（CO_SELECTOR）
               </Button>
               <Button
                 block
@@ -263,7 +264,7 @@ export const DevToolsPanel: React.FC = () => {
                 onClick={() => handleRoleSwitch(UserRole.OPS_BD)}
                 icon={<UserSwitchOutlined />}
               >
-                Ops/BD (OPS_BD)
+                运营/BD（OPS_BD）
               </Button>
               <Button
                 block
@@ -271,7 +272,7 @@ export const DevToolsPanel: React.FC = () => {
                 onClick={() => handleRoleSwitch(UserRole.FINANCE)}
                 icon={<UserSwitchOutlined />}
               >
-                Finance (FINANCE)
+                财务（FINANCE）
               </Button>
             </Space>
 
@@ -279,9 +280,9 @@ export const DevToolsPanel: React.FC = () => {
 
             <Paragraph style={{ fontSize: 12, marginBottom: 0 }}>
               <Text type="secondary">
-                • CO_SELECTOR: Can create/submit leads<br/>
-                • OPS_BD: Can review/approve/reject<br/>
-                • FINANCE: View-only access
+                CO_SELECTOR：可创建/提交线索<br/>
+                OPS_BD：可审核/通过/拒绝<br/>
+                FINANCE：只读访问
               </Text>
             </Paragraph>
           </Card>
@@ -292,15 +293,15 @@ export const DevToolsPanel: React.FC = () => {
           tab={
             <span>
               <DatabaseOutlined />
-              Data
+              数据
             </span>
           }
           key="data"
         >
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <Card title="Generate Single Lead" size="small">
+            <Card title="生成单条线索" size="small">
               <Paragraph type="secondary" style={{ fontSize: 12 }}>
-                Create a single lead in specific status for testing workflows.
+                创建指定状态的单条线索，用于测试工作流。
               </Paragraph>
               <Space direction="vertical" style={{ width: '100%' }}>
                 {Object.values(LeadStatus).map(status => (
@@ -311,15 +312,15 @@ export const DevToolsPanel: React.FC = () => {
                     loading={loading}
                     icon={<PlusOutlined />}
                   >
-                    Generate {status} Lead
+                    生成{translateStatus(status)}线索
                   </Button>
                 ))}
               </Space>
             </Card>
 
-            <Card title="Generate Batch" size="small">
+            <Card title="批量生成" size="small">
               <Paragraph type="secondary" style={{ fontSize: 12 }}>
-                Create 10 diverse leads covering all status scenarios.
+                创建 10 条覆盖各类状态场景的线索。
               </Paragraph>
               <Button
                 block
@@ -328,18 +329,18 @@ export const DevToolsPanel: React.FC = () => {
                 loading={loading}
                 icon={<DatabaseOutlined />}
               >
-                Generate 10 Diverse Leads
+                生成 10 条多样化线索
               </Button>
             </Card>
 
-            <Card title="Data Management" size="small">
+            <Card title="数据管理" size="small">
               <Space direction="vertical" style={{ width: '100%' }}>
                 <Button
                   block
                   onClick={handleRefreshFromStorage}
                   icon={<ReloadOutlined />}
                 >
-                  Refresh from Storage
+                  从存储刷新
                 </Button>
                 <Button
                   block
@@ -347,7 +348,7 @@ export const DevToolsPanel: React.FC = () => {
                   onClick={handleResetData}
                   icon={<DatabaseOutlined />}
                 >
-                  Reset All Data
+                  重置所有数据
                 </Button>
               </Space>
             </Card>
@@ -359,14 +360,14 @@ export const DevToolsPanel: React.FC = () => {
           tab={
             <span>
               <ClockCircleOutlined />
-              Timeline
+              时间线
             </span>
           }
           key="timeline"
         >
-          <Card title="Inject Timeline Event" size="small">
+          <Card title="注入时间线事件" size="small">
             <Paragraph type="secondary" style={{ fontSize: 12 }}>
-              Manually add timeline events to any lead for testing audit trail.
+              手动向任意线索添加时间线事件，用于测试审计轨迹。
             </Paragraph>
             
             <Form
@@ -376,51 +377,51 @@ export const DevToolsPanel: React.FC = () => {
             >
               <Form.Item
                 name="leadId"
-                label="Lead ID"
-                rules={[{ required: true, message: 'Please enter lead ID' }]}
+                label="线索 ID"
+                rules={[{ required: true, message: '请输入线索 ID' }]}
               >
-                <Input placeholder="Enter lead ID (e.g., lead_123)" />
+                <Input placeholder="输入线索 ID（例如 lead_123）" />
               </Form.Item>
 
               <Form.Item
                 name="eventType"
-                label="Event Type"
-                rules={[{ required: true, message: 'Please select event type' }]}
+                label="事件类型"
+                rules={[{ required: true, message: '请选择事件类型' }]}
               >
-                <Select placeholder="Select event type">
-                  <Select.Option value="STATUS_CHANGED">Status Changed</Select.Option>
-                  <Select.Option value="OWNER_ASSIGNED">Owner Assigned</Select.Option>
-                  <Select.Option value="INFO_REQUESTED">Info Requested</Select.Option>
-                  <Select.Option value="APPROVED">Approved</Select.Option>
-                  <Select.Option value="REJECTED">Rejected</Select.Option>
+                <Select placeholder="选择事件类型">
+                  <Select.Option value="STATUS_CHANGED">状态已变更</Select.Option>
+                  <Select.Option value="OWNER_ASSIGNED">负责人已分配</Select.Option>
+                  <Select.Option value="INFO_REQUESTED">需补充信息</Select.Option>
+                  <Select.Option value="APPROVED">已通过</Select.Option>
+                  <Select.Option value="REJECTED">已拒绝</Select.Option>
                 </Select>
               </Form.Item>
 
               <Form.Item
                 name="actorType"
-                label="Actor Type"
-                rules={[{ required: true, message: 'Please select actor type' }]}
+                label="操作者类型"
+                rules={[{ required: true, message: '请选择操作者类型' }]}
               >
-                <Select placeholder="Select actor type">
-                  <Select.Option value={ActorType.CO_SELECTOR}>CO_SELECTOR</Select.Option>
-                  <Select.Option value={ActorType.OPS_BD}>OPS_BD</Select.Option>
-                  <Select.Option value={ActorType.SYSTEM}>SYSTEM</Select.Option>
-                  <Select.Option value={ActorType.FINANCE}>FINANCE</Select.Option>
+                <Select placeholder="选择操作者类型">
+                  <Select.Option value={ActorType.CO_SELECTOR}>协同遴选者</Select.Option>
+                  <Select.Option value={ActorType.OPS_BD}>运营/BD</Select.Option>
+                  <Select.Option value={ActorType.SYSTEM}>系统</Select.Option>
+                  <Select.Option value={ActorType.FINANCE}>财务</Select.Option>
                 </Select>
               </Form.Item>
 
               <Form.Item
                 name="reasonCode"
-                label="Reason Code"
-                rules={[{ required: true, message: 'Please enter reason code' }]}
+                label="原因代码"
+                rules={[{ required: true, message: '请输入原因代码' }]}
               >
-                <Input placeholder="e.g., MANUAL_OVERRIDE" />
+                <Input placeholder="例如：MANUAL_OVERRIDE" />
               </Form.Item>
 
               <Form.Item
                 name="metadata"
-                label="Metadata (JSON)"
-                help="Optional JSON object for additional data"
+                label="元数据（JSON）"
+                help="可选 JSON 对象，用于补充数据"
               >
                 <TextArea 
                   rows={3} 
@@ -435,7 +436,7 @@ export const DevToolsPanel: React.FC = () => {
                 loading={loading}
                 icon={<ThunderboltOutlined />}
               >
-                Inject Event
+                注入事件
               </Button>
             </Form>
           </Card>
@@ -446,30 +447,30 @@ export const DevToolsPanel: React.FC = () => {
           tab={
             <span>
               <SettingOutlined />
-              Settings
+              设置
             </span>
           }
           key="settings"
         >
           <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <Card title="DevTools Settings" size="small">
+            <Card title="开发工具设置" size="small">
               <Space direction="vertical" style={{ width: '100%' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text>Keyboard Shortcuts (Ctrl+Shift+D)</Text>
+                  <Text>键盘快捷键（Ctrl+Shift+D）</Text>
                   <Switch
                     checked={state.keyboardShortcuts}
                     onChange={devTools.setKeyboardShortcuts}
                   />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text>Auto Refresh</Text>
+                  <Text>自动刷新</Text>
                   <Switch
                     checked={state.autoRefresh}
                     onChange={devTools.setAutoRefresh}
                   />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text>Mock Data Enabled</Text>
+                  <Text>启用模拟数据</Text>
                   <Switch
                     checked={state.mockDataEnabled}
                     onChange={devTools.setMockDataEnabled}
@@ -478,13 +479,13 @@ export const DevToolsPanel: React.FC = () => {
               </Space>
             </Card>
 
-            <Card title="Environment Info" size="small">
+            <Card title="环境信息" size="small">
               <Paragraph style={{ fontSize: 12, marginBottom: 8 }}>
                 <Text type="secondary">
-                  <strong>Mode:</strong> {process.env.NODE_ENV}<br/>
-                  <strong>User:</strong> {user?.displayName}<br/>
-                  <strong>Role:</strong> {role}<br/>
-                  <strong>Storage:</strong> localStorage
+                  <strong>模式：</strong> {process.env.NODE_ENV}<br/>
+                  <strong>用户：</strong> {user?.displayName}<br/>
+                  <strong>角色：</strong> {translateText(role)}<br/>
+                  <strong>存储：</strong> localStorage
                 </Text>
               </Paragraph>
             </Card>
@@ -494,7 +495,7 @@ export const DevToolsPanel: React.FC = () => {
               danger
               onClick={devTools.resetSettings}
             >
-              Reset All Settings
+              重置所有设置
             </Button>
           </Space>
         </TabPane>

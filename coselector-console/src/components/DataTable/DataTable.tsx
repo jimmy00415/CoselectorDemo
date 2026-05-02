@@ -102,7 +102,7 @@ export function DataTable<T extends Record<string, any>>({
     showQuickJumper: true,
     pageSizeOptions: PAGE_SIZE_OPTIONS,
     showTotal: (total: number, range: [number, number]) =>
-      `${range[0]}-${range[1]} of ${total} items`,
+      `${range[0]}-${range[1]} / 共 ${total} 条`,
   },
   onPaginationChange,
   selectable = false,
@@ -112,7 +112,7 @@ export function DataTable<T extends Record<string, any>>({
   onRowClick,
   searchable = false,
   onSearch,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder = '搜索...',
   exportable = false,
   onExport,
   exportFileName = 'export.csv',
@@ -211,7 +211,7 @@ export function DataTable<T extends Record<string, any>>({
                 size="small"
                 icon={<MoreOutlined />}
                 onClick={(e) => e.stopPropagation()}
-                aria-label="More actions"
+                aria-label="更多操作"
               />
             </Dropdown>
           )}
@@ -226,7 +226,7 @@ export function DataTable<T extends Record<string, any>>({
     const cols = [...columns];
     if (rowActions.length > 0) {
       cols.push({
-        title: 'Actions',
+        title: '操作',
         key: 'actions',
         fixed: 'right',
         width: 150,
@@ -259,35 +259,35 @@ export function DataTable<T extends Record<string, any>>({
               onPressEnter={() => handleSearch(searchText)}
               style={{ width: 250 }}
               allowClear
-              aria-label="Search table"
+              aria-label="搜索表格"
             />
           )}
           {(Object.keys(filteredInfo).length > 0 || searchText) && (
             <Button onClick={handleClearFilters} size="small">
-              Clear Filters
+              清除筛选
             </Button>
           )}
         </Space>
 
         <Space size="small">
           {refreshable && (
-            <Tooltip title="Refresh data">
+            <Tooltip title="刷新数据">
               <Button
                 icon={<ReloadOutlined />}
                 onClick={onRefresh}
                 loading={loading}
-                aria-label="Refresh data"
+                aria-label="刷新数据"
               />
             </Tooltip>
           )}
           {exportable && (
-            <Tooltip title={`Export to ${exportFileName}`}>
+            <Tooltip title={`导出为 ${exportFileName}`}>
               <Button
                 icon={<DownloadOutlined />}
                 onClick={onExport}
-                aria-label="Export data"
+                aria-label="导出数据"
               >
-                Export
+                导出
               </Button>
             </Tooltip>
           )}
@@ -307,25 +307,25 @@ export function DataTable<T extends Record<string, any>>({
           onClick: () => onRowClick?.(record),
           style: { cursor: onRowClick ? 'pointer' : 'default' },
           'aria-label': ariaLabel
-            ? `${ariaLabel} row`
-            : 'Table row',
+            ? `${ariaLabel} 行`
+            : '表格行',
         })}
         bordered={bordered}
         size={size}
         scroll={scroll}
         aria-label={ariaLabel}
         locale={{
-          emptyText: 'No data available',
-          filterConfirm: 'OK',
-          filterReset: 'Reset',
-          filterEmptyText: 'No filters',
-          selectAll: 'Select all',
-          selectInvert: 'Invert selection',
-          selectionAll: 'Select all data',
-          sortTitle: 'Sort',
-          triggerDesc: 'Click to sort descending',
-          triggerAsc: 'Click to sort ascending',
-          cancelSort: 'Click to cancel sorting',
+          emptyText: '暂无数据',
+          filterConfirm: '确定',
+          filterReset: '重置',
+          filterEmptyText: '无筛选项',
+          selectAll: '全选',
+          selectInvert: '反选',
+          selectionAll: '选择全部数据',
+          sortTitle: '排序',
+          triggerDesc: '点击降序排列',
+          triggerAsc: '点击升序排列',
+          cancelSort: '点击取消排序',
         }}
       />
     </div>

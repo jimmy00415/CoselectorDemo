@@ -57,7 +57,7 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
     // Client-side size check (max 5MB per file)
     const validFiles = newFileList.filter((file) => {
       if (file.size && file.size > 5 * 1024 * 1024) {
-        message.error(`${file.name} exceeds 5MB size limit`);
+        message.error(`${file.name} 超过 5MB 大小限制`);
         return false;
       }
       return true;
@@ -80,7 +80,7 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
   const handleSubmit = () => {
     form.validateFields().then((values) => {
       if (fileList.length < 2) {
-        message.error('Please upload at least 2 identity documents');
+        message.error('请至少上传 2 份身份证明文件');
         return;
       }
 
@@ -106,18 +106,18 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
             current={2}
             status="process"
             items={[
-              { title: 'Identity Basics', icon: <UserOutlined /> },
-              { title: 'Document Upload', icon: <IdcardOutlined /> },
-              { title: 'Under Review', icon: <ClockCircleOutlined /> },
-              { title: 'Approved', icon: <CheckCircleOutlined /> },
+              { title: '身份基础信息', icon: <UserOutlined /> },
+              { title: '文件上传', icon: <IdcardOutlined /> },
+              { title: '审核中', icon: <ClockCircleOutlined /> },
+              { title: '已通过', icon: <CheckCircleOutlined /> },
             ]}
           />
           <Alert
             type="info"
-            message="KYC Under Review"
-            description={`Your KYC submission is under review. Submitted on ${new Date(
+            message="KYC 审核中"
+            description={`你的 KYC 提交正在审核中。提交时间：${new Date(
               userProfile.kycSubmittedAt || ''
-            ).toLocaleDateString()}. You will be notified once the review is complete.`}
+            ).toLocaleDateString()}。审核完成后你会收到通知。`}
             icon={<ClockCircleOutlined />}
             showIcon
           />
@@ -134,18 +134,18 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
             current={3}
             status="finish"
             items={[
-              { title: 'Identity Basics', icon: <UserOutlined /> },
-              { title: 'Document Upload', icon: <IdcardOutlined /> },
-              { title: 'Under Review', icon: <ClockCircleOutlined /> },
-              { title: 'Approved', icon: <CheckCircleOutlined /> },
+              { title: '身份基础信息', icon: <UserOutlined /> },
+              { title: '文件上传', icon: <IdcardOutlined /> },
+              { title: '审核中', icon: <ClockCircleOutlined /> },
+              { title: '已通过', icon: <CheckCircleOutlined /> },
             ]}
           />
           <Alert
             type="success"
-            message="KYC Approved"
-            description={`Your identity has been verified. Approved on ${new Date(
+            message="KYC 已通过"
+            description={`你的身份已验证。通过时间：${new Date(
               userProfile.kycApprovedAt || ''
-            ).toLocaleDateString()}. If your information changes, please contact support.`}
+            ).toLocaleDateString()}。如果信息发生变化，请联系支持团队。`}
             icon={<CheckCircleOutlined />}
             showIcon
           />
@@ -161,23 +161,23 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
           current={current}
           status={status}
           items={[
-            { title: 'Identity Basics', icon: <UserOutlined /> },
-            { title: 'Document Upload', icon: <IdcardOutlined /> },
-            { title: 'Review', icon: <SafetyOutlined /> },
+            { title: '身份基础信息', icon: <UserOutlined /> },
+            { title: '文件上传', icon: <IdcardOutlined /> },
+            { title: '审核', icon: <SafetyOutlined /> },
           ]}
         />
 
         {userProfile.kycStatus === KYCStatus.REJECTED && (
           <Alert
             type="error"
-            message="KYC Rejected"
+            message="KYC 已拒绝"
             description={
               <div>
-                <p>Your previous KYC submission was rejected.</p>
+                <p>你上一次 KYC 提交已被拒绝。</p>
                 <p>
-                  <strong>Reason:</strong> {userProfile.kycRejectionReason || 'Document unclear or information mismatch'}
+                  <strong>原因：</strong> {userProfile.kycRejectionReason || '文件不清晰或信息不一致'}
                 </p>
-                <p>Please review the information below and resubmit.</p>
+                <p>请检查以下信息并重新提交。</p>
               </div>
             }
             icon={<CloseCircleOutlined />}
@@ -190,88 +190,88 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
           {currentStep === 0 && (
             <>
               <Form.Item
-                label="Full Name"
+                label="姓名"
                 name="fullName"
-                rules={[{ required: true, message: 'Please enter your full name' }]}
+                rules={[{ required: true, message: '请输入姓名' }]}
               >
-                <Input prefix={<UserOutlined />} placeholder="Enter your full legal name" />
+                <Input prefix={<UserOutlined />} placeholder="输入法定姓名" />
               </Form.Item>
 
               <Form.Item
-                label="ID Type"
+                label="证件类型"
                 name="idType"
                 initialValue="ID_CARD"
-                rules={[{ required: true, message: 'Please select ID type' }]}
+                rules={[{ required: true, message: '请选择证件类型' }]}
               >
                 <Radio.Group>
-                  <Radio.Button value="ID_CARD">National ID Card</Radio.Button>
-                  <Radio.Button value="PASSPORT">Passport</Radio.Button>
-                  <Radio.Button value="DRIVER_LICENSE">Driver License</Radio.Button>
+                  <Radio.Button value="ID_CARD">身份证</Radio.Button>
+                  <Radio.Button value="PASSPORT">护照</Radio.Button>
+                  <Radio.Button value="DRIVER_LICENSE">驾驶证</Radio.Button>
                 </Radio.Group>
               </Form.Item>
 
               <Form.Item
-                label="ID Number"
+                label="证件号码"
                 name="idNumber"
                 rules={[
-                  { required: true, message: 'Please enter your ID number' },
+                  { required: true, message: '请输入证件号码' },
                   {
                     pattern: /^[A-Z0-9]{6,20}$/,
-                    message: 'Invalid ID number format',
+                    message: '证件号码格式无效',
                   },
                 ]}
               >
                 <Input
                   prefix={<IdcardOutlined />}
-                  placeholder="Enter your ID number"
+                  placeholder="输入证件号码"
                   maxLength={20}
                 />
               </Form.Item>
 
               <Form.Item
-                label="Date of Birth"
+                label="出生日期"
                 name="dateOfBirth"
-                rules={[{ required: true, message: 'Please enter your date of birth' }]}
+                rules={[{ required: true, message: '请输入出生日期' }]}
               >
                 <Input type="date" />
               </Form.Item>
 
               <Form.Item
-                label="Address"
+                label="地址"
                 name="address"
-                rules={[{ required: true, message: 'Please enter your address' }]}
+                rules={[{ required: true, message: '请输入地址' }]}
               >
-                <Input.TextArea rows={2} placeholder="Street address" />
+                <Input.TextArea rows={2} placeholder="街道地址" />
               </Form.Item>
 
               <Space style={{ width: '100%' }}>
                 <Form.Item
-                  label="City"
+                  label="城市"
                   name="city"
-                  rules={[{ required: true, message: 'Required' }]}
+                  rules={[{ required: true, message: '必填' }]}
                 >
-                  <Input placeholder="City" />
+                  <Input placeholder="城市" />
                 </Form.Item>
 
                 <Form.Item
-                  label="Province"
+                  label="省份"
                   name="province"
-                  rules={[{ required: true, message: 'Required' }]}
+                  rules={[{ required: true, message: '必填' }]}
                 >
-                  <Select placeholder="Select Province" style={{ width: 150 }}>
-                    <Select.Option value="Beijing">Beijing</Select.Option>
-                    <Select.Option value="Shanghai">Shanghai</Select.Option>
-                    <Select.Option value="Guangdong">Guangdong</Select.Option>
-                    <Select.Option value="Zhejiang">Zhejiang</Select.Option>
+                  <Select placeholder="选择省份" style={{ width: 150 }}>
+                    <Select.Option value="Beijing">北京</Select.Option>
+                    <Select.Option value="Shanghai">上海</Select.Option>
+                    <Select.Option value="Guangdong">广东</Select.Option>
+                    <Select.Option value="Zhejiang">浙江</Select.Option>
                   </Select>
                 </Form.Item>
 
                 <Form.Item
-                  label="Postal Code"
+                  label="邮政编码"
                   name="postalCode"
-                  rules={[{ required: true, message: 'Required' }]}
+                  rules={[{ required: true, message: '必填' }]}
                 >
-                  <Input placeholder="Postal Code" maxLength={6} />
+                  <Input placeholder="邮政编码" maxLength={6} />
                 </Form.Item>
               </Space>
             </>
@@ -281,20 +281,20 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
             <>
               <Alert
                 type="info"
-                message="Document Upload Requirements"
+                message="文件上传要求"
                 description={
                   <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
-                    <li>Upload at least 2 clear photos of your identity document</li>
-                    <li>Front and back of ID card, or all pages of passport</li>
-                    <li>File format: JPG, PNG, or PDF</li>
-                    <li>Maximum file size: 5MB per file</li>
-                    <li>Ensure all text is clearly readable</li>
+                    <li>至少上传 2 张清晰的身份证明文件照片</li>
+                    <li>身份证正反面，或护照所有页面</li>
+                    <li>文件格式：JPG、PNG 或 PDF</li>
+                    <li>单个文件最大 5MB</li>
+                    <li>请确保所有文字清晰可读</li>
                   </ul>
                 }
                 style={{ marginBottom: 16 }}
               />
 
-              <Form.Item label="Identity Documents">
+              <Form.Item label="身份证明文件">
                 <Upload
                   listType="picture-card"
                   fileList={fileList}
@@ -306,7 +306,7 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
                   {fileList.length < 4 && (
                     <div>
                       <UploadOutlined />
-                      <div style={{ marginTop: 8 }}>Upload</div>
+                      <div style={{ marginTop: 8 }}>上传</div>
                     </div>
                   )}
                 </Upload>
@@ -315,7 +315,7 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
               {fileList.length > 0 && fileList.length < 2 && (
                 <Alert
                   type="warning"
-                  message={`Please upload at least ${2 - fileList.length} more document(s)`}
+                  message={`请至少再上传 ${2 - fileList.length} 份文件`}
                   showIcon
                 />
               )}
@@ -326,31 +326,31 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
             <>
               <Alert
                 type="success"
-                message="Ready to Submit"
-                description="Please review your information before submitting. Once submitted, you cannot edit until the review is complete."
+                message="准备提交"
+                description="提交前请检查你的信息。提交后，在审核完成前无法编辑。"
                 showIcon
                 style={{ marginBottom: 16 }}
               />
 
-              <Card size="small" title="Summary">
+              <Card size="small" title="摘要">
                 <p>
-                  <strong>Full Name:</strong> {form.getFieldValue('fullName')}
+                  <strong>姓名：</strong> {form.getFieldValue('fullName')}
                 </p>
                 <p>
-                  <strong>ID Type:</strong> {form.getFieldValue('idType')}
+                  <strong>证件类型：</strong> {form.getFieldValue('idType')}
                 </p>
                 <p>
-                  <strong>ID Number:</strong> {form.getFieldValue('idNumber')}
+                  <strong>证件号码：</strong> {form.getFieldValue('idNumber')}
                 </p>
                 <p>
-                  <strong>Date of Birth:</strong> {form.getFieldValue('dateOfBirth')}
+                  <strong>出生日期：</strong> {form.getFieldValue('dateOfBirth')}
                 </p>
                 <p>
-                  <strong>Address:</strong>{' '}
+                  <strong>地址：</strong>{' '}
                   {`${form.getFieldValue('address')}, ${form.getFieldValue('city')}, ${form.getFieldValue('province')} ${form.getFieldValue('postalCode')}`}
                 </p>
                 <p>
-                  <strong>Documents:</strong> {fileList.length} file(s) uploaded
+                  <strong>文件：</strong> 已上传 {fileList.length} 个文件
                 </p>
               </Card>
             </>
@@ -359,16 +359,16 @@ export const KYCStepper: React.FC<KYCStepperProps> = ({ userProfile, onSubmit, o
 
         <Space style={{ marginTop: 16 }}>
           {currentStep > 0 && currentStep < 2 && (
-            <Button onClick={handlePrevious}>Previous</Button>
+            <Button onClick={handlePrevious}>上一步</Button>
           )}
           {currentStep < 2 && (
             <Button type="primary" onClick={handleNext}>
-              Next
+              下一步
             </Button>
           )}
           {currentStep === 2 && (
             <Button type="primary" onClick={handleSubmit}>
-              {userProfile.kycStatus === KYCStatus.REJECTED ? 'Resubmit' : 'Submit for Review'}
+              {userProfile.kycStatus === KYCStatus.REJECTED ? '重新提交' : '提交审核'}
             </Button>
           )}
         </Space>

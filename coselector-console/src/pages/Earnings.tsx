@@ -12,14 +12,14 @@ const EarningsPage: React.FC = () => {
   return (
     <div>
       <PageBreadcrumb />
-      <Title level={2}>Earnings & Transactions</Title>
+      <Title level={2}>收益与交易</Title>
       <Paragraph type="secondary">
-        Track your revenue and transaction history
+        追踪你的收益和交易历史
       </Paragraph>
 
       <Card style={{ marginTop: 24 }}>
         <Paragraph>
-          Earnings module with transaction tracking will be implemented here.
+          收益模块和交易追踪将在此实现。
         </Paragraph>
       </Card>
     </div>
