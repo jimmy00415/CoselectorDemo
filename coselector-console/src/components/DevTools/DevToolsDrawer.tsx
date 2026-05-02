@@ -623,7 +623,7 @@ export const DevToolsDrawer: React.FC<DevToolsDrawerProps> = ({ open, onClose })
       placement="right"
       onClose={onClose}
       open={open}
-      width={600}
+      size="large"
     >
       <Alert
         type="warning"

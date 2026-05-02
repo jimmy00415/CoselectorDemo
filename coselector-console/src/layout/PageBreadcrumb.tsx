@@ -61,26 +61,24 @@ const PageBreadcrumb: React.FC = () => {
     return null;
   }
 
-  return (
-    <Breadcrumb className="page-breadcrumb">
-      {breadcrumbs.map((item, index) => {
-        const isLast = index === breadcrumbs.length - 1;
-        return (
-          <Breadcrumb.Item key={item.path}>
-            {index === 0 ? (
-              <Link to={item.path}>
-                <HomeOutlined /> {item.label}
-              </Link>
-            ) : isLast ? (
-              <span>{item.label}</span>
-            ) : (
-              <Link to={item.path}>{item.label}</Link>
-            )}
-          </Breadcrumb.Item>
-        );
-      })}
-    </Breadcrumb>
-  );
+  const breadcrumbItems = breadcrumbs.map((item, index) => {
+    const isLast = index === breadcrumbs.length - 1;
+
+    return {
+      key: item.path,
+      title: index === 0 ? (
+        <Link to={item.path}>
+          <HomeOutlined /> {item.label}
+        </Link>
+      ) : isLast ? (
+        <span>{item.label}</span>
+      ) : (
+        <Link to={item.path}>{item.label}</Link>
+      ),
+    };
+  });
+
+  return <Breadcrumb className="page-breadcrumb" items={breadcrumbItems} />;
 };
 
 export default PageBreadcrumb;

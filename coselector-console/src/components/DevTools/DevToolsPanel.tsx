@@ -211,7 +211,7 @@ export const DevToolsPanel: React.FC = () => {
         </Space>
       }
       placement="right"
-      width={600}
+      size="large"
       open={state.isPanelOpen}
       onClose={closePanel}
       className="dev-tools-drawer"

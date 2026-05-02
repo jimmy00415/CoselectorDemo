@@ -219,7 +219,7 @@ export const FilterRail: React.FC<FilterRailProps> = ({
       <Drawer
         title="筛选"
         placement="left"
-        width={320}
+        size="default"
         open={drawerVisible}
         onClose={onDrawerClose}
         closeIcon={<CloseOutlined aria-label="关闭筛选" />}

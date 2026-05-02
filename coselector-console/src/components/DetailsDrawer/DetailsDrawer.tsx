@@ -57,6 +57,7 @@ export const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
   headerActions,
   footerActions,
   width = 720,
+  size,
   placement = 'right',
   ariaLabel: _ariaLabel,
   returnFocusRef,
@@ -64,6 +65,7 @@ export const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
 }) => {
   const drawerRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const drawerSize = size ?? (typeof width === 'number' && width >= 600 ? 'large' : 'default');
 
   // Store the previously focused element when drawer opens
   useEffect(() => {
@@ -210,7 +212,7 @@ export const DetailsDrawer: React.FC<DetailsDrawerProps> = ({
       open={visible}
       onClose={handleClose}
       title={renderHeader()}
-      width={width}
+      size={drawerSize}
       placement={placement}
       footer={renderFooter()}
       closeIcon={<CloseOutlined aria-label="关闭抽屉" />}

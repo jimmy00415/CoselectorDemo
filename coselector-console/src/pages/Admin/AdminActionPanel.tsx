@@ -319,7 +319,7 @@ export const AdminActionPanel: React.FC<AdminActionPanelProps> = ({ lead, onUpda
           setCurrentAction(null);
           form.resetFields();
         }}
-        width={500}
+        size="large"
         footer={
           <Space style={{ float: 'right' }}>
             <Button onClick={() => {

@@ -152,7 +152,7 @@ export const DisputeDetailsDrawer: React.FC<DisputeDetailsDrawerProps> = ({
       placement="right"
       onClose={onClose}
       open={open}
-      width={800}
+      size="large"
       extra={
         <Button onClick={onClose}>关闭</Button>
       }

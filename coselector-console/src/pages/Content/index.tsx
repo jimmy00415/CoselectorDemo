@@ -519,7 +519,7 @@ const ContentPage: React.FC = () => {
       <Drawer
         open={!!detailProduct}
         onClose={() => setDetailProduct(null)}
-        width={620}
+        size="large"
         title="商品详情"
       >
         {detailProduct && (

@@ -102,7 +102,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         </Space>
       }
       placement="right"
-      width={400}
+      size="default"
       open={visible}
       onClose={onClose}
       extra={

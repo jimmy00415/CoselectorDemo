@@ -78,7 +78,7 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
         </Space>
       }
       placement="right"
-      width={450}
+      size="default"
       open={visible}
       onClose={onClose}
       destroyOnClose

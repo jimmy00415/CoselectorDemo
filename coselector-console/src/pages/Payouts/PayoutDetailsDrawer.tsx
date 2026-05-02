@@ -97,7 +97,7 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
         </Space>
       }
       placement="right"
-      width={500}
+      size="large"
       onClose={onClose}
       open={visible}
     >
