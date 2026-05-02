@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/CoselectorDemo/static/css/main.44583bda.css",
+    "main.js": "/CoselectorDemo/static/js/main.17860fe6.js",
+    "static/js/453.1a522e4d.chunk.js": "/CoselectorDemo/static/js/453.1a522e4d.chunk.js",
+    "index.html": "/CoselectorDemo/index.html",
+    "main.44583bda.css.map": "/CoselectorDemo/static/css/main.44583bda.css.map",
+    "main.17860fe6.js.map": "/CoselectorDemo/static/js/main.17860fe6.js.map",
+    "453.1a522e4d.chunk.js.map": "/CoselectorDemo/static/js/453.1a522e4d.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.44583bda.css",
+    "static/js/main.17860fe6.js"
+  ]
+}
