@@ -237,7 +237,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ visible, onClose }) => {
             <Text type="secondary">
               可按以下内容搜索：
               <ul>
-                <li>资产 ID（例如 asset_001）</li>
+                <li>商品链接 / 订单链接 ID（例如 link_001）</li>
                 <li>内容 ID（例如 content_123）</li>
                 <li>线索 ID（例如 lead_456）</li>
                 <li>交易 ID（例如 tx_789）</li>

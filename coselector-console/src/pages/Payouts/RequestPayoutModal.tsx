@@ -75,12 +75,13 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
       onCancel={handleCancel}
       okText="提交申请"
       okButtonProps={{ disabled: !confirmed || !hasBankAccount }}
-      width={600}
+      width={560}
+      styles={{ body: { maxHeight: '70vh', overflowY: 'auto', overflowX: 'hidden' } }}
     >
       {!hasBankAccount && (
         <Alert
           type="error"
-          message="缺少提现方式"
+          title="缺少提现方式"
           description={
             <span>
               请先<a href="/profile">设置银行账户</a>，再申请提现。
@@ -94,7 +95,7 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
       {amountChanged && (
         <Alert
           type="warning"
-          message="可提现余额已变化"
+          title="可提现余额已变化"
           description={`你的可提现余额已从 ${formatCurrency(
             currentPayable
           )} 变为 ${formatCurrency(maxPayable)}。请调整申请金额。`}
@@ -105,44 +106,42 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
       )}
 
       <Form form={form} layout="vertical" disabled={!hasBankAccount}>
-        <Form.Item
-          label="提现金额"
-          name="amount"
-          rules={[
-            { required: true, message: '请输入提现金额' },
-            {
-              type: 'number',
-              min: 0.01,
-              message: '金额必须大于 0',
-            },
-            {
-              type: 'number',
-              max: maxPayable,
-              message: `金额不能超过 ${formatCurrency(maxPayable)}`,
-            },
-          ]}
-        >
-          <InputNumber
-            style={{ width: '100%' }}
-            prefix="¥"
-            precision={2}
-            placeholder="输入金额"
-            max={maxPayable}
-            addonAfter={
-              <Button
-                type="link"
-                size="small"
-                onClick={() => form.setFieldsValue({ amount: maxPayable })}
-              >
-                全部
-              </Button>
-            }
-          />
+        <Form.Item label="提现金额" required>
+          <Space.Compact style={{ width: '100%' }}>
+            <Form.Item
+              name="amount"
+              noStyle
+              rules={[
+                { required: true, message: '请输入提现金额' },
+                {
+                  type: 'number',
+                  min: 0.01,
+                  message: '金额必须大于 0',
+                },
+                {
+                  type: 'number',
+                  max: maxPayable,
+                  message: `金额不能超过 ${formatCurrency(maxPayable)}`,
+                },
+              ]}
+            >
+              <InputNumber
+                style={{ width: '100%' }}
+                prefix="¥"
+                precision={2}
+                placeholder="输入金额"
+                max={maxPayable}
+              />
+            </Form.Item>
+            <Button onClick={() => form.setFieldsValue({ amount: maxPayable })}>
+              全部
+            </Button>
+          </Space.Compact>
         </Form.Item>
 
         <Alert
           type="info"
-          message={`最高可提现：${formatCurrency(maxPayable)}`}
+          title={`最高可提现：${formatCurrency(maxPayable)}`}
           style={{ marginBottom: 16 }}
         />
 
@@ -179,7 +178,7 @@ export const RequestPayoutModal: React.FC<RequestPayoutModalProps> = ({
 
       <Alert
         type="info"
-        message="处理时效"
+        title="处理时效"
         description="提现通常会在 1-2 个工作日内审批，通过后 3-5 个工作日内转账。"
         style={{ marginTop: 16 }}
       />

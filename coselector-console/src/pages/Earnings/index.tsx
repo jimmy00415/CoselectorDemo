@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { Tabs, Table, message, Button, Space } from 'antd';
 import { 
   DollarOutlined, 
@@ -8,13 +8,15 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons';
 import { Transaction } from '../../types';
-import { EarningsState } from '../../types/enums';
+import type { TrackingAsset } from '../../types';
+import { EarningsState, KYCStatus } from '../../types/enums';
 import { mockApi } from '../../services/mockApi';
 import { useAuth } from '../../contexts/AuthContext';
 import { EarningsOverview } from './EarningsOverview';
 import { TransactionTraceDrawer } from './TransactionTraceDrawer';
 import { getTransactionColumns, getDaysUntilLock, canLockNow } from './config';
 import { EarningsStateMachine } from '../../services/stateMachines';
+import PayoutsPage from '../Payouts';
 import { StatementsPage } from '../Statements';
 import { translateStatus } from '../../utils';
 import './styles.css';
@@ -36,19 +38,16 @@ import './styles.css';
  */
 
 export const Earnings: React.FC = () => {
-  const { user, role } = useAuth();
+  const { user } = useAuth();
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [assets, setAssets] = useState<TrackingAsset[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [traceDrawerVisible, setTraceDrawerVisible] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [stateFilter, setStateFilter] = useState<EarningsState | null>(null);
-
-  useEffect(() => {
-    loadTransactions();
-  }, []);
 
   useEffect(() => {
     // Apply filters
@@ -59,29 +58,11 @@ export const Earnings: React.FC = () => {
     }
   }, [transactions, stateFilter]);
 
-  const loadTransactions = async () => {
-    setLoading(true);
-    try {
-      const data = await mockApi.transactions.getAll();
-      
-      // Auto-lock eligible pending transactions
-      const updated = await autoLockTransactions(data);
-      
-      setTransactions(updated);
-      setFilteredTransactions(updated);
-    } catch (error) {
-      message.error('交易加载失败');
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   /**
    * Auto-lock transactions where lock_end_at has passed
    * Per PM/SE agreement: Background simulation on page load
    */
-  const autoLockTransactions = async (txs: Transaction[]): Promise<Transaction[]> => {
+  const autoLockTransactions = useCallback(async (txs: Transaction[]): Promise<Transaction[]> => {
     const updated = [...txs];
     let hasChanges = false;
 
@@ -134,7 +115,34 @@ export const Earnings: React.FC = () => {
     }
 
     return updated;
-  };
+  }, []);
+
+  const loadTransactions = useCallback(async () => {
+    setLoading(true);
+    try {
+      await mockApi.initializeData();
+      const [data, assetData] = await Promise.all([
+        mockApi.transactions.getAll(),
+        mockApi.assets.getAll(),
+      ]);
+      
+      // Auto-lock eligible pending transactions
+      const updated = await autoLockTransactions(data);
+      
+      setTransactions(updated);
+      setAssets(assetData);
+      setFilteredTransactions(updated);
+    } catch (error) {
+      message.error('交易加载失败');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [autoLockTransactions]);
+
+  useEffect(() => {
+    loadTransactions();
+  }, [loadTransactions]);
 
   const handleViewTrace = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
@@ -154,7 +162,6 @@ export const Earnings: React.FC = () => {
   };
 
   const handleFilterByLockRange = (minDays: number, maxDays: number) => {
-    const now = new Date();
     const filtered = transactions.filter(tx => {
       if (tx.state !== EarningsState.PENDING) return false;
       
@@ -174,11 +181,11 @@ export const Earnings: React.FC = () => {
     message.success('筛选已清除');
   };
 
-  // Check eligibility (placeholder logic)
-  const isEligible = user?.kycStatus === 'APPROVED';
+  const kycReady = user?.kycStatus === KYCStatus.APPROVED || user?.kycStatus === KYCStatus.VERIFIED;
+  const isEligible = !!kycReady && !!user?.bankAccount;
   const eligibilityIssues = [
-    ...(user?.kycStatus !== 'APPROVED' ? [{ label: 'KYC 验证', action: '提交 KYC', actionUrl: '/profile' }] : []),
-    ...(!user?.bankAccount ? [{ label: '提现方式', action: '添加银行账户', actionUrl: '/profile' }] : []),
+    ...(!kycReady ? [{ label: 'KYC 验证', action: '提交 KYC', actionUrl: '#/profile' }] : []),
+    ...(!user?.bankAccount ? [{ label: '提现方式', action: '添加银行账户', actionUrl: '#/profile' }] : []),
   ];
 
   const columns = getTransactionColumns(handleViewTrace);
@@ -186,11 +193,11 @@ export const Earnings: React.FC = () => {
   return (
     <div className="earnings-container">
       {/* Page Header */}
-      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="earnings-page-titlebar">
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>收益与提现</h1>
-          <p style={{ margin: '8px 0 0 0', color: '#8c8c8c' }}>
-            追踪收益从待锁定到已支付的完整生命周期
+          <h1>浏览与收益</h1>
+          <p>
+            按 SPU 链接看清平台浏览线索、转化质量、抽佣结果和每日收益节奏
           </p>
         </div>
         <Button
@@ -218,8 +225,10 @@ export const Earnings: React.FC = () => {
             children: (
               <EarningsOverview
                 transactions={transactions}
+                assets={assets}
                 onFilterByState={handleFilterByState}
                 onFilterByLockRange={handleFilterByLockRange}
+                onOpenPayouts={() => setActiveTab('payouts')}
                 isEligible={isEligible}
                 eligibilityIssues={eligibilityIssues}
               />
@@ -230,7 +239,7 @@ export const Earnings: React.FC = () => {
             label: (
               <span>
                 <UnorderedListOutlined />
-                交易
+                交易追踪
               </span>
             ),
             children: (
@@ -284,7 +293,7 @@ export const Earnings: React.FC = () => {
                 提现
               </span>
             ),
-            children: <div style={{ padding: 24 }}>提现功能可在专门的提现页面使用</div>,
+            children: <PayoutsPage />,
           },
           {
             key: 'statements',
@@ -303,8 +312,11 @@ export const Earnings: React.FC = () => {
       <TransactionTraceDrawer
         visible={traceDrawerVisible}
         transaction={selectedTransaction}
+        assets={assets}
         onClose={handleCloseTrace}
       />
     </div>
   );
 };
+
+export default Earnings;

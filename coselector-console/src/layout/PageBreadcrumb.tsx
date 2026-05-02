@@ -21,12 +21,12 @@ const PageBreadcrumb: React.FC = () => {
   // Route label mapping
   const routeLabels: Record<string, string> = {
     '/': '首页',
-    '/assets': '链接',
+    '/assets': '链接管理',
     '/content': '内容',
     '/leads': '共选',
     '/admin': '管理',
     '/admin/review-queue': '审核队列',
-    '/earnings': '收益',
+    '/earnings': '浏览与收益',
     '/payouts': '提现',
     '/inbox': '收件箱',
     '/inbox/notifications': '通知',

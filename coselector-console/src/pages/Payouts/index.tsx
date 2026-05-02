@@ -9,7 +9,7 @@ import {
 import { RequestPayoutModal } from './RequestPayoutModal';
 import { PayoutHistoryTable } from './PayoutHistoryTable';
 import { PayoutDetailsDrawer } from './PayoutDetailsDrawer';
-import type { Payout, Transaction, UserProfile } from '../../types';
+import type { Payout, Transaction } from '../../types';
 import { PayoutStatus, EarningsState, ActorType } from '../../types/enums';
 import { useAuth } from '../../contexts/AuthContext';
 import { mockApi } from '../../services/mockApi';
@@ -35,6 +35,7 @@ export const PayoutsPage: React.FC = () => {
   const loadData = async () => {
     setLoading(true);
     try {
+      await mockApi.initializeData();
       const allPayouts = await mockApi.payouts.getAll();
       const allTransactions = await mockApi.transactions.getAll();
       setPayouts(allPayouts);
@@ -227,12 +228,12 @@ export const PayoutsPage: React.FC = () => {
 
   return (
     <div className="payouts-container">
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+      <Space orientation="vertical" size="large" style={{ width: '100%' }}>
         {/* Eligibility Banner */}
         {isEligible ? (
           <Alert
             type="success"
-            message="符合提现条件"
+            title="符合提现条件"
             description={`你可以发起提现申请。可用余额：¥${payableBalance.toFixed(2)}`}
             icon={<CheckCircleOutlined />}
             showIcon
@@ -251,9 +252,9 @@ export const PayoutsPage: React.FC = () => {
         ) : (
           <Alert
             type="error"
-            message="提现受阻"
+            title="提现受阻"
             description={
-              <Space direction="vertical" size="small">
+              <Space orientation="vertical" size="small">
                 <span>申请提现前请先解决以下问题：</span>
                 <ul style={{ marginBottom: 0, paddingLeft: 20 }}>
                   {issues.map((issue, index) => (
@@ -265,7 +266,7 @@ export const PayoutsPage: React.FC = () => {
             icon={<StopOutlined />}
             showIcon
             action={
-              <Button type="primary" size="small" href="/profile">
+              <Button type="primary" size="small" href="#/profile">
                 立即处理
               </Button>
             }
@@ -303,3 +304,5 @@ export const PayoutsPage: React.FC = () => {
     </div>
   );
 };
+
+export default PayoutsPage;

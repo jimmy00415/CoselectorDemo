@@ -1,5 +1,5 @@
 import { ColumnsType } from 'antd/es/table';
-import { Tag, Space, Typography, Tooltip, Button } from 'antd';
+import { Tag, Space, Typography, Tooltip, Button, Select } from 'antd';
 import {
   LinkOutlined,
   CopyOutlined,
@@ -9,20 +9,20 @@ import {
 import { TrackingAsset } from '../../types';
 import { AssetStatus } from '../../types/enums';
 import { FilterConfig } from '../../components/FilterRail/FilterRail';
-import { translateChannel, translateStatus } from '../../utils/i18n';
-import { PRODUCT_LINK_ENTRIES } from './ProductLinkCreator';
+import { translateStatus } from '../../utils/i18n';
 
 const { Text } = Typography;
 
 interface AssetColumnActions {
   onDelete?: (asset: TrackingAsset) => void;
+  onUsageMarkChange?: (asset: TrackingAsset, mark: 'pending' | 'used') => void;
   canDelete?: boolean;
 }
 
 /**
  * Asset table columns configuration
  */
-export const getAssetColumns = ({ onDelete, canDelete = false }: AssetColumnActions = {}): ColumnsType<TrackingAsset> => [
+export const getAssetColumns = ({ onDelete, onUsageMarkChange, canDelete = false }: AssetColumnActions = {}): ColumnsType<TrackingAsset> => [
   {
     title: '商品链接',
     dataIndex: 'name',
@@ -30,7 +30,7 @@ export const getAssetColumns = ({ onDelete, canDelete = false }: AssetColumnActi
     width: 250,
     fixed: 'left',
     render: (name: string, record: TrackingAsset) => (
-      <Space direction="vertical" size={0}>
+      <Space orientation="vertical" size={0}>
         <Space>
           <LinkOutlined />
           <Text strong>{name}</Text>
@@ -40,13 +40,6 @@ export const getAssetColumns = ({ onDelete, canDelete = false }: AssetColumnActi
         </Text>
       </Space>
     ),
-  },
-  {
-    title: '入口',
-    dataIndex: 'channelTag',
-    key: 'channelTag',
-    width: 120,
-    render: (tag: string) => <Tag color="blue">{translateChannel(tag)}</Tag>,
   },
   {
     title: '状态',
@@ -61,56 +54,25 @@ export const getAssetColumns = ({ onDelete, canDelete = false }: AssetColumnActi
     },
   },
   {
-    title: '点击',
-    dataIndex: 'clickCount',
-    key: 'clickCount',
-    width: 100,
-    align: 'right',
-    sorter: (a, b) => a.clickCount - b.clickCount,
-    render: (count: number) => <Text>{count.toLocaleString()}</Text>,
-  },
-  {
-    title: '转化',
-    dataIndex: 'conversionCount',
-    key: 'conversionCount',
-    width: 120,
-    align: 'right',
-    sorter: (a, b) => a.conversionCount - b.conversionCount,
-    render: (count: number, record: TrackingAsset) => {
-      const rate = record.clickCount > 0 ? (count / record.clickCount) * 100 : 0;
-      return (
-        <Space direction="vertical" size={0}>
-          <Text>{count.toLocaleString()}</Text>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            转化率 {rate.toFixed(1)}%
-          </Text>
-        </Space>
-      );
-    },
-  },
-  {
-    title: '绑定 SPU',
-    dataIndex: 'boundContentIds',
-    key: 'boundContentIds',
-    width: 120,
-    align: 'center',
-    render: (ids: string[]) => (
-      <Tooltip title={ids.length > 0 ? `已关联 ${ids.length} 个 SPU` : '未关联 SPU'}>
-        <Tag>{ids.length}</Tag>
-      </Tooltip>
-    ),
-  },
-  {
-    title: '最近使用',
+    title: '使用标记',
     dataIndex: 'lastUsedAt',
     key: 'lastUsedAt',
-    width: 150,
-    render: (date: string) =>
-      date ? (
-        <Text type="secondary">{new Date(date).toLocaleString()}</Text>
-      ) : (
-        <Text type="secondary">从未使用</Text>
-      ),
+    width: 130,
+    render: (date: string | undefined, record: TrackingAsset) => (
+      <div onClick={event => event.stopPropagation()} onMouseDown={event => event.stopPropagation()}>
+        <Select
+          size="small"
+          value={date ? 'used' : 'pending'}
+          style={{ width: 100 }}
+          aria-label="使用标记"
+          options={[
+            { label: '待使用', value: 'pending' },
+            { label: '已使用', value: 'used' },
+          ]}
+          onChange={(value: 'pending' | 'used') => onUsageMarkChange?.(record, value)}
+        />
+      </div>
+    ),
   },
   {
     title: '创建时间',
@@ -174,11 +136,5 @@ export const getAssetFilters = (): FilterConfig[] => [
       { label: translateStatus(AssetStatus.ACTIVE), value: AssetStatus.ACTIVE },
       { label: translateStatus(AssetStatus.DISABLED), value: AssetStatus.DISABLED },
     ],
-  },
-  {
-    key: 'channelTag',
-    label: '入口',
-    type: 'select',
-    options: PRODUCT_LINK_ENTRIES.map(entry => ({ label: entry.name, value: entry.name })),
   },
 ];

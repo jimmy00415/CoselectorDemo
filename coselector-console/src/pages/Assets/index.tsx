@@ -72,13 +72,13 @@ const AssetsPage: React.FC = () => {
   // Filter assets based on active filters
   const filteredAssets = assets.filter(asset => {
     if (filters.status && asset.status !== filters.status) return false;
-    if (filters.channelTag && asset.channelTag !== filters.channelTag) return false;
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       return (
         asset.name.toLowerCase().includes(searchLower) ||
         asset.id.toLowerCase().includes(searchLower) ||
-        asset.channelTag.toLowerCase().includes(searchLower)
+        asset.assetValue.toLowerCase().includes(searchLower) ||
+        asset.boundContentIds.some(spuId => spuId.toLowerCase().includes(searchLower))
       );
     }
     return true;
@@ -88,12 +88,11 @@ const AssetsPage: React.FC = () => {
   const getFilterOptions = (key: string) => assetFilters.find(filter => filter.key === key)?.options || [];
   const activeFilterEntries = [
     { key: 'search', label: '搜索', value: filters.search },
-    { key: 'channelTag', label: '入口', value: filters.channelTag },
     { key: 'status', label: '状态', value: filters.status },
   ].filter(entry => entry.value !== undefined && entry.value !== null && entry.value !== '');
   const activeAssets = assets.filter(asset => asset.status === AssetStatus.ACTIVE).length;
-  const totalClicks = filteredAssets.reduce((total, asset) => total + asset.clickCount, 0);
-  const totalConversions = filteredAssets.reduce((total, asset) => total + asset.conversionCount, 0);
+  const usedAssets = assets.filter(asset => Boolean(asset.lastUsedAt)).length;
+  const pendingAssets = assets.length - usedAssets;
   const actionTargetCount = actionAssets.length;
   const confirmActionText = actionType === 'disable' ? '设为失效' : actionType === 'enable' ? '启用' : '删除';
   const confirmMessage =
@@ -153,6 +152,22 @@ const AssetsPage: React.FC = () => {
     setConfirmModalVisible(true);
   };
 
+  const handleUsageMarkChange = async (asset: TrackingAsset, mark: 'pending' | 'used') => {
+    try {
+      const updated = await mockApi.updateAsset(asset.id, {
+        lastUsedAt: mark === 'used' ? (asset.lastUsedAt || new Date().toISOString()) : undefined,
+      });
+      setAssets(prev => prev.map(item => (item.id === updated.id ? updated : item)));
+      setSelectedRows(prev => prev.map(item => (item.id === updated.id ? updated : item)));
+      if (selectedAsset?.id === updated.id) {
+        setSelectedAsset(updated);
+      }
+      message.success(`已标记为${mark === 'used' ? '已使用' : '待使用'}`);
+    } catch (error) {
+      message.error('使用标记更新失败');
+    }
+  };
+
   const handleConfirmAction = async () => {
     const targets = actionAssets;
 
@@ -193,14 +208,14 @@ const AssetsPage: React.FC = () => {
 
   const handleExport = () => {
     const csv = [
-      ['链接编号', '商品名称', '入口', '状态', '点击', '转化', '创建时间'],
+      ['链接编号', '商品名称', 'SPU', '订单链接', '状态', '使用标记', '创建时间'],
       ...filteredAssets.map(asset => [
         asset.id,
         asset.name,
-        asset.channelTag,
+        asset.boundContentIds.join(' / '),
+        asset.assetValue,
         asset.status === AssetStatus.ACTIVE ? '启用' : '失效',
-        asset.clickCount,
-        asset.conversionCount,
+        asset.lastUsedAt ? '已使用' : '待使用',
         asset.createdAt,
       ]),
     ]
@@ -226,7 +241,7 @@ const AssetsPage: React.FC = () => {
         <div>
           <Title level={2}>链接管理</Title>
           <Paragraph type="secondary">
-            为八大入口下的商家 SPU 生成唯一归因商品链接和二维码
+            为商家 SPU 生成唯一归因商品链接和二维码，浏览与转化表现统一到「浏览与收益」查看。
           </Paragraph>
         </div>
       </div>
@@ -253,12 +268,12 @@ const AssetsPage: React.FC = () => {
                 <strong>{activeAssets.toLocaleString()}</strong>
               </div>
               <div className="asset-history-stat">
-                <span>点击</span>
-                <strong>{totalClicks.toLocaleString()}</strong>
+                <span>已使用</span>
+                <strong>{usedAssets.toLocaleString()}</strong>
               </div>
               <div className="asset-history-stat">
-                <span>转化</span>
-                <strong>{totalConversions.toLocaleString()}</strong>
+                <span>待使用</span>
+                <strong>{pendingAssets.toLocaleString()}</strong>
               </div>
             </div>
           </div>
@@ -266,18 +281,11 @@ const AssetsPage: React.FC = () => {
           <div className="asset-history-toolbar">
             <Input
               className="asset-history-search"
-              placeholder="搜索商品链接、ID 或入口"
+              placeholder="搜索商品链接、ID、SPU 或订单链接"
               prefix={<SearchOutlined />}
               allowClear
               value={filters.search}
               onChange={event => handleFilterChange('search', event.target.value)}
-            />
-            <Select
-              placeholder="入口"
-              allowClear
-              value={filters.channelTag}
-              onChange={value => handleFilterChange('channelTag', value)}
-              options={getFilterOptions('channelTag')}
             />
             <Select
               placeholder="状态"
@@ -355,6 +363,7 @@ const AssetsPage: React.FC = () => {
             <DataTable
               columns={getAssetColumns({
                 onDelete: handleSingleDelete,
+                onUsageMarkChange: handleUsageMarkChange,
                 canDelete: can(Permission.ASSET_DELETE),
               })}
               data={filteredAssets}
@@ -365,8 +374,8 @@ const AssetsPage: React.FC = () => {
               selectedRowKeys={selectedRows.map(r => r.id)}
               onSelectionChange={(_keys: React.Key[], rows: TrackingAsset[]) => setSelectedRows(rows)}
               bordered={false}
-              scroll={{ x: 1120 }}
-              ariaLabel="商品链接"
+              scroll={{ x: 780 }}
+              ariaLabel="链接管理"
             />
           )}
           </div>
@@ -377,12 +386,12 @@ const AssetsPage: React.FC = () => {
       <DetailsDrawer
         visible={!!selectedAsset}
         onClose={handleDrawerClose}
-        title="商品详情"
+        title="商品链接详情"
         width={720}
         sections={[
           {
             key: 'details',
-            title: '商品信息',
+            title: '链接信息',
             content: selectedAsset && (
               <AssetDetailView
                 asset={selectedAsset}

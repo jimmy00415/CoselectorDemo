@@ -53,6 +53,27 @@ export const canLockNow = (lockEndAt: string): boolean => {
   return getDaysUntilLock(lockEndAt) === 0;
 };
 
+export const getCommissionRateDecimal = (commissionRate: number): number => {
+  if (!Number.isFinite(commissionRate) || commissionRate <= 0) {
+    return 0;
+  }
+
+  return commissionRate > 1 ? commissionRate / 100 : commissionRate;
+};
+
+export const getCommissionRatePercent = (commissionRate: number): number => {
+  return getCommissionRateDecimal(commissionRate) * 100;
+};
+
+export const calculateCommissionableBase = (amount: number, commissionRate: number): number => {
+  const decimalRate = getCommissionRateDecimal(commissionRate);
+  if (decimalRate <= 0) {
+    return 0;
+  }
+
+  return Math.abs(amount) / decimalRate;
+};
+
 /**
  * Transaction table columns
  * Per PRD §7.5.3: Date, Source, Reference, Amount, State, Locking date, Rule version, Action
@@ -68,7 +89,7 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
     defaultSortOrder: 'descend',
   },
   {
-    title: '来源',
+    title: '交易类型',
     dataIndex: 'source',
     key: 'source',
     width: 120,
@@ -83,7 +104,7 @@ export const getTransactionColumns = (onViewTrace: (transaction: Transaction) =>
     onFilter: (value, record) => record.source === value,
   },
   {
-    title: '引用',
+    title: '订单ID',
     dataIndex: 'referenceId',
     key: 'referenceId',
     width: 150,
@@ -290,7 +311,7 @@ export const calculateReversalRate = (transactions: Transaction[]): number => {
   ).length;
 
   const reversedTransactions = recentTransactions.filter(tx =>
-    tx.state === EarningsState.REVERSED && tx.amount > 0
+    tx.state === EarningsState.REVERSED
   ).length;
 
   if (totalTransactions === 0) return 0;

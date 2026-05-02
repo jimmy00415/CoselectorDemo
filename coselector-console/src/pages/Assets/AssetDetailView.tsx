@@ -10,9 +10,6 @@ import {
   Divider,
   Typography,
   Card,
-  Statistic,
-  Row,
-  Col,
 } from 'antd';
 import {
   CopyOutlined,
@@ -27,8 +24,6 @@ import { TrackingAsset } from '../../types';
 import { AssetStatus } from '../../types/enums';
 import { Permission } from '../../services/permissions';
 import { usePermission } from '../../hooks/usePermission';
-import { translateChannel } from '../../utils/i18n';
-import { PRODUCT_LINK_ENTRIES } from './ProductLinkCreator';
 
 const { Title, Text } = Typography;
 
@@ -42,7 +37,7 @@ interface AssetDetailViewProps {
 
 /**
  * Product link detail view
- * Shows product information, attribution link, and performance metrics.
+ * Shows product information, attribution link, and QR code tools.
  */
 const AssetDetailView: React.FC<AssetDetailViewProps> = ({
   asset,
@@ -52,7 +47,6 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
   const [editing, setEditing] = useState(false);
   const [editValues, setEditValues] = useState({
     name: asset.name,
-    channelTag: asset.channelTag,
     status: asset.status,
   });
   const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
@@ -95,15 +89,10 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
   const handleCancel = () => {
     setEditValues({
       name: asset.name,
-      channelTag: asset.channelTag,
       status: asset.status,
     });
     setEditing(false);
   };
-
-  const conversionRate = asset.clickCount > 0 
-    ? ((asset.conversionCount / asset.clickCount) * 100).toFixed(2)
-    : '0.00';
 
   return (
     <div className="asset-detail-view">
@@ -174,22 +163,6 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="入口">
-          {editing ? (
-            <Select
-              value={editValues.channelTag}
-              onChange={(value) => setEditValues({ ...editValues, channelTag: value })}
-              style={{ width: 150 }}
-            >
-              {PRODUCT_LINK_ENTRIES.map(entry => (
-                <Select.Option key={entry.id} value={entry.name}>{entry.name}</Select.Option>
-              ))}
-            </Select>
-          ) : (
-            <Tag>{translateChannel(asset.channelTag)}</Tag>
-          )}
-        </Descriptions.Item>
-
         <Descriptions.Item label="商品链接">
           <Text code copyable style={{ fontSize: 12 }}>
             {asset.assetValue}
@@ -213,35 +186,10 @@ const AssetDetailView: React.FC<AssetDetailViewProps> = ({
 
       <Divider />
 
-      {/* Performance Metrics */}
-      <Title level={5}>链接表现</Title>
-      <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={8}>
-          <Card>
-            <Statistic title="总点击" value={asset.clickCount} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic title="转化" value={asset.conversionCount} />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="转化率"
-              value={conversionRate}
-              suffix="%"
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Bound SPU */}
       <Title level={5}>关联 SPU</Title>
       <Card>
         {asset.boundContentIds.length > 0 ? (
-          <Space direction="vertical">
+          <Space orientation="vertical">
             {asset.boundContentIds.map((id) => (
               <Tag key={id} color="green">
                 {id}

@@ -17,7 +17,7 @@ import {
   ActorType,
 } from '../types/enums';
 import { storage } from '../utils/storage';
-import { generateSeedData } from './seedData';
+import { generateSeedData, generateTransactions } from './seedData';
 import {
   LeadStateMachine,
   EarningsStateMachine,
@@ -67,9 +67,9 @@ export async function initializeData(): Promise<void> {
   await delay(500);
 
   // Check if data exists in localStorage
-  const existingData = storage.get<any>(STORAGE_KEYS.ASSETS);
+  const existingAssets = storage.get<TrackingAsset[]>(STORAGE_KEYS.ASSETS);
   
-  if (!existingData) {
+  if (!existingAssets) {
     console.log('馃攧 No existing data found, generating seed data...');
     const seedData = generateSeedData();
     
@@ -86,6 +86,30 @@ export async function initializeData(): Promise<void> {
     
     console.log('鉁?Seed data saved to localStorage');
   } else {
+    const seedData = generateSeedData();
+    let hasMissingData = false;
+
+    const ensureData = <T,>(key: string, data: T[] | T): void => {
+      const existing = storage.get<T[] | T>(key);
+      const isEmptyArray = Array.isArray(existing) && existing.length === 0;
+      if (!existing || isEmptyArray) {
+        storage.set(key, data);
+        hasMissingData = true;
+      }
+    };
+
+    ensureData(STORAGE_KEYS.CONTENT, seedData.contentItems);
+    ensureData(STORAGE_KEYS.LEADS, seedData.leads);
+    ensureData(STORAGE_KEYS.TRANSACTIONS, generateTransactions(120, existingAssets));
+    ensureData(STORAGE_KEYS.PAYOUTS, seedData.payouts);
+    ensureData(STORAGE_KEYS.DISPUTES, seedData.disputeCases);
+    ensureData(STORAGE_KEYS.NOTIFICATIONS, seedData.notifications);
+    ensureData(STORAGE_KEYS.USER_PROFILE, seedData.userProfile);
+
+    if (hasMissingData) {
+      updateLastSyncTime();
+    }
+
     console.log('鉁?Data loaded from localStorage');
   }
 }

@@ -136,7 +136,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       centered
       keyboard={true} // Enable Escape key
       maskClosable={false} // Prevent accidental close
-      destroyOnClose
+      destroyOnHidden
       {...modalProps}
     >
       <div className="modal-content">

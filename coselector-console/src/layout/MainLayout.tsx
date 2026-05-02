@@ -57,7 +57,7 @@ export const MainLayout: React.FC = () => {
     {
       key: '/assets',
       icon: <LinkOutlined />,
-      label: '链接',
+      label: '链接管理',
     },
     {
       key: '/content',
@@ -78,7 +78,7 @@ export const MainLayout: React.FC = () => {
     {
       key: '/earnings',
       icon: <DollarOutlined />,
-      label: '收益',
+      label: '浏览与收益',
     },
     {
       key: '/inbox',

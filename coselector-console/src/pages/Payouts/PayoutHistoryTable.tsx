@@ -11,7 +11,6 @@ import {
 import type { Payout } from '../../types';
 import { PayoutStatus } from '../../types/enums';
 import { formatDate, formatCurrency } from '../../utils/format';
-import { translateStatus } from '../../utils/i18n';
 
 interface PayoutHistoryTableProps {
   payouts: Payout[];
@@ -94,7 +93,7 @@ export const PayoutHistoryTable: React.FC<PayoutHistoryTableProps> = ({
       key: 'bankAccount',
       width: 200,
       render: (_: string, record: Payout) => (
-        <Space direction="vertical" size={0}>
+        <Space orientation="vertical" size={0}>
           <span>{record.bankAccount.bankName}</span>
           <span style={{ fontSize: '12px', color: '#666' }}>
             {record.bankAccount.accountNumber}

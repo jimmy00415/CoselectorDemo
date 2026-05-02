@@ -5,10 +5,11 @@ import {
   LockOutlined, 
   WarningOutlined 
 } from '@ant-design/icons';
-import { Transaction } from '../../types';
+import { Transaction, TrackingAsset } from '../../types';
 import { EarningsState, TransactionSource, ReversalReason } from '../../types/enums';
 import { formatDate, formatCurrency, translateChannel, translateReasonCode, translateStatus, translateText } from '../../utils';
-import { stateColors } from './config';
+import { calculateCommissionableBase, getCommissionRatePercent, stateColors } from './config';
+import { MERCHANT_CATALOG } from '../Content/catalogData';
 
 /**
  * TransactionTraceDrawer Component
@@ -21,19 +22,31 @@ import { stateColors } from './config';
  * Critical: Graceful fallback if referenced data (asset, lead) is unavailable
  */
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { Panel } = Collapse;
 
 interface TransactionTraceDrawerProps {
   visible: boolean;
   transaction: Transaction | null;
+  assets?: TrackingAsset[];
   onClose: () => void;
 }
 
-// Mock data for demonstration - in production, would fetch related entities
-const getAssetName = (assetId: string): string => {
-  // In production: fetch from mockApi.assets.getById(assetId)
-  return `资产 ${assetId.substring(0, 8)}`;
+const hashString = (value: string) =>
+  value.split('').reduce((hash, char) => hash + char.charCodeAt(0), 0);
+
+const getMerchantNameForAsset = (asset: TrackingAsset | undefined, fallbackId: string): string => {
+  const matchedMerchant = MERCHANT_CATALOG.find(merchant =>
+    asset?.boundContentIds.some(spuId => merchant.products.some(product => product.id === spuId)) ||
+    merchant.products.some(product => product.name === asset?.name)
+  );
+
+  if (matchedMerchant) {
+    return matchedMerchant.name;
+  }
+
+  const fallbackMerchant = MERCHANT_CATALOG[hashString(asset?.id || fallbackId) % MERCHANT_CATALOG.length];
+  return fallbackMerchant?.name || '商家信息待同步';
 };
 
 const getReversalReasonLabel = (reason?: ReversalReason): string => {
@@ -55,17 +68,23 @@ const getReversalReasonLabel = (reason?: ReversalReason): string => {
 export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
   visible,
   transaction,
+  assets = [],
   onClose,
 }) => {
   if (!transaction) return null;
+
+  const linkedAsset = assets.find(asset => asset.id === transaction.assetId);
+  const merchantName = getMerchantNameForAsset(linkedAsset, transaction.assetId);
+  const orderLink = linkedAsset?.assetValue || transaction.assetId;
 
   const isReversed = transaction.state === EarningsState.REVERSED;
   const isPending = transaction.state === EarningsState.PENDING;
   const isNegativeAmount = transaction.amount < 0;
 
   // Calculate commission details
-  const commissionableBase = Math.abs(transaction.amount) / (transaction.commissionRate / 100);
+  const commissionableBase = calculateCommissionableBase(transaction.amount, transaction.commissionRate);
   const commissionAmount = transaction.amount;
+  const commissionRatePercent = getCommissionRatePercent(transaction.commissionRate);
 
   return (
     <Drawer
@@ -81,7 +100,7 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
       size="default"
       open={visible}
       onClose={onClose}
-      destroyOnClose
+      destroyOnHidden
     >
       {/* Header Summary */}
       <div style={{ marginBottom: 24 }}>
@@ -111,7 +130,7 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
       {/* Reversal Alert */}
       {isReversed && (
         <Alert
-          message="交易已冲正"
+          title="交易已冲正"
           description={
             isNegativeAmount
               ? '这是一条冲正调整记录（负金额）'
@@ -141,20 +160,20 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
           key="attribution"
         >
           <Descriptions column={1} size="small" bordered>
-            <Descriptions.Item label="来源">
-              <Tag>{transaction.source}</Tag>
+            <Descriptions.Item label="商家名称">
+              <Text strong>{merchantName}</Text>
             </Descriptions.Item>
-            <Descriptions.Item label="引用 ID">
+            <Descriptions.Item label="订单 ID">
               <Text copyable={{ text: transaction.referenceId }}>
                 {transaction.referenceId}
               </Text>
             </Descriptions.Item>
-            <Descriptions.Item label="资产 ID">
-              <Tooltip title={transaction.assetId}>
-                {getAssetName(transaction.assetId)}
-              </Tooltip>
+            <Descriptions.Item label="共选者创建的订单链接">
+              <Text code copyable={{ text: orderLink }} style={{ fontSize: 12 }}>
+                {orderLink}
+              </Text>
             </Descriptions.Item>
-            <Descriptions.Item label="渠道标签">
+            <Descriptions.Item label="平台线索">
               <Tag color="blue">{translateChannel(transaction.channelTag)}</Tag>
             </Descriptions.Item>
             <Descriptions.Item label="触点">
@@ -180,7 +199,7 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
               {formatCurrency(commissionableBase)}
             </Descriptions.Item>
             <Descriptions.Item label="佣金比例">
-              {transaction.commissionRate}%
+              {commissionRatePercent.toFixed(2)}%
             </Descriptions.Item>
             <Descriptions.Item label="佣金金额">
               <Text strong style={{ color: '#52c41a' }}>
@@ -194,7 +213,7 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
 
           {transaction.source === TransactionSource.ADJUSTMENT && (
             <Alert
-              message="调整交易"
+              title="调整交易"
               description="这是一条手动调整或修正记录"
               type="info"
               showIcon
@@ -272,7 +291,7 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
 
             {isNegativeAmount && (
               <Alert
-                message="调整记录"
+                title="调整记录"
                 description="这是一条负向调整记录，用于冲正此前已锁定、可提现或已支付的交易。原始交易会保留在系统中用于审计。"
                 type="warning"
                 showIcon
@@ -327,5 +346,3 @@ export const TransactionTraceDrawer: React.FC<TransactionTraceDrawerProps> = ({
   );
 };
 
-// Add missing import for Tooltip
-import { Tooltip } from 'antd';

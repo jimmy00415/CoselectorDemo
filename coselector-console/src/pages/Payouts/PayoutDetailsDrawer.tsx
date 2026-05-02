@@ -22,7 +22,7 @@ import {
 import type { Payout } from '../../types';
 import { PayoutStatus } from '../../types/enums';
 import { formatDate, formatCurrency } from '../../utils/format';
-import { translateActorName, translateEventType, translateStatus, translateText } from '../../utils/i18n';
+import { translateActorName, translateEventType, translateText } from '../../utils/i18n';
 
 const { Title, Text } = Typography;
 
@@ -105,7 +105,7 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       {payout.status === PayoutStatus.FAILED && (
         <Alert
           type="error"
-          message="付款失败"
+          title="付款失败"
           description={translateText(failureReason)}
           showIcon
           style={{ marginBottom: 16 }}
@@ -115,7 +115,7 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       {payout.status === PayoutStatus.REJECTED && (
         <Alert
           type="warning"
-          message="提现已拒绝"
+          title="提现已拒绝"
           description={translateText(failureEvent?.description) || '请查看时间线了解详情'}
           showIcon
           style={{ marginBottom: 16 }}
@@ -125,7 +125,7 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
       {payout.status === PayoutStatus.CANCELLED && (
         <Alert
           type="info"
-          message="提现已取消"
+          title="提现已取消"
           description="此提现申请已由用户取消。"
           showIcon
           style={{ marginBottom: 16 }}
@@ -213,7 +213,7 @@ export const PayoutDetailsDrawer: React.FC<PayoutDetailsDrawerProps> = ({
               ? 'red'
               : 'blue',
           children: (
-            <Space direction="vertical" size={0}>
+            <Space orientation="vertical" size={0}>
               <Text strong>{translateEventType(event.eventType)}</Text>
               <Text type="secondary" style={{ fontSize: '12px' }}>
                 {formatDate(event.occurredAt)}

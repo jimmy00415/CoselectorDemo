@@ -35,7 +35,7 @@ export const NAV_ITEMS = [
   },
   {
     key: 'links',
-    label: '链接',
+    label: '链接管理',
     path: ROUTES.LINKS,
     icon: 'LinkOutlined',
   },
@@ -59,7 +59,7 @@ export const NAV_ITEMS = [
   },
   {
     key: 'earnings',
-    label: '收益',
+    label: '浏览与收益',
     path: ROUTES.EARNINGS,
     icon: 'DollarOutlined',
   },

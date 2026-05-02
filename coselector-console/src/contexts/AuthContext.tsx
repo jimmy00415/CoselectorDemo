@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { UserRole } from '../types/enums';
+import { KYCStatus, UserRole } from '../types/enums';
 import { UserProfile } from '../types';
 import { storage } from '../utils/storage';
 import { STORAGE_KEYS } from '../constants';
@@ -32,6 +32,26 @@ export interface AuthContextValue extends AuthState {
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+const prototypeUser: UserProfile = {
+  id: 'prototype-co-selector',
+  role: UserRole.CO_SELECTOR,
+  displayName: '演示共选者',
+  email: 'demo@example.com',
+  phone: '13800138000',
+  kycStatus: KYCStatus.VERIFIED,
+  kycSubmittedAt: new Date().toISOString(),
+  kycApprovedAt: new Date().toISOString(),
+  bankAccount: {
+    bankName: '中国工商银行',
+    accountNumber: '6222 **** **** 1234',
+    accountHolder: '演示共选者',
+    verified: true,
+    verifiedAt: new Date().toISOString(),
+  },
+  createdAt: new Date().toISOString(),
+  lastLoginAt: new Date().toISOString(),
+};
 
 /**
  * Get default view preset for a role
@@ -68,8 +88,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Default to CO_SELECTOR for prototype
     return {
       isAuthenticated: true,
-      user: savedUser,
-      role: UserRole.CO_SELECTOR,
+      user: prototypeUser,
+      role: prototypeUser.role,
       viewPreset: ViewPreset.OWNER,
     };
   });
